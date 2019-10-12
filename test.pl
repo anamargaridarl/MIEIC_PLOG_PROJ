@@ -44,19 +44,19 @@ drawRowSeparator():- put_char('|'),tab(5),put_char('|'),drawHorizontalLine(39),p
 
 %|    |   /
 drawSquaresUp1():-
-    put_char('|'),tab(4),put_char('|'),tab(3),put_char('/').
+    put_char('|'),tab(1),put_char('S'),tab(2),put_char('|'),tab(1),put_char('T'),tab(1),put_char('/').
 
 %|    |/   |
 drawSquaresDown1():-
-    put_char('|'),tab(4),put_char('|'),put_char('/'),tab(3).
+    put_char('|'),tab(4),put_char('|'),put_char('/'),tab(1),put_char('T'),tab(1).
 
 %|\   |    |
 drawSquaresUp2():-
-    put_char('|'),put_char('\\'),tab(3),put_char('|'),tab(4).
+    put_char('|'),put_char('\\'),tab(1),put_char('T'),tab(1),put_char('|'),tab(1),put_char('S'),tab(2).
 
 %|   \|    |
 drawSquaresDown2():-
-    put_char('|'),tab(3),put_char('\\'),put_char('|'),tab(4).
+    put_char('|'),tab(1),put_char('T'),tab(1),put_char('\\'),put_char('|'),tab(4).
 
 % X  |     |    |   /|    |   /|    |   /|    |   /|     |
 %    |     |    |/   |    |/   |    |/   |    |/   |     |
