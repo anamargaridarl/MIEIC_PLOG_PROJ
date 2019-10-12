@@ -44,7 +44,7 @@ drawRowSeparator():- put_char('|'),tab(5),put_char('|'),drawHorizontalLine(39),p
 
 %|    |   /
 drawSquaresUp1():-
-    put_char('|'),tab(1),put_char('S'),tab(2),put_char('|'),tab(1),put_char('T'),tab(1),put_char('/').
+    put_char('|'),tab(1),ansi_format([bold,fg(cyan)], '~w', [s]),tab(2),put_char('|'),tab(1),put_char('T'),tab(1),put_char('/').
 
 %|    |/   |
 drawSquaresDown1():-
