@@ -21,22 +21,22 @@ drawBottomInnerBorderLine():-
 
 %    -----------------------------------------------------
 % X  |     |                   |                         |
-% X+1|     |                   |                         |
+%    |     |                   |                         |
 %    |     |----------------------------------------------
 drawUpBorder(OldID,NewID):- 
     tab(2),drawHorizontalLine(53),nl,
-    tab(1),drawRowID(OldID),AuxID = OldID + 1, drawUpHalfRectangle(),
-    tab(1),drawRowID(AuxID),NewID = AuxID + 1, drawUpHalfRectangle(),
+    tab(1),drawRowID(OldID),NewID = OldID + 1, drawUpHalfRectangle(),
+    tab(2),drawUpHalfRectangle(),
     tab(2),drawUpInnerBorderLine().
 
 %    ----------------------------------------------|     |
 % X  |                        |                    |     |
-% X+1|                        |                    |     |
+%    |                        |                    |     |
 %    -----------------------------------------------------
 drawBottomBorder(OldID):-  
     tab(2),drawBottomInnerBorderLine(), 
-    drawRowID(OldID),AuxID = OldID + 1, drawBottomHalfRectangle(),
-    drawRowID(AuxID), drawBottomHalfRectangle(),
+    drawRowID(OldID), drawBottomHalfRectangle(),
+    tab(2), drawBottomHalfRectangle(),
     tab(2),drawHorizontalLine(53).
 
 %|     |---------------------------------------|     |
@@ -59,16 +59,16 @@ drawSquaresDown2():-
     put_char('|'),tab(3),put_char('\\'),put_char('|'),tab(4).
 
 % X  |     |    |   /|    |   /|    |   /|    |   /|     |
-% X+1|     |    |/   |    |/   |    |/   |    |/   |     |
+%    |     |    |/   |    |/   |    |/   |    |/   |     |
 drawInnerRow1(OldID,NewID):-
-    (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, put_char('|'),tab(5),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),put_char('|'),tab(5),put_char('|'),nl,
-    (AuxID < 10 -> tab(1);tab(0)),drawRowID(AuxID), NewID = AuxID + 1, put_char('|'),tab(5),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),put_char('|'),tab(5),put_char('|'),nl.
+   (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, put_char('|'),tab(5),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),put_char('|'),tab(5),put_char('|'),nl,
+   (AuxID < 10 -> tab(2);tab(2)),NewID = AuxID , put_char('|'),tab(5),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),put_char('|'),tab(5),put_char('|'),nl.
 
 % X  |     |\   |    |\   |    |\   |    |\   |    |     |
 % X+1|     |   \|    |   \|    |   \|    |   \|    |     |    
 drawInnerRow2(OldID, NewID):-
     (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, put_char('|'),tab(5),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),put_char('|'),tab(5),put_char('|'),nl,
-    (AuxID < 10 -> tab(1);tab(0)),drawRowID(AuxID), NewID = AuxID + 1, put_char('|'),tab(5),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),put_char('|'),tab(5),put_char('|'),nl.
+    (AuxID < 10 -> tab(2);tab(2)), NewID = AuxID, put_char('|'),tab(5),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),put_char('|'),tab(5),put_char('|'),nl.
 
 %  3|     |    |   /|    |   /|    |   /|    |   /|     |
 %  4|     |    |/   |    |/   |    |/   |    |/   |     |
@@ -88,40 +88,40 @@ drawInnerHalf(OldID,NewID):-
     drawInnerRow2(Aux3,NewID).
 
 drawColumnIds():-
-    writef("  |A   B|C  D|E  F|G  H|I  J|K  L|M  N|O  P|Q  R|S   T|"),nl.
+    writef("  |A    |  B | C   | D  | E | F  |  G  |  H|  I | J   |"),nl.
 
 drawRowID(ID):- format('~d',ID).
-%    A  B  C  D E  F G  H I  J K  L M  N O  P Q  R S   T 
+%   |A    |  B | C  |  D | E  |  F | G  |  H | I  | J   |
 %   -----------------------------------------------------
 %  1|     |                   |                         |
-%  2|     |                   |                         |
+%   |     |                   |                         |
 %   |     |----------------------------------------------
-%  3|     |    |   /|    |   /|    |   /|    |   /|     |
-%  4|     |    |/   |    |/   |    |/   |    |/   |     |
+%  2|     |    |   /|    |   /|    |   /|    |   /|     |
+%   |     |    |/   |    |/   |    |/   |    |/   |     |
+%   |     |---------------------------------------|     |
+%  3|     |\   |    |\   |    |\   |    |\   |    |     |
+%   |     |   \|    |   \|    |   \|    |   \|    |     |
+%   |     |---------------------------------------|     |
+%  4|     |    |   /|    |   /|    |   /|    |   /|     |
+%   |     |    |/   |    |/   |    |/   |    |/   |     |
 %   |     |---------------------------------------|     |
 %  5|     |\   |    |\   |    |\   |    |\   |    |     |
-%  6|     |   \|    |   \|    |   \|    |   \|    |     |
-%   |     |---------------------------------------|     |
-%  7|     |    |   /|    |   /|    |   /|    |   /|     |
-%  8|     |    |/   |    |/   |    |/   |    |/   |     |
-%   |     |---------------------------------------|     |
-%  9|     |\   |    |\   |    |\   |    |\   |    |     |
-% 10|     |   \|    |   \|    |   \|    |   \|    |     |
+%   |     |   \|    |   \|    |   \|    |   \|    |     |
 %   -----------------------------------------------------
-% 11|     |    |   /|    |   /|    |   /|    |   /|     |
-% 12|     |    |/   |    |/   |    |/   |    |/   |     |
+% 6 |     |    |   /|    |   /|    |   /|    |   /|     |
+%   |     |    |/   |    |/   |    |/   |    |/   |     |
 %   |     |---------------------------------------|     |
-% 13|     |\   |    |\   |    |\   |    |\   |    |     |
-% 14|     |   \|    |   \|    |   \|    |   \|    |     |
+% 7 |     |\   |    |\   |    |\   |    |\   |    |     |
+%   |     |   \|    |   \|    |   \|    |   \|    |     |
 %   |     |---------------------------------------|     |
-% 15|     |    |   /|    |   /|    |   /|    |   /|     |
-% 16|     |    |/   |    |/   |    |/   |    |/   |     |
+% 8 |     |    |   /|    |   /|    |   /|    |   /|     |
+%   |     |    |/   |    |/   |    |/   |    |/   |     |
 %   |     |---------------------------------------|     |
-% 17|     |\   |    |\   |    |\   |    |\   |    |     |
-% 18|     |   \|    |   \|    |   \|    |   \|    |     |
+% 9 |     |\   |    |\   |    |\   |    |\   |    |     |
+%   |     |   \|    |   \|    |   \|    |   \|    |     |
 %   ----------------------------------------------|     |
-% 19|                        |                    |     |
-% 20|                        |                    |     |
+% 10|                        |                    |     |
+%   |                        |                    |     |
 %   -----------------------------------------------------
 drawBoard():-OldID = 1,drawColumnIds(),
     drawUpBorder(OldID,Aux1),
