@@ -5,19 +5,23 @@ drawHorizontalLine(X):-
 
 %|     |                   |                         |
 drawUpHalfRectangle():-
-    put_char('|'),tab(5),put_char('|'),tab(19),put_char('|'),tab(25),put_char('|'),nl.
+    put_char('|'),tab(5),put_char('|'),
+    tab(19),put_char('|'),tab(25),put_char('|'),nl.
 
 %|     |----------------------------------------------
 drawUpInnerBorderLine():-
-    put_char('|'),tab(5),put_char('|'),drawHorizontalLine(46),nl.
+    put_char('|'),tab(5),put_char('|'),
+    drawHorizontalLine(46),nl.
 
 %|                        |                    |     |
 drawBottomHalfRectangle():-
-    put_char('|'),tab(25),put_char('|'),tab(19),put_char('|'),tab(5),put_char('|'),nl.
+    put_char('|'),tab(25),put_char('|'),
+    tab(19),put_char('|'),tab(5),put_char('|'),nl.
 
 %----------------------------------------------|     |
 drawBottomInnerBorderLine():-
-    drawHorizontalLine(46),put_char('|'),tab(5),put_char('|'),nl.
+    drawHorizontalLine(46),put_char('|'),
+    tab(5),put_char('|'),nl.
 
 %    -----------------------------------------------------
 % X  |     |                   |                         |
@@ -40,35 +44,58 @@ drawBottomBorder(OldID):-
     tab(2),drawHorizontalLine(53).
 
 %|     |---------------------------------------|     |
-drawRowSeparator():- put_char('|'),tab(5),put_char('|'),drawHorizontalLine(39),put_char('|'),tab(5),put_char('|'),nl.
+drawRowSeparator():- 
+    put_char('|'),tab(5),put_char('|'),
+    drawHorizontalLine(39),put_char('|'),tab(5),put_char('|'),nl.
 
-%|    |   /
+%| S   |   /
 drawSquaresUp1():-
-    put_char('|'),tab(1),ansi_format([bold,fg(cyan)], '~w', [s]),tab(2),put_char('|'),tab(1),put_char('T'),tab(1),put_char('/').
+    put_char('|'),tab(1),
+    ansi_format([bold,fg(cyan)], '~w', [s]),
+    tab(2),put_char('|'),
+    tab(1),put_char('T'),
+    tab(1),put_char('/').
 
-%|    |/   |
+%|    |/ T |
 drawSquaresDown1():-
-    put_char('|'),tab(4),put_char('|'),put_char('/'),tab(1),put_char('T'),tab(1).
+    put_char('|'),tab(4),put_char('|'),
+    put_char('/'),tab(1),put_char('T'),tab(1).
 
-%|\   |    |
+%|\ T | S  |
 drawSquaresUp2():-
-    put_char('|'),put_char('\\'),tab(1),put_char('T'),tab(1),put_char('|'),tab(1),put_char('S'),tab(2).
+    put_char('|'),put_char('\\'),tab(1),
+    put_char('T'),tab(1),put_char('|'),
+    tab(1),put_char('S'),tab(2).
 
-%|   \|    |
+%| T \|    |
 drawSquaresDown2():-
-    put_char('|'),tab(1),put_char('T'),tab(1),put_char('\\'),put_char('|'),tab(4).
+    put_char('|'),tab(1),put_char('T'),
+    tab(1),put_char('\\'),
+    put_char('|'),tab(4).
 
 % X  |     |    |   /|    |   /|    |   /|    |   /|     |
 %    |     |    |/   |    |/   |    |/   |    |/   |     |
 drawInnerRow1(OldID,NewID):-
-   (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, put_char('|'),tab(5),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),put_char('|'),tab(5),put_char('|'),nl,
-   (AuxID < 10 -> tab(2);tab(2)),NewID = AuxID , put_char('|'),tab(5),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),put_char('|'),tab(5),put_char('|'),nl.
+   (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, 
+   put_char('|'),tab(5),
+   drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),
+   put_char('|'),tab(5),put_char('|'),nl,
+   (AuxID < 10 -> tab(2);tab(2)),NewID = AuxID , 
+   put_char('|'),tab(5),
+   drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),
+   put_char('|'),tab(5),put_char('|'),nl.
 
 % X  |     |\   |    |\   |    |\   |    |\   |    |     |
 % X+1|     |   \|    |   \|    |   \|    |   \|    |     |    
 drawInnerRow2(OldID, NewID):-
-    (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, put_char('|'),tab(5),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),put_char('|'),tab(5),put_char('|'),nl,
-    (AuxID < 10 -> tab(2);tab(2)), NewID = AuxID, put_char('|'),tab(5),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),put_char('|'),tab(5),put_char('|'),nl.
+    (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1,
+    put_char('|'),tab(5),
+    drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),
+    put_char('|'),tab(5),put_char('|'),nl,
+    (AuxID < 10 -> tab(2);tab(2)), NewID = AuxID, 
+    put_char('|'),tab(5),
+    drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),
+    put_char('|'),tab(5),put_char('|'),nl.
 
 %  3|     |    |   /|    |   /|    |   /|    |   /|     |
 %  4|     |    |/   |    |/   |    |/   |    |/   |     |
@@ -88,10 +115,11 @@ drawInnerHalf(OldID,NewID):-
     drawInnerRow2(Aux3,NewID).
 
 drawColumnIds():-
-    writef("  |A    |  B | C   | D  | E | F  |  G  |  H|  I | J   |"),nl.
+    writef("  |A    | B  |  C |  D |  E |  F |  G |  H | I  |  J  |"),nl.
 
 drawRowID(ID):- format('~d',ID).
-%   |A    |  B | C  |  D | E  |  F | G  |  H | I  | J   |
+
+%   |A    | B  |  C |  D |  E |  F |  G |  H | I  |  J  |
 %   -----------------------------------------------------
 %  1|     |                   |                         |
 %   |     |                   |                         |
@@ -123,7 +151,8 @@ drawRowID(ID):- format('~d',ID).
 % 10|                        |                    |     |
 %   |                        |                    |     |
 %   -----------------------------------------------------
-drawBoard():-OldID = 1,drawColumnIds(),
+drawBoard():- 
+    OldID = 1,drawColumnIds(),
     drawUpBorder(OldID,Aux1),
     drawInnerHalf(Aux1,Aux2),
     tab(2),drawHorizontalLine(53),nl,
