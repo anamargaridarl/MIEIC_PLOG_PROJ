@@ -143,7 +143,7 @@ drawSquaresUpp(L):-
     color(C,T2),
     put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['S']),tab(2),put_char('|').
 
-drawTriangUp1Down2(L,Color):-
+drawTriangUp1Up2(L,Color):-
     [_|T1] = L,
     [Tail|[]] = T1,
     [T2|_] = Tail,
@@ -152,31 +152,30 @@ drawTriangUp1Down2(L,Color):-
 
 %  T /
 drawTriangUpp1(L):-
-    drawTriangUp1Down2(L,Color),
+    drawTriangUp1Up2(L,Color),
     tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1),put_char('/').
 
 % T \
 drawTriangDownn2(L):-
-    drawTriangUp1Down2(L,Color),
+    drawTriangDown2Down1(L,Color),
     tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1),put_char('\\').
 
-
-
-drawTriangUp2Down1(L, Color):-
+drawTriangDown2Down1(L, Color):-
     [_|T1] = L,
     [Tail|[]] = T1,
     [_|T2] = Tail,
     [T3|[]] = T2,
     [T4|_] = T3,
     color(Color,T4).
+
 %/ T |
 drawTriangDownn1(L):-
-    drawTriangUp2Down1(L,Color),
+    drawTriangDown2Down1(L,Color),
     tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1),put_char('/').
 
 %|\ T 
 drawTriangUpp2(L):-
-    drawTriangUp2Down1(L,Color),
+    drawTriangUp1Up2(L,Color),
     put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1).
 
 
@@ -213,7 +212,7 @@ drawTriangUpp2(L):-
 % 10|                        |                    |     |
 %   |                        |                    |     |
 %   -----------------------------------------------------
-drawBoard(R10):-
+drawBoard():-
     % drawColumnIds(),
     % buildList([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_]),
     % tab(1),drawRowID(1),/*drawRow1(R1),*/ nl,
