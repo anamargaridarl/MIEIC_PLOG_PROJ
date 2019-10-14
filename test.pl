@@ -151,7 +151,26 @@ drawRowID(ID):- format('~d',ID).
 % 10|                        |                    |     |
 %   |                        |                    |     |
 %   -----------------------------------------------------
-drawBoard():- 
+drawBoard([Row1|Rows1]):- 
+    %%drawRow1(Row1),
+    %%Rows1 is [Row2|Rows2],
+    %%drawRow2(Row2),
+    %%Rows2 is [Row3|Rows3],
+    %%drawRow3(Row3),
+    %%Rows3 is [Row4|Rows4],
+    %%drawRow4(Row4),
+    %%Rows4 is [Row5|Rows5],
+    %%drawRow5(Row5),
+    %%Rows5 is [Row6|Rows6],
+    %%drawRow6(Row6),
+    %%Rows6 is [Row7|Rows7],
+    %%drawRow7(Row7),
+    %%Rows7 is [Row8|Rows8],
+    %%drawRow8(Row8),
+    %%Rows8 is [Row9|Rows9],
+    %%drawRow9(Row9),
+    %%Rows9 is [Row10|Rows10],
+    %%drawRow10(Row10),
     OldID = 1,drawColumnIds(),
     drawUpBorder(OldID,Aux1),
     drawInnerHalf(Aux1,Aux2),
@@ -159,56 +178,8 @@ drawBoard():-
     drawInnerHalf(Aux2,Aux3),
     drawBottomBorder(Aux3).
 
-/*
-Pieces to refer:
-    - small rectangle up [1-2][C-J]
-    - small rectangle left [11-18][A-B]
-    - small rectangle right [3-10][S-T]
-    - small recatngle down [19-20][K-R]
-    - big rectangle up [1-2][K-T]
-    - big rectangle left [1-10][A-B]
-    - big rectangle right [11-20][S-T]
-    - big recatngle down [19-20][A-J]
-    - squares:
-        + [3-4]; [7-8]; [11-12] [15-16]:
-            º [C-D]
-            º [G-H]
-            º [K-L]
-            º [O-P]
-        + [5-6]; [9-10]; [13-14]; [17-18]:
-            º [E-F]
-            º [I-J]
-            º [M-N]
-            º [Q-R]
-    - triangles:
-        + ◸:
-            º[3];[7];[11];[15]:
-                * [E]
-                * [I]
-                * [M]
-                * [Q]
-        + ◿:
-            º[4];[8];[12];[16]:
-                * [F]
-                * [J]
-                * [N]
-                * [R]
-        + ◹:
-            º[5];[9];[13];[17]:
-                * [D]
-                * [H]
-                * [L]
-                * [P]
-        + ◺:
-            º[6];[10];[14];[18]:
-                * [C]
-                * [G]
-                * [K]
-                * [O]
-*/
-
 buildList(L) :-
-    L is [
+    makelist( [
         [ [[1,A],[0,1]], [[1,B],[0,2]], [[1,C],[0,2]], [[1,D],[0,2]], [[1,E],[0,2]], [[1,F],[0,1]], [[1,G],[0,1]], [[1,H],[0,1]], [[1,I],[0,1]], [[1,J],[0,1]] ], 
         [ [[2,A],[0,1]], [[2,B],[0,0]], [[2,C],[[0,5],[0,6]]], [[2,D],[0,0]], [[2,E],[[0,5],[0,6]]], [[2,F],[0,0]], [[2,G],[[0,5],[0,6]]], [[2,H],[0,0]], [[2,I],[[0,5],[0,6]]], [[2,J],[0,2]] ],
         [ [[3,A],[0,1]], [[3,B],[[0,3],[0,4]]], [[3,C],[0,0]], [[3,D],[[0,3],[0,4]]], [[3,E],[0,0]], [[3,F],[[0,3],[0,4]]], [[3,G],[0,0]], [[3,H],[[0,3],[0,4]]], [[3,I],[0,0]], [[3,J],[[0,2]] ],
