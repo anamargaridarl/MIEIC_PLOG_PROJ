@@ -48,41 +48,44 @@ drawRowSeparator():-
     put_char('|'),tab(5),put_char('|'),
     drawHorizontalLine(39),put_char('|'),tab(5),put_char('|'),nl.
 
-%| S   |   /
-drawSquaresUp1():-
-    put_char('|'),tab(1),
-    ansi_format([bold,fg(cyan)], '~w', [s]),
-    tab(2),put_char('|'),
-    tab(1),put_char('T'),
-    tab(1),put_char('/').
+%| S   |   
+drawSquaresUp():-
+    put_char('|'),tab(1),ansi_format([bold,fg(cyan)], '~w', [s]),tab(2),put_char('|').
 
-%|    |/ T |
-drawSquaresDown1():-
-    put_char('|'),tab(4),put_char('|'),
+%  T /
+drawTriangUp1():-
+    tab(1),put_char('T'), tab(1),put_char('/').
+
+%|    |
+drawSquaresDown():-
+    put_char('|'),tab(4),put_char('|').
+
+%/ T |
+drawTriangDown1():-
     put_char('/'),tab(1),put_char('T'),tab(1).
 
-%|\ T | S  |
-drawSquaresUp2():-
-    put_char('|'),put_char('\\'),tab(1),
-    put_char('T'),tab(1),put_char('|'),
-    tab(1),put_char('S'),tab(2).
+%|\ T 
+drawTriangUp2():-
+    put_char('\\'),tab(1),
+    put_char('T'),tab(1).
 
-%| T \|    |
-drawSquaresDown2():-
-    put_char('|'),tab(1),put_char('T'),
-    tab(1),put_char('\\'),
-    put_char('|'),tab(4).
+
+%| T \
+drawTriangDown2():-
+    tab(1),put_char('T'),
+    tab(1),put_char('\\').
+
 
 % X  |     |    |   /|    |   /|    |   /|    |   /|     |
 %    |     |    |/   |    |/   |    |/   |    |/   |     |
 drawInnerRow1(OldID,NewID):-
    (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, 
    put_char('|'),tab(5),
-   drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),drawSquaresUp1(),
+   drawSquaresUp(),drawTriangUp1(),drawSquaresUp(),drawTriangUp1(), drawSquaresUp(),drawTriangUp1(), drawSquaresUp(),drawTriangUp1(), 
    put_char('|'),tab(5),put_char('|'),nl,
    (AuxID < 10 -> tab(2);tab(2)),NewID = AuxID , 
    put_char('|'),tab(5),
-   drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),drawSquaresDown1(),
+   drawSquaresDown(),drawTriangDown1(), drawSquaresDown(),drawTriangDown1(),drawSquaresDown(),drawTriangDown1(),drawSquaresDown(),drawTriangDown1(),
    put_char('|'),tab(5),put_char('|'),nl.
 
 % X  |     |\   |    |\   |    |\   |    |\   |    |     |
@@ -90,11 +93,11 @@ drawInnerRow1(OldID,NewID):-
 drawInnerRow2(OldID, NewID):-
     (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1,
     put_char('|'),tab(5),
-    drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),drawSquaresUp2(),
+    drawTriangUp2(),drawSquaresUp(),drawTriangUp2(),drawSquaresUp(),drawTriangUp2(), drawSquaresUp(),drawTriangUp2(),drawSquaresUp(),
     put_char('|'),tab(5),put_char('|'),nl,
     (AuxID < 10 -> tab(2);tab(2)), NewID = AuxID, 
     put_char('|'),tab(5),
-    drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),drawSquaresDown2(),
+    drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),
     put_char('|'),tab(5),put_char('|'),nl.
 
 %  3|     |    |   /|    |   /|    |   /|    |   /|     |
@@ -118,6 +121,65 @@ drawColumnIds():-
     writef("  |A    | B  |  C |  D |  E |  F |  G |  H | I  |  J  |"),nl.
 
 drawRowID(ID):- format('~d',ID).
+
+color(blue,1).
+color(white,0).
+color(yellow,2).
+
+%helps for debugging
+print(Term) :-
+    current_prolog_flag(print_write_options, Options), !,
+    write_term(Term, Options).
+print(Term) :-
+    write_term(Term, [ portray(true),
+                       numbervars(true),
+                       quoted(true)
+                     ]).
+
+drawSquaresUpp(L):-
+    [_|T1] = L,
+    [Tail|[]] = T1,
+    [T2|_] = Tail,
+    color(C,T2),
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['S']),tab(2),put_char('|').
+
+drawTriangUp1Down2(L,Color):-
+    [_|T1] = L,
+    [Tail|[]] = T1,
+    [T2|_] = Tail,
+    [T3|_] = T2,
+    color(Color,T3).
+
+%  T /
+drawTriangUpp1(L):-
+    drawTriangUp1Down2(L,Color),
+    tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1),put_char('/').
+
+% T \
+drawTriangDownn2(L):-
+    drawTriangUp1Down2(L,Color),
+    tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1),put_char('\\').
+
+
+
+drawTriangUp2Down1(L, Color):-
+    [_|T1] = L,
+    [Tail|[]] = T1,
+    [_|T2] = Tail,
+    [T3|[]] = T2,
+    [T4|_] = T3,
+    color(Color,T4).
+%/ T |
+drawTriangDownn1(L):-
+    drawTriangUp2Down1(L,Color),
+    tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1),put_char('/').
+
+%|\ T 
+drawTriangUpp2(L):-
+    drawTriangUp2Down1(L,Color),
+    put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1).
+
+
 
 %   |A    | B  |  C |  D |  E |  F |  G |  H | I  |  J  |
 %   -----------------------------------------------------
@@ -151,19 +213,24 @@ drawRowID(ID):- format('~d',ID).
 % 10|                        |                    |     |
 %   |                        |                    |     |
 %   -----------------------------------------------------
-drawBoard(R10):- 
-    buildList([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_]),
-    tab(1),drawRowID(1),/*drawRow1(R1),*/ nl,
-    tab(1),drawRowID(2),/*drawRow2(R2),*/ nl,
-    tab(1),drawRowID(3),/*drawRow3(R3),*/ nl,
-    tab(1),drawRowID(4),/*drawRow4(R4),*/ nl,
-    tab(1),drawRowID(5),/*drawRow5(R5),*/ nl,
-    tab(1),drawRowID(6),/*drawRow6(R6),*/ nl,
-    tab(1),drawRowID(7),/*drawRow7(R7),*/ nl,
-    tab(1),drawRowID(8),/*drawRow8(R8),*/ nl,
-    tab(1),drawRowID(9),/*drawRow9(R9),*/ nl,
-    drawRowID(10),/*drawRow10(R10),*/nl.
-    % OldID = 1,drawColumnIds(),
+drawBoard(R10):-
+    % drawColumnIds(),
+    % buildList([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_]),
+    % tab(1),drawRowID(1),/*drawRow1(R1),*/ nl,
+    % tab(1),drawRowID(2),/*drawRow2(R2),*/ nl,
+    % tab(1),drawRowID(3),/*drawRow3(R3),*/ nl,
+    % tab(1),drawRowID(4),/*drawRow4(R4),*/ nl,
+    % tab(1),drawRowID(5),/*drawRow5(R5),*/ nl,
+    % tab(1),drawRowID(6),/*drawRow6(R6),*/ nl,
+    % tab(1),drawRowID(7),/*drawRow7(R7),*/ nl,
+    % tab(1),drawRowID(8),/*drawRow8(R8),*/ nl,
+    % tab(1),drawRowID(9),/*drawRow9(R9),*/ nl,
+    % drawRowID(10),/*drawRow10(R10),*/nl,
+    drawSquaresUpp([[1,'A'],[1,1]]),
+    drawTriangUpp1([[6,'C'],[[1,5],[2,6]]]),
+    drawTriangDownn1([[6,'C'],[[1,5],[2,6]]]),
+    drawTriangUpp2([[6,'C'],[[1,3],[2,4]]]),
+    drawTriangDownn2([[6,'C'],[[1,3],[2,4]]]).
     % drawUpBorder(OldID,Aux1),
     % drawInnerHalf(Aux1,Aux2),
     % tab(2),drawHorizontalLine(53),nl,
