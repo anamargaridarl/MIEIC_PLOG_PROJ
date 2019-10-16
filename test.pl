@@ -143,7 +143,7 @@ drawSqrUp(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['S']),tab(2),put_char('|').
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
 
 %|     |
 drawSqrDwn():-            
@@ -156,7 +156,7 @@ drawRetPrtUp(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['R']),tab(2),put_char('|').
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
 
 %   R   
 drawRetPrtMid(L):-
@@ -164,7 +164,7 @@ drawRetPrtMid(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    tab(2),ansi_format([bold,fg(C)], '~w', ['R']),tab(2).
+    tab(2),ansi_format([bold,fg(C)], '~w', ['■']),tab(2).
 
 %|  R
 drawRetPrtLft(L):-
@@ -172,7 +172,7 @@ drawRetPrtLft(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['R']),tab(2).
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2).
 
 %   R  |
 drawRetPrtRgt(L):-
@@ -180,7 +180,7 @@ drawRetPrtRgt(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    tab(1),ansi_format([bold,fg(C)], '~w', ['R']),tab(2),put_char('|').
+    tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
 
 %|    
 drawRetPrtDwn1():-            
@@ -212,12 +212,12 @@ getUpTriColor(L,Color):-
 %  T /
 drawTriUp1(L):-
     getUpTriColor(L,Color),
-    tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1),put_char('/').
+    tab(1),ansi_format([bold,fg(Color)], '~w', ['◤']), tab(1),put_char('/').
 
 %|\ T 
 drawTriUp2(L):-
     getUpTriColor(L,Color),
-    put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1).
+    put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◥']),tab(1).
 
 
 getDwnTriColor(L, Color):-
@@ -231,12 +231,12 @@ getDwnTriColor(L, Color):-
 % T \
 drawTriDwn2(L):-
     getDwnTriColor(L,Color),
-    tab(1),ansi_format([bold,fg(Color)], '~w', ['T']),tab(1),put_char('\\').
+    tab(1),ansi_format([bold,fg(Color)], '~w', ['◣']),tab(1),put_char('\\').
 
 %/ T |
 drawTriDwn1(L):-
     getDwnTriColor(L,Color),
-    put_char('/'),tab(1),ansi_format([bold,fg(Color)], '~w', ['T']), tab(1).
+    put_char('/'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◢']), tab(1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD ROW DRAW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
