@@ -1,97 +1,4 @@
 
-
-
-
-% %    -----------------------------------------------------
-% % X  |     |                   |                         |
-% %    |     |                   |                         |
-% %    |     |----------------------------------------------
-% drawUpBorder(OldID,NewID):- 
-%     tab(2),drawHorizontalLine(53),nl,
-%     tab(1),drawRowID(OldID),NewID = OldID + 1, drawUpHalfRectangle(),
-%     tab(2),drawUpHalfRectangle(),
-%     tab(2),drawUpInnerBorderLine().
-
-% %    ----------------------------------------------|     |
-% % X  |                        |                    |     |
-% %    |                        |                    |     |
-% %    -----------------------------------------------------
-% drawBottomBorder(OldID):-  
-%     tab(2),drawBottomInnerBorderLine(), 
-%     drawRowID(OldID), drawBottomHalfRectangle(),
-%     tab(2), drawBottomHalfRectangle(),
-%     tab(2),drawHorizontalLine(53).
-
-
-% %| S   |   
-% drawSquaresUp():-
-%     put_char('|'),tab(1),ansi_format([bold,fg(cyan)], '~w', [s]),tab(2),put_char('|').
-
-% %  T /
-% drawTriangUp1():-
-%     tab(1),put_char('T'), tab(1),put_char('/').
-
-
-% %/ T |
-% drawTriangDown1():-
-%     put_char('/'),tab(1),put_char('T'),tab(1).
-
-% %|\ T 
-% drawTriangUp2():-
-%     put_char('\\'),tab(1),
-%     put_char('T'),tab(1).
-
-
-% %| T \
-% drawTriangDown2():-
-%     tab(1),put_char('T'),
-%     tab(1),put_char('\\').
-
-
-% % X  |     |    |   /|    |   /|    |   /|    |   /|     |
-% %    |     |    |/   |    |/   |    |/   |    |/   |     |
-% drawInnerRow1(OldID,NewID):-
-%    (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1, 
-%    put_char('|'),tab(5),
-%    drawSquaresUp(),drawTriangUp1(),drawSquaresUp(),drawTriangUp1(), drawSquaresUp(),drawTriangUp1(), drawSquaresUp(),drawTriangUp1(), 
-%    put_char('|'),tab(5),put_char('|'),nl,
-%    (AuxID < 10 -> tab(2);tab(2)),NewID = AuxID , 
-%    put_char('|'),tab(5),
-%    drawSquaresDown(),drawTriangDown1(), drawSquaresDown(),drawTriangDown1(),drawSquaresDown(),drawTriangDown1(),drawSquaresDown(),drawTriangDown1(),
-%    put_char('|'),tab(5),put_char('|'),nl.
-
-% % X  |     |\   |    |\   |    |\   |    |\   |    |     |
-% % X+1|     |   \|    |   \|    |   \|    |   \|    |     |    
-% drawInnerRow2(OldID, NewID):-
-%     (OldID < 10 -> tab(1);tab(0)),drawRowID(OldID), AuxID = OldID + 1,
-%     put_char('|'),tab(5),
-%     drawTriangUp2(),drawSquaresUp(),drawTriangUp2(),drawSquaresUp(),drawTriangUp2(), drawSquaresUp(),drawTriangUp2(),drawSquaresUp(),
-%     put_char('|'),tab(5),put_char('|'),nl,
-%     (AuxID < 10 -> tab(2);tab(2)), NewID = AuxID, 
-%     put_char('|'),tab(5),
-%     drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),drawTriangDown2(),drawSquaresDown(),
-%     put_char('|'),tab(5),put_char('|'),nl.
-
-% %  3|     |    |   /|    |   /|    |   /|    |   /|     |
-% %  4|     |    |/   |    |/   |    |/   |    |/   |     |
-% %   |     |---------------------------------------|     |
-% %  5|     |\   |    |\   |    |\   |    |\   |    |     |
-% %  6|     |   \|    |   \|    |   \|    |   \|    |     |
-% %   |     |---------------------------------------|     |
-% %  7|     |    |   /|    |   /|    |   /|    |   /|     |
-% %  8|     |    |/   |    |/   |    |/   |    |/   |     |
-% %   |     |---------------------------------------|     |
-% %  9|     |\   |    |\   |    |\   |    |\   |    |     |
-% % 10|     |   \|    |   \|    |   \|    |   \|    |     |
-% drawInnerHalf(OldID,NewID):-
-%     drawInnerRow1(OldID,Aux1), tab(2), drawRowSeparator(),
-%     drawInnerRow2(Aux1,Aux2), tab(2), drawRowSeparator(),
-%     drawInnerRow1(Aux2,Aux3), tab(2), drawRowSeparator(),
-%     drawInnerRow2(Aux3,NewID).
-
-%/////////////////////////////////// CURRENT VERSION //////////////////////////////////
-%//////////////////////////////////////////////////////////////////////////////////////
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DEBUGGING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print(Term) :-
@@ -137,7 +44,6 @@ drawRowSeparator():-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SQUARES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%|  S  | 
 drawSqrUp(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
@@ -145,12 +51,8 @@ drawSqrUp(L):-
     color(C,T2),
     put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
 
-%|     |
-drawSqrDwn():-            
-    put_char('|'),tab(4),put_char('|').
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RECTANGLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%|  R  |
+
 drawRetPrtUp(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
@@ -158,7 +60,6 @@ drawRetPrtUp(L):-
     color(C,T2),
     put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
 
-%   R   
 drawRetPrtMid(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
@@ -173,7 +74,7 @@ drawRetPrtMid(L1,L2) :-
     [T4|_] = Tail2,color(C1,T4),
     tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|'),
     tab(1),ansi_format([bold,fg(C1)], '~w', ['■']),tab(2).
-%|  R
+
 drawRetPrtLft(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
@@ -181,31 +82,12 @@ drawRetPrtLft(L):-
     color(C,T2),
     put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1).
 
-%   R  |
 drawRetPrtRgt(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
     tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
-
-%|    
-drawRetPrtDwn1():-            
-    put_char('|'),tab(4).
-
-%    |      
-drawRetPrtDwn2():-            
-    tab(4),put_char('|'). 
-
-% %|     |                   |                         |
-drawUpHalfRectangle():-
-    tab(2),put_char('|'),tab(4),put_char('|'),
-    tab(19),put_char('|'),tab(24),put_char('|'),nl.
-
-%|                        |                    |     |
-drawBottomHalfRectangle():-
-    tab(2),put_char('|'),tab(24),put_char('|'),
-    tab(19),put_char('|'),tab(4),put_char('|'),nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRIANGLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -216,29 +98,6 @@ getUpTriColor(L,Color):-
     [T3|_] = T2,
     color(Color,T3).
 
-% %  T /
-% drawTriUp1(L):-
-%     getUpTriColor(L,Color),
-%     tab(1),ansi_format([bold,fg(Color)], '~w', ['◤']), tab(1),put_char('/').
-
-% %\ T 
-% drawTriUp2(L):-
-%     getUpTriColor(L,Color),
-%     put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◥']),tab(1).
-
-% ◤/◢
-drawTri1(L):-
-    getUpTriColor(L,Color),
-    ansi_format([bold,fg(Color)], '~w', ['◤']),
-    getDwnTriColor(L,Color2),
-    ansi_format([bold,fg(Color2)], '~w', ['◢']),tab(1).
-% ◣\◥
-drawTri2(L) :-
-    getDwnTriColor(L,Color),
-    ansi_format([bold,fg(Color)], '~w', ['◣']),
-    getUpTriColor(L,Color2),
-    ansi_format([bold,fg(Color2)], '~w', ['◥']),tab(1).
-
 getDwnTriColor(L, Color):-
     [_|T1] = L,
     [Tail|[]] = T1,
@@ -247,21 +106,21 @@ getDwnTriColor(L, Color):-
     [T4|_] = T3,
     color(Color,T4).
 
-% % T \
-% drawTriDwn2(L):-
-%     getDwnTriColor(L,Color),
-%     tab(1),ansi_format([bold,fg(Color)], '~w', ['◣']),tab(1),put_char('\\').
+drawTri1(L):-
+    getUpTriColor(L,Color),
+    ansi_format([bold,fg(Color)], '~w', ['◤']),
+    getDwnTriColor(L,Color2),
+    ansi_format([bold,fg(Color2)], '~w', ['◢']),tab(1).
 
-% %/ T |
-% drawTriDwn1(L):-
-%     getDwnTriColor(L,Color),
-%     put_char('/'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◢']), tab(1).
+drawTri2(L) :-
+    getDwnTriColor(L,Color),
+    ansi_format([bold,fg(Color)], '~w', ['◣']),
+    getUpTriColor(L,Color2),
+    ansi_format([bold,fg(Color2)], '~w', ['◥']),tab(1).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD ROW DRAW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% %    ---------------------------------------------------
-% %   1| R  | R    R    R    R  | R    R    R    R    R  |
-% %    |    |---------------------------------------------
 drawRow1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
     tab(2),drawHorizontalLine(41),nl,
     tab(1),drawRowID(1),
@@ -272,7 +131,6 @@ drawRow1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
     drawRetPrtMid(C9),drawRetPrtRgt(C10),nl,
     drawUpInnerBorderLine().
 
-% %   | R  | S  |T/T| S  |T/T| S  |T/T| S  |T/T| R  |
 drawRowType1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
     drawRetPrtLft(C1),drawSqrUp(C2),
     drawTri1(C3),drawSqrUp(C4),
@@ -281,8 +139,6 @@ drawRowType1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
     drawTri1(C9),drawRetPrtUp(C10),
     nl.
 
-
-% %   | R  |T\T| S  |T\T| S  |T\T| S  |T\T| S  | R  |
 drawRowType2([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
     drawRetPrtUp(C1), drawTri2(C2),
     drawSqrUp(C3), drawTri2(C4),
@@ -291,9 +147,6 @@ drawRowType2([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
     drawSqrUp(C9), drawRetPrtRgt(C10),
     nl.
 
-% %    ---------------------------------------------|    |
-% %    |                        |                   |    |
-% %    ---------------------------------------------------
 drawRow10([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
     drawBottomInnerBorderLine(), drawRowID(10),
     drawRetPrtLft(C1), tab(1),drawRetPrtMid(C2), 
@@ -303,42 +156,7 @@ drawRow10([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
     drawRetPrtRgt(C9),drawRetPrtRgt(C10),nl,
     tab(2),drawHorizontalLine(41),nl.
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD DRAW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%   |A    | B  |  C |  D |  E |  F |  G |  H | I  |  J  |
-%   -----------------------------------------------------
-%  1|     |                   |                         |
-%   |     |                   |                         |
-%   |     |----------------------------------------------
-%  2|     |    |   /|    |   /|    |   /|    |   /|     |
-%   |     |    |/   |    |/   |    |/   |    |/   |     |
-%   |     |---------------------------------------|     |
-%  3|     |\   |    |\   |    |\   |    |\   |    |     |
-%   |     |   \|    |   \|    |   \|    |   \|    |     |
-%   |     |---------------------------------------|     |
-%  4|     |    |   /|    |   /|    |   /|    |   /|     |
-%   |     |    |/   |    |/   |    |/   |    |/   |     |
-%   |     |---------------------------------------|     |
-%  5|     |\   |    |\   |    |\   |    |\   |    |     |
-%   |     |   \|    |   \|    |   \|    |   \|    |     |
-%   -----------------------------------------------------
-% 6 |     |    |   /|    |   /|    |   /|    |   /|     |
-%   |     |    |/   |    |/   |    |/   |    |/   |     |
-%   |     |---------------------------------------|     |
-% 7 |     |\   |    |\   |    |\   |    |\   |    |     |
-%   |     |   \|    |   \|    |   \|    |   \|    |     |
-%   |     |---------------------------------------|     |
-% 8 |     |    |   /|    |   /|    |   /|    |   /|     |
-%   |     |    |/   |    |/   |    |/   |    |/   |     |
-%   |     |---------------------------------------|     |
-% 9 |     |\   |    |\   |    |\   |    |\   |    |     |
-%   |     |   \|    |   \|    |   \|    |   \|    |     |
-%   ----------------------------------------------|     |
-% 10|                        |                    |     |
-%   |                        |                    |     |
-%   -----------------------------------------------------
 
 drawInitBoard():-
     buildList([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_]),
@@ -355,20 +173,6 @@ drawInitBoard():-
     tab(1), drawRowID(9), drawRowType2(R9),
     drawRow10(R10), nl.
     
-    %% PREVIOUS VERSION (TESTING)
-    % drawSqrUpp([[1,'A'],[1,1]]),
-    % drawTriUpp1([[6,'C'],[[1,5],[2,6]]]),
-    % drawTriDwn1([[6,'C'],[[1,5],[2,6]]]),
-    % drawTriUpp2([[6,'C'],[[1,3],[2,4]]]),
-    % drawTriDwn2([[6,'C'],[[1,3],[2,4]]]).
-    
-    %% OLD VERSION
-    % drawUpBorder(OldID,Aux1),
-    % drawInnerHalf(Aux1,Aux2),
-    % tab(2),drawHorizontalLine(53),nl,
-    % drawInnerHalf(Aux2,Aux3),
-    % drawBottomBorder(Aux3).
-
 buildList(L) :-
     append( [
         [ [[1,'A'],[1,1]], [[1,'B'],[0,2]], [[1,'C'],[0,2]], [[1,'D'],[0,2]], [[1,'E'],[0,2]], [[1,'F'],[0,1]], [[1,'G'],[0,1]], [[1,'H'],[0,1]], [[1,'I'],[0,1]], [[1,'J'],[0,1]] ], 
