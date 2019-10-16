@@ -110,7 +110,7 @@ color(white,0).
 color(cyan,2).
 
 drawColumnIds():-
-    writef("  | A  | B  | C  | D  | E  | F  | G  | H  | I  | J  |"),nl.
+    writef("  | A | B | C | D | E | F | G | H | I | J |"),nl.
 
 drawRowID(ID):- format('~d',ID).
 
@@ -123,17 +123,17 @@ drawHorizontalLine(X):-
 
 %----------------------------------------------|     |
 drawBottomInnerBorderLine():-
-    tab(2),drawHorizontalLine(45),put_char('|'),
-    tab(4),put_char('|'),nl.
+    tab(2),drawHorizontalLine(36),put_char('|'),
+    tab(3),put_char('|'),nl.
 %|     |----------------------------------------------
 drawUpInnerBorderLine():-
-    tab(2),put_char('|'),tab(4),put_char('|'),
-    drawHorizontalLine(45),nl.
+    tab(2),put_char('|'),tab(3),put_char('|'),
+    drawHorizontalLine(36),nl.
     
 %|     |---------------------------------------|     |
 drawRowSeparator():- 
-    tab(2),put_char('|'),tab(4),put_char('|'),
-    drawHorizontalLine(39),put_char('|'),tab(4),put_char('|'),nl.
+    tab(2),put_char('|'),tab(3),put_char('|'),
+    drawHorizontalLine(31),put_char('|'),tab(3),put_char('|'),nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SQUARES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -143,7 +143,7 @@ drawSqrUp(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
 
 %|     |
 drawSqrDwn():-            
@@ -156,7 +156,7 @@ drawRetPrtUp(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
 
 %   R   
 drawRetPrtMid(L):-
@@ -164,15 +164,22 @@ drawRetPrtMid(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    tab(2),ansi_format([bold,fg(C)], '~w', ['■']),tab(2).
+    tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2).
 
+drawRetPrtMid(L1,L2) :-
+    [_|T1] = L1,[Tail|[]] = T1,
+    [T2|_] = Tail,color(C,T2),
+    [_|T3] = L2,[Tail2|[]] = T3,
+    [T4|_] = Tail2,color(C1,T4),
+    tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|'),
+    tab(1),ansi_format([bold,fg(C1)], '~w', ['■']),tab(2).
 %|  R
 drawRetPrtLft(L):-
     [_|T1] = L,
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2).
+    put_char('|'),tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1).
 
 %   R  |
 drawRetPrtRgt(L):-
@@ -180,7 +187,7 @@ drawRetPrtRgt(L):-
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
-    tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(2),put_char('|').
+    tab(1),ansi_format([bold,fg(C)], '~w', ['■']),tab(1),put_char('|').
 
 %|    
 drawRetPrtDwn1():-            
@@ -209,16 +216,28 @@ getUpTriColor(L,Color):-
     [T3|_] = T2,
     color(Color,T3).
 
-%  T /
-drawTriUp1(L):-
-    getUpTriColor(L,Color),
-    tab(1),ansi_format([bold,fg(Color)], '~w', ['◤']), tab(1),put_char('/').
+% %  T /
+% drawTriUp1(L):-
+%     getUpTriColor(L,Color),
+%     tab(1),ansi_format([bold,fg(Color)], '~w', ['◤']), tab(1),put_char('/').
 
-%|\ T 
-drawTriUp2(L):-
-    getUpTriColor(L,Color),
-    put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◥']),tab(1).
+% %\ T 
+% drawTriUp2(L):-
+%     getUpTriColor(L,Color),
+%     put_char('\\'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◥']),tab(1).
 
+% ◤/◢
+drawTri1(L):-
+    getUpTriColor(L,Color),
+    ansi_format([bold,fg(Color)], '~w', ['◤']),
+    getDwnTriColor(L,Color2),
+    ansi_format([bold,fg(Color2)], '~w', ['◢']),tab(1).
+% ◣\◥
+drawTri2(L) :-
+    getDwnTriColor(L,Color),
+    ansi_format([bold,fg(Color)], '~w', ['◣']),
+    getUpTriColor(L,Color2),
+    ansi_format([bold,fg(Color2)], '~w', ['◥']),tab(1).
 
 getDwnTriColor(L, Color):-
     [_|T1] = L,
@@ -228,77 +247,61 @@ getDwnTriColor(L, Color):-
     [T4|_] = T3,
     color(Color,T4).
 
-% T \
-drawTriDwn2(L):-
-    getDwnTriColor(L,Color),
-    tab(1),ansi_format([bold,fg(Color)], '~w', ['◣']),tab(1),put_char('\\').
+% % T \
+% drawTriDwn2(L):-
+%     getDwnTriColor(L,Color),
+%     tab(1),ansi_format([bold,fg(Color)], '~w', ['◣']),tab(1),put_char('\\').
 
-%/ T |
-drawTriDwn1(L):-
-    getDwnTriColor(L,Color),
-    put_char('/'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◢']), tab(1).
+% %/ T |
+% drawTriDwn1(L):-
+%     getDwnTriColor(L,Color),
+%     put_char('/'),tab(1),ansi_format([bold,fg(Color)], '~w', ['◢']), tab(1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD ROW DRAW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %    ---------------------------------------------------
-% %    |    |                   |                        |
 % %   1| R  | R    R    R    R  | R    R    R    R    R  |
 % %    |    |---------------------------------------------
 drawRow1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
-    tab(2),drawHorizontalLine(51),nl,
-    drawUpHalfRectangle(),
+    tab(2),drawHorizontalLine(41),nl,
     tab(1),drawRowID(1),
-    drawRetPrtLft(C1),drawRetPrtLft(C2),
+    drawRetPrtUp(C1),drawRetPrtMid(C2),
     drawRetPrtMid(C3),drawRetPrtMid(C4),
-    drawRetPrtMid(C5),drawRetPrtLft(C6),
+    drawRetPrtMid(C5,C6),
     drawRetPrtMid(C7),drawRetPrtMid(C8),
-    drawRetPrtMid(C9),tab(1),drawRetPrtRgt(C10),nl,
+    drawRetPrtMid(C9),drawRetPrtRgt(C10),nl,
     drawUpInnerBorderLine().
 
-% %   | R  | S  | T /| S  | T /| S  | T /| S  | T /| S  |
-% %   |    |    |/ T |    |/ T |    |/ T |    |/ T |    |
+% %   | R  | S  |T/T| S  |T/T| S  |T/T| S  |T/T| R  |
 drawRowType1([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
     drawRetPrtLft(C1),drawSqrUp(C2),
-    drawTriUp1(C3),drawSqrUp(C4),
-    drawTriUp1(C5),drawSqrUp(C6),
-    drawTriUp1(C7),drawSqrUp(C8),
-    drawTriUp1(C9),drawRetPrtUp(C10),
-    nl,tab(2),drawRetPrtDwn1(),
-    drawSqrDwn(), drawTriDwn1(C3),
-    drawSqrDwn(), drawTriDwn1(C5),
-    drawSqrDwn(), drawTriDwn1(C7),
-    drawSqrDwn(), drawTriDwn1(C9),
-    drawSqrDwn(),nl.
+    drawTri1(C3),drawSqrUp(C4),
+    drawTri1(C5),drawSqrUp(C6),
+    drawTri1(C7),drawSqrUp(C8),
+    drawTri1(C9),drawRetPrtUp(C10),
+    nl.
 
 
-% %   | R  |\ T | S  |\ T | S  |\ T | S  |\ T | S  | R  |
-% %   |    | T \|    | T \|    | T \|    | T \|    |    |
+% %   | R  |T\T| S  |T\T| S  |T\T| S  |T\T| S  | R  |
 drawRowType2([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]) :-
-    drawRetPrtUp(C1), drawTriUp2(C2),
-    drawSqrUp(C3), drawTriUp2(C4),
-    drawSqrUp(C5), drawTriUp2(C6),
-    drawSqrUp(C7), drawTriUp2(C8),
+    drawRetPrtUp(C1), drawTri2(C2),
+    drawSqrUp(C3), drawTri2(C4),
+    drawSqrUp(C5), drawTri2(C6),
+    drawSqrUp(C7), drawTri2(C8),
     drawSqrUp(C9), drawRetPrtRgt(C10),
-    nl,tab(2),drawSqrDwn(),
-    drawTriDwn2(C2),drawSqrDwn(), 
-    drawTriDwn2(C4),drawSqrDwn(), 
-    drawTriDwn2(C6),drawSqrDwn(), 
-    drawTriDwn2(C8),drawSqrDwn(), 
-    drawRetPrtDwn2(),nl.
+    nl.
 
 % %    ---------------------------------------------|    |
-% %    |                        |                   |    |
 % %    |                        |                   |    |
 % %    ---------------------------------------------------
 drawRow10([C1,C2,C3,C4,C5,C6,C7,C8,C9,C10|_]):-
     drawBottomInnerBorderLine(), drawRowID(10),
-    drawRetPrtLft(C1), drawRetPrtMid(C2), 
+    drawRetPrtLft(C1), tab(1),drawRetPrtMid(C2), 
     drawRetPrtMid(C3), drawRetPrtMid(C4), 
-    drawRetPrtMid(C5), drawRetPrtLft(C6), 
+    drawRetPrtMid(C5,C6),
     drawRetPrtMid(C7), drawRetPrtMid(C8),
-    drawRetPrtMid(C9), drawRetPrtUp(C10),nl,
-    drawBottomHalfRectangle(),
-    tab(2),drawHorizontalLine(51),nl.
+    drawRetPrtRgt(C9),drawRetPrtRgt(C10),nl,
+    tab(2),drawHorizontalLine(41),nl.
 
 
 
@@ -345,7 +348,7 @@ drawInitBoard():-
     tab(1), drawRowID(3), drawRowType2(R3), drawRowSeparator(),
     tab(1), drawRowID(4), drawRowType1(R4), drawRowSeparator(),
     tab(1), drawRowID(5), drawRowType2(R5),
-    tab(2), drawHorizontalLine(51),nl,
+    tab(2), drawHorizontalLine(41),nl,
     tab(1), drawRowID(6), drawRowType1(R6), drawRowSeparator(),
     tab(1), drawRowID(7), drawRowType2(R7), drawRowSeparator(),
     tab(1), drawRowID(8), drawRowType1(R8), drawRowSeparator(),
