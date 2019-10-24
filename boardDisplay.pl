@@ -179,8 +179,7 @@ display_game([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_],Player):-
 %without handle of triangles
 add_play_aux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
-    append([[X,NY]], AuxIn, AuxOut),
-    print(AuxOut).
+    append([[X,NY]], AuxIn, AuxOut).
 
 play(Player, Board, AuxIn, AuxOut):- 
     display_game(Board,Player),
