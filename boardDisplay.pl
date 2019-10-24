@@ -16,11 +16,17 @@ color(magenta,1).
 color(white,0).
 color(green,2).
 
-getPlayInfo(X,Y):-
-    writef("Write coordinates: (x,y)"),nl,
-    get_char(Y),get_char(AuxX),
+isTriangle(AuxT,T):-
+    AuxT == '\n', T is -1;
+    AuxT == 'U', T is 0;
+    AuxT == 'D', T is 1.
+
+getPlayInfo(X,Y,T):-
+    writef("Write coordinates: (xyT)"),nl,
+    get_char(AuxX),get_char(Y),get_char(AuxT),
+    isTriangle(AuxT,T),
     char_code(AuxX,AuxX2), 
-    X is AuxX2-65.
+    X is AuxX2-64.
 
 playerTurn(Player) :-
     color(C,Player),
@@ -169,19 +175,32 @@ display_game([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_],Player):-
     drawRow10(R10), nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-game_start():-
-    buildBlankList(L),
-    repeat,
-    play(1,L),
-    play(2,L).
 
-play(Player, Board):- 
+%without handle of triangles
+add_play_aux(AuxIn,Board,X,Y,T, AuxOut):-
+    atom_number(Y,NY),
+    append([[X,NY]], AuxIn, AuxOut),
+    print(AuxOut).
+
+play(Player, Board, AuxIn, AuxOut):- 
+    display_game(Board,Player),
+    getPlayInfo(X,Y,T),
     %valid_play(X,Y), (%valid_plays(Aux), valid() )
     %change_board(),
-    %add_play_aux(),
-    display_game(Board,Player),
-    getPlayInfo(X,Y).
+    add_play_aux(AuxIn,Board,X,Y,T, AuxOut).
     %game_state().
+
+plays_loop(Board,Aux):-
+    play(1,Board,Aux1,Aux2),
+    play(2,Board,Aux2,AuxF),
+    print(AuxF),
+    plays_loop(Board,AuxF).
+
+game_start():-
+    buildBlankList(L),
+    plays_loop(L,[]).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REPORT VISUALIZATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
