@@ -289,24 +289,22 @@ fillPiece(TabIn,RowN,ColN,Player,TabOut) :-
   nth1(ColN,NRow,[Player|ID],NewRow), %insert col into row
   nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
 
-fillPiece(TabIn,RowN,ColN,TriPos,Player,TabOut):-
+fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
-  TriPos is 0,
-  trace,nth1(ColN,Row,[[_|ID]|_],NewRow), %retrieve column and triangle piece ID
-  nth1(ColN,NRow,[[Player|ID]|_],NewRow), %insert col into row
-  nodebug,nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
+  nth1(ColN,Row,[[_,ID|_]|Rest],NewRow), %retrieve column and triangle piece ID
+  nth1(ColN,NRow,[[Player,ID|_]|Rest],NewRow), %insert col into row
+  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
 
-fillPiece(TabIn,RowN,ColN,TriPos,Player,TabOut):-
+fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
-  TriPos is 1,
-  nth1(ColN,Row,[_|[_|ID]],NewRow), %retrieve column and triangle piece ID
-  nth1(ColN,NRow,[_|[Player|ID]],NewRow), %insert col into row
+  nth1(ColN,Row,[Rest,[_,ID|_]|_],NewRow), %retrieve column and triangle piece ID
+  nth1(ColN,NRow,[Rest,[Player,ID|_]|_],NewRow), %insert col into row
   nth1(RowN,TabOut,NRow,NewTab).
 
 fillOne() :-
     buildBlankList(L),
     display_game(L,2),
-    fillPiece(L,3,2,0,2,L2),
+    fillPieceTriDwn(L,3,2,2,L2),
     display_game(L2,1).
