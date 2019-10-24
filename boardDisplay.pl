@@ -92,7 +92,7 @@ getUpTriColor([UpT|_],Color):-
     color(Color,C).
 
 getDwnTriColor([_|DwnT], Color):-
-    [C|_] = DwnT,
+    [[C|_]|_] = DwnT,
     color(Color,C).
 
 drawTri2(L):-
@@ -259,3 +259,32 @@ buildStartList(L) :-
         [ [[9,'A'],[0,2]], [[9,'B'],[[0,3],[0,4]]], [[9,'C'],[0,0]], [[9,'D'],[[0,3],[0,4]]], [[9,'E'],[0,0]], [[9,'F'],[[0,3],[0,4]]], [[9,'G'],[0,0]], [[9,'H'],[[0,3],[0,4]]], [[9,'I'],[0,0]], [[9,'J'],[0,2]] ],
         [ [[10,'A'],[0,1]], [[10,'B'],[0,1]], [[10,'C'],[0,1]], [[10,'D'],[0,1]], [[10,'E'],[0,1]], [[10,'F'],[0,2]], [[10,'G'],[0,2]], [[10,'H'],[0,2]], [[10,'I'],[0,2]], [[10,'J'],[0,1]] ]
     ],[],L).
+
+fillPiece(TabIn,RowN,ColN,Player,TabOut) :-
+  nth1(RowN,TabIn,Row,_), %retrieve row
+  select(Row,TabIn,NewTab), %delete old row
+  nth1(ColN,Row,[_|ID],NewRow), %retrieve column and piece ID
+  nth1(ColN,NRow,[Player|ID],NewRow), %insert col into row
+  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
+
+fillPiece(TabIn,RowN,ColN,TriPos,Player,TabOut):-
+  nth1(RowN,TabIn,Row,_), %retrieve row
+  select(Row,TabIn,NewTab), %delete old row
+  TriPos is 0,
+  trace,nth1(ColN,Row,[[_|ID]|_],NewRow), %retrieve column and triangle piece ID
+  nth1(ColN,NRow,[[Player|ID]|_],NewRow), %insert col into row
+  nodebug,nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
+
+fillPiece(TabIn,RowN,ColN,TriPos,Player,TabOut):-
+  nth1(RowN,TabIn,Row,_), %retrieve row
+  select(Row,TabIn,NewTab), %delete old row
+  TriPos is 1,
+  nth1(ColN,Row,[_|[_|ID]],NewRow), %retrieve column and triangle piece ID
+  nth1(ColN,NRow,[_|[Player|ID]],NewRow), %insert col into row
+  nth1(RowN,TabOut,NRow,NewTab).
+
+fillOne() :-
+    buildBlankList(L),
+    display_game(L,2),
+    fillPiece(L,3,2,0,2,L2),
+    display_game(L2,1).
