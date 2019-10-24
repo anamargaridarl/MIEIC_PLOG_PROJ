@@ -1,5 +1,5 @@
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DEBUGGING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DEBUGGIxNG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 print(Term) :-
     current_prolog_flag(print_write_options, Options), !,
@@ -15,6 +15,12 @@ print(Term) :-
 color(magenta,1).
 color(white,0).
 color(green,2).
+
+getPlayInfo(X,Y):-
+    writef("Write coordinates: (x,y)"),nl,
+    get_char(Y),get_char(AuxX),
+    char_code(AuxX,AuxX2), 
+    X is AuxX2-65.
 
 playerTurn(Player) :-
     color(C,Player),
@@ -58,7 +64,7 @@ drawRowSeparator():-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SQUARES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 drawSqrUp(L):-
-    [_|T1] = L,
+    [_|T1] = L, %clean code
     [Tail|[]] = T1,
     [T2|_] = Tail,
     color(C,T2),
@@ -186,11 +192,24 @@ display_game([R1,R2,R3,R4,R5,R6,R7,R8,R9,R10|_],Player):-
     tab(1), drawRowID(9), drawRowType2(R9),
     drawRow10(R10), nl.
 
+game_start():-
+    buildBlankList(L),
+    repeat,
+    play(1,L),
+    play(2,L).
+
+play(Player, Board):- 
+    %valid_play(X,Y), (%valid_plays(Aux), valid() )
+    %change_board(),
+    %add_play_aux(),
+    display_game(Board,Player),
+    getPlayInfo(X,Y).
+    %game_state().
 
 %used for report images
-display_blank() :-
+display_blank(L) :-
     buildBlankList(L),
-    display_game(L,2).
+    display_game(L,0).
 
 display_start() :-
     buildStartList(L),
