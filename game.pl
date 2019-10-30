@@ -54,7 +54,6 @@ addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%without handle of triangles
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
     switch(T,[
@@ -64,7 +63,6 @@ addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
   ]).
 
   
-
 play(Player, Board, AuxIn, AuxOut,BoardOut):- 
     display_game(Board,Player),
     getPlayInfo(X,Y,T),
