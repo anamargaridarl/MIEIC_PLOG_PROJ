@@ -18,9 +18,9 @@ getPieceFillTriDwn(TabIn,Row,Col,FillOut) :-
 
 getPieceFill(TabIn,Row,Col,Tri,FillOut) :-
   switch(Tri,[
-    0:getPieceFillOther(TabIn,Row,Col,FillOut),
-    1:getPieceFillTriUp(TabIn,Row,Col,FillOut),
-    2:getPieceFillTriDwn(TabIn,Row,Col,FillOut)
+    -1:getPieceFillOther(TabIn,Row,Col,FillOut),
+    0:getPieceFillTriUp(TabIn,Row,Col,FillOut),
+    1:getPieceFillTriDwn(TabIn,Row,Col,FillOut)
   ]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,19 +29,19 @@ add_play_aux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
     append([[X,NY]], AuxIn, AuxOut).
 
-play(Player, Board, AuxIn, AuxOut):- 
+play(Player, Board, AuxIn, AuxOut,BoardOut):- 
     display_game(Board,Player),
     getPlayInfo(X,Y,T),
     %valid_play(X,Y), (%valid_plays(Aux), valid() )
-    %change_board(),
+    fillPiece(Board,Y,X,T,Player,BoardOut),
     add_play_aux(AuxIn,Board,X,Y,T, AuxOut).
     %game_state().
 
 plays_loop(Board,Aux):-
-    play(1,Board,Aux1,Aux2),
-    play(2,Board,Aux2,AuxF),
+    play(1,Board,Aux1,Aux2,BoardOut),
+    play(2,BoardOut,Aux2,AuxF,BoardOut2),
     print(AuxF),
-    plays_loop(Board,AuxF).
+    plays_loop(BoardOut2,AuxF).
 
 game_start():-
     buildBlankList(L),
@@ -123,11 +123,13 @@ buildStartList(L) :-
     ],[],L).
 
 fillPieceOther(TabIn,RowN,ColN,Player,TabOut) :-
-  nth1(RowN,TabIn,Row,_), %retrieve row
+  atom_number(RowN,RowAuxN),
+  print(RowAuxN),
+  nth1(RowAuxN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
   nth1(ColN,Row,[_|ID],NewRow), %retrieve column and piece ID
   nth1(ColN,NRow,[Player|ID],NewRow), %insert col into row
-  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
+  nth1(RowAuxN,TabOut,NRow,NewTab). % insert row into tab
 
 fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,_), %retrieve row
@@ -144,10 +146,11 @@ fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabOut,NRow,NewTab).
 
 fillPiece(TabIn,RowN,ColN,Tri,Player,TabOut) :-
+print(Tri),
   switch(Tri,[
-    0:fillPieceOther(TabIn,RowN,ColN,Player,TabOut),
-    1:fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut),
-    2:fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut)
+    -1:fillPieceOther(TabIn,RowN,ColN,Player,TabOut),
+    0:fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut),
+    1:fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut)
   ]).
   
 fillOne(X) :-
