@@ -24,24 +24,45 @@ getPieceFill(TabIn,Row,Col,Tri,FillOut) :-
   ]).
 
 %without triangles
-valid_play(Aux,X,Y,T) :- 
-  Xless is X -1,
-  Xmore is X +1,
-  Yless is Y-1,
-  Ymore is Y+1,
-  member([Xless,Y], Aux);
-  member([Xmore,Y], Aux);
-  member([X,Ymore], Aux);
-  member([X,Yless], Aux).
+% validPlay(Aux,X,Y,T) :- 
+%   Xless is X -1,
+%   Xmore is X +1,
+%   Yless is Y-1,
+%   Ymore is Y+1,
+%   member([Xless,Y], Aux);
+%   member([Xmore,Y], Aux);
+%   member([X,Ymore], Aux);
+%   member([X,Yless], Aux).
+
+addAuxOther(X,Y,Board,AuxIn,AuxOut):-
+    nth1(Y,Board,Row,_),
+    nth1(X,Row,Piece,_),
+    append([[[X,Y],Piece]], AuxIn, AuxOut).
+
+addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
+  nth1(Y,Board,Row,_),
+  nth1(X,Row,PieceAux,_),
+  PieceAux = [Piece|_],
+  append([[[X,Y],Piece]], AuxIn, AuxOut).
+
+addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
+  nth1(Y,Board,Row,_),
+  nth1(X,Row,PieceAux,_),
+  PieceAux = [_|Piece],
+  append([[[X,Y],Piece]], AuxIn, AuxOut).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %without handle of triangles
-add_play_aux(AuxIn,Board,X,Y,T, AuxOut):-
+addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
-    nth1(NY,Board,Row,_), %retrieve row
-    nth1(X,Row,Piece,_), %retrieve column and piece ID
-    append([[[X,NY],Piece]], AuxIn, AuxOut).
+    switch(T,[
+    -1:addAuxOther(X,NY,Board,AuxIn,AuxOut),
+    0:addAuxTriangleDown(X,NY,Board,AuxIn,AuxOut),
+    1:addAuxTriangleUp(X,NY,Board,AuxIn,AuxOut)
+  ]).
+
   
 
 play(Player, Board, AuxIn, AuxOut,BoardOut):- 
@@ -49,18 +70,18 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     getPlayInfo(X,Y,T),
     %valid_play(Aux,X,Y,T),
     fillPiece(Board,Y,X,T,Player,BoardOut),
-    add_play_aux(AuxIn,Board,X,Y,T, AuxOut).
+    addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).
     %game_state().
 
-plays_loop(Board,Aux):-
-    play(1,Board,Aux1,Aux2,BoardOut),
+playsLoop(Board,Aux):-
+    play(1,Board,Aux,Aux2,BoardOut),
     play(2,BoardOut,Aux2,AuxF,BoardOut2),
     print(AuxF),
-    plays_loop(BoardOut2,AuxF).
+    playsLoop(BoardOut2,AuxF).
 
-game_start():-
+gameStart():-
     buildBlankList(L),
-    plays_loop(L,[]).
+    playsLoop(L,[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARDS SETUP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 buildBlankList(L) :-
