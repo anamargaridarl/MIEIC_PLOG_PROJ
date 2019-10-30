@@ -22,17 +22,32 @@ getPieceFill(TabIn,Row,Col,Tri,FillOut) :-
     0:getPieceFillTriUp(TabIn,Row,Col,FillOut),
     1:getPieceFillTriDwn(TabIn,Row,Col,FillOut)
   ]).
+
+%without triangles
+valid_play(Aux,X,Y,T) :- 
+  Xless is X -1,
+  Xmore is X +1,
+  Yless is Y-1,
+  Ymore is Y+1,
+  member([Xless,Y], Aux);
+  member([Xmore,Y], Aux);
+  member([X,Ymore], Aux);
+  member([X,Yless], Aux).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %without handle of triangles
 add_play_aux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
-    append([[X,NY]], AuxIn, AuxOut).
+    nth1(NY,Board,Row,_), %retrieve row
+    nth1(X,Row,Piece,_), %retrieve column and piece ID
+    append([[[X,NY],Piece]], AuxIn, AuxOut).
+  
 
 play(Player, Board, AuxIn, AuxOut,BoardOut):- 
     display_game(Board,Player),
     getPlayInfo(X,Y,T),
-    %valid_play(X,Y), (%valid_plays(Aux), valid() )
+    %valid_play(Aux,X,Y,T),
     fillPiece(Board,Y,X,T,Player,BoardOut),
     add_play_aux(AuxIn,Board,X,Y,T, AuxOut).
     %game_state().
@@ -124,7 +139,6 @@ buildStartList(L) :-
 
 fillPieceOther(TabIn,RowN,ColN,Player,TabOut) :-
   atom_number(RowN,RowAuxN),
-  print(RowAuxN),
   nth1(RowAuxN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
   nth1(ColN,Row,[_|ID],NewRow), %retrieve column and piece ID
@@ -146,7 +160,6 @@ fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabOut,NRow,NewTab).
 
 fillPiece(TabIn,RowN,ColN,Tri,Player,TabOut) :-
-print(Tri),
   switch(Tri,[
     -1:fillPieceOther(TabIn,RowN,ColN,Player,TabOut),
     0:fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut),
