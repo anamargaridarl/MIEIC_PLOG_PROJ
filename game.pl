@@ -305,26 +305,39 @@ fillOne(X) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Verify Game State %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- verifyPieceState(TabIn,Player,Piece,Type,Adjs,PieceState).% :-
-%   getAdjs(TabIn,Piece,NextTo),
-  
 
+% To implement.
+% 
+ checkAdjs(_,_,_).
+ processAdjs(_,_,_,_,_,_,_).
+% 
 
-%Fill 1 - Player 1;  2 - Player 2
-%Type 1 - Rectangle; 2 - Square; 3- Triangle
-verifyPieceState(TabIn,Player,[Position,[Fill,Type]|_],PieceState) :-
-  (Type is 1 ; \+(Player is Fill)) -> PieceState is 0;
-  verifyPieceState(TabIn,Player,[Position,[Fill,Type]],Type,[],PieceState).
+%verifyPieceState(+TabIn,+Player,+InPlay,-InPlay2,-TabOut,-PieceState)
+%To verify a piece state, get adjacents, check them, and analyze adjacent pieces of the same player
+%With a DFS-like solution
+verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
+  lookForAdjacent(TabIn,Piece,Adjs),
+  checkAdjs(Adjs,AdjcentTo,Result),
+  switch(Result, [
+    0: (InPlay2 = Rest, TabOut = TabIn, PieceState = 0),
+    1: processAdjs(TabIn,Player,Rest,AdjcentTo,InPlay2,TabOut,PieceState),
+    2: PieceState is 1
+  ]).  
 
+%verifyPlayerState(+TabIn,+Player,+InPlay,-StateOut)
+%To verify the player's state, verify all pieces in play in order to check 
+%if some piece/pieces belonging to the player is surrounded
+%StateOut: 0 - Player continues; 1 - Player loses
 verifyPlayerState(_,_,[],0).
-verifyPlayerState(TabIn,Player,[Piece|Rest],StateOut) :-
-  verifyPieceState(TabIn,Player, Piece, PieceState), %PieceState: 0 - continue 1 - adjacent 2 - surrounded
-  verifyPlayerState(TabIn,Player,Rest,StateOut).
+verifyPlayerState(TabIn,Player,InPlay,StateOut) :-
+  verifyPieceState(TabIn,Player, InPlay, [], InPlay2, AuxTab, PieceState),
+  (PieceState is 0 -> verifyPlayerState(AuxTab,Player,InPlay2,StateOut); StateOut is 1).
 
-
+%verifyGameState(+TabIn,+InPlay,-StateOut)
+%To verify game state, verify if player 1 and player 2 has some piece/pieces surrounded
 % StateOut: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
 verifyGameState(TabIn,InPlay,StateOut) :-
-  verifyPlayerState(TabIn,1,InPlay,P1State), % P1State: 0 - continue 1 - loses
-  verifyPlayerState(TabIn,2,InPlay,P2State), % P2State: 0 - continue 1 - loses
+  verifyPlayerState(TabIn,1,InPlay,P1State), 
+  verifyPlayerState(TabIn,2,InPlay,P2State), 
   (P1State is 0 -> (P2State is 0 -> StateOut is 0; StateOut is 1 );
   (P1State is 1 -> (P2State is 0 -> StateOut is 2; StateOut is 3))).
