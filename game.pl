@@ -34,26 +34,129 @@ getPieceFill(TabIn,Row,Col,Tri,FillOut) :-
 %   member([X,Ymore], Aux);
 %   member([X,Yless], Aux).
 
+getTriangleUp(X,Y,Board,Piece):-
+  nth1(Y,Board,Row,_),                                  
+  nth1(X,Row,PieceAux,_),
+  PieceAux = [Piece|_].   
+
+getTriangleDown(X,Y,Board,Piece):-
+  nth1(Y,Board,Row,_),
+  nth1(X,Row,PieceAux,_),
+  PieceAux = [_|[Piece|_]].
+
+%___________________Auxiliar structure helper functions _______________________%
+
+%add other pieces to auxiliar structure
 addAuxOther(X,Y,Board,AuxIn,AuxOut):-
-    nth1(Y,Board,Row,_),
-    nth1(X,Row,Piece,_),
-    append([[[X,Y],Piece]], AuxIn, AuxOut).
+    nth1(Y,Board,Row,_),                           %get row
+    nth1(X,Row,Piece,_),                           %get piece
+    append([[[X,Y],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
 
+%add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
-  nth1(Y,Board,Row,_),
-  nth1(X,Row,PieceAux,_),
-  PieceAux = [Piece|_],
+  getTriangleUp(X,Y,Board,Piece),          
   append([[[X,Y],Piece]], AuxIn, AuxOut).
 
+%add triangle down to auxiliar structure
 addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
-  nth1(Y,Board,Row,_),
-  nth1(X,Row,PieceAux,_),
-  PieceAux = [_|Piece],
+  getTriangleDown(X,Y,Board,Piece),
   append([[[X,Y],Piece]], AuxIn, AuxOut).
 
+%____________________ Adjacent Pieces _____________________________________________%
+
+getPiece(X,Y,Board,Piece):-
+  nth1(Y,Board,Row,_),
+  nth1(X,Row,Piece,_).
+
+adjacentUp3(Board,X,Y,Adjacents):-
+
+  %need to verify x <0 and y<0
+  Xmore is X +1,
+  Ymore is Y+1,
+  % (x+1,y)
+  getPiece(Xmore,Y,Board,Piece1),
+  % (x,y, Down)
+  getTriangleDown(X,Y,Board,Piece2),
+  % (x, y+1)
+  getPiece(X,Ymore,Board,Piece3),
+
+  append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
+
+adjacentUp5(Board,X,Y,Adjacents):-
+  %need to verify x <0 and y<0
+  Xless is X -1,
+  Ymore is Y +1,
+  % (x-1,y)
+  getPiece(Xless,Y,Board,Piece1),
+  % (x,y, Down)
+  getTriangleDown(X,Y,Board,Piece2),
+  % (x, y+1)
+  getPiece(X,Ymore,Board,Piece3),
+
+  append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
+
+adjacentDown6(Board,X,Y,Adjacents):-
+
+  %need to verify x <0 and y<0
+  Xmore is X +1,
+  Yless is Y-1,
+  % (x+1,y)
+  getPiece(Xmore,Y.Board,Piece1),
+  % (x,y, Down)
+  getTriangleUp(X,Y,Board,Piece2),
+  % (x, y-1)
+  getPiece(X,Yless,Board,Piece3),
+
+  append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
+
+adjacentDown4(Board,X,Y,Adjacents):-
+
+  %need to verify x <0 and y<0
+  Xless is X -1,
+  Yless is Y-1,
+  % (x-1,y)
+  getPiece(Xless,Y,Board,Piece1),
+  % (x,y, Down)
+  getTriangleUp(X,Y,Board,Piece2),
+  % (x, y-1)
+  getPiece(X,Yless,Board,Piece3),
+
+  append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
+
+adjacentOthers(Board,X,Y,Adjacents):-
+
+  Xless is X -1,
+  Ymore is Y+1,
+  Xmore is X +1,
+  Yless is Y-1,
+
+  Mod is X mod 2,
+  ((Mod == 0,
+  % (x-1,y, Down)
+  getTriangleDown(Xless,Y,Board,Piece1),
+  % (x+1,y, Up)
+  getTriangleUp(Xmore,Y,Board,Piece2),
+  % (x,y+1, Down)
+  getTriangleDown(X,Ymore,Board,Piece3),
+  % (x,y-1, Up)
+  getTriangleUp(X,Yless,Board,Piece4))
+  ;
+  % (x-1,y, Up)
+  (getTriangleUp(Xmore,Y,Board,Piece2),
+  % (x+1,y, Down)
+  getTriangleDown(Xless,Y,Board,Piece1),
+  % (x,y+1, Up)
+  getTriangleUp(X,Ymore,Board,Piece3),
+  % (x,y-1, Down)
+  getTriangleDown(X,Yless,Board,Piece4))),
+
+  append([  [[Xless,Y],Piece1],  [[Xmore,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     atom_number(Y,NY),
     switch(T,[
@@ -62,24 +165,32 @@ addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     1:addAuxTriangleUp(X,NY,Board,AuxIn,AuxOut)
   ]).
 
+lookForAdjacent(Board,X,Y,Id,Adjacents):-
+    atom_number(Y,NY),
+    ((Id == 3, adjacentUp3(Board,X,NY,Adjacents));
+    (Id == 4, adjacentDown4(Board,X,NY,Adjacents));
+    (Id == 5, adjacentUp5(Board,X,NY,Adjacents));
+    (Id == 6, adjacentDown6(Board,X,NY,Adjacents));
+    ((Id == 1; Id== 0; Id == 2), adjacentOthers(Board,X,NY,Adjacents))).
   
 play(Player, Board, AuxIn, AuxOut,BoardOut):- 
-    display_game(Board,Player),
-    getPlayInfo(X,Y,T),
-    %valid_play(Aux,X,Y,T),
-    fillPiece(Board,Y,X,T,Player,BoardOut),
-    addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).
+    display_game(Board,Player),                     %display board
+    getPlayInfo(X,Y,T), 
+    lookForAdjacent(Board,X,Y,0,Adjacents),
+    print(Adjacents),
+    fillPiece(Board,Y,X,T,Player,BoardOut),         %fill piece with player color
+    addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).       %add play to auxiliar structure
     %game_state().
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut),
-    play(2,BoardOut,Aux2,AuxF,BoardOut2),
-    print(AuxF),
-    playsLoop(BoardOut2,AuxF).
+    play(1,Board,Aux,Aux2,BoardOut).             %player1
+    %play(2,BoardOut,Aux2,AuxF,BoardOut2),           %player2
+    % print(AuxF).         
+    %playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
-    buildBlankList(L),
-    playsLoop(L,[]).
+    buildBlankList(L),                              %build board
+    playsLoop(L,[]).                                
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARDS SETUP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 buildBlankList(L) :-
