@@ -68,8 +68,7 @@ getPiece(X,Y,Board,Piece):-
   nth1(Y,Board,Row,_),
   nth1(X,Row,Piece,_).
 
-adjacentUp3(Board,X,Y,Adjacents):-
-
+adjacentUp5(Board,X,Y,Adjacents):-
   %need to verify x <0 and y<0
   Xmore is X +1,
   Ymore is Y+1,
@@ -79,24 +78,21 @@ adjacentUp3(Board,X,Y,Adjacents):-
   getTriangleDown(X,Y,Board,Piece2),
   % (x, y+1)
   getPiece(X,Ymore,Board,Piece3),
-
   append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
 
-adjacentUp5(Board,X,Y,Adjacents):-
+adjacentUp4(Board,X,Y,Adjacents):-
   %need to verify x <0 and y<0
   Xless is X -1,
   Ymore is Y +1,
   % (x-1,y)
-  getPiece(Xless,Y,Board,Piece1),
+  getPiece(Xless,Y,Board,Piece1),  
   % (x,y, Down)
   getTriangleDown(X,Y,Board,Piece2),
   % (x, y+1)
   getPiece(X,Ymore,Board,Piece3),
-
   append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
 
-adjacentDown6(Board,X,Y,Adjacents):-
-
+adjacentDown3(Board,X,Y,Adjacents):-
   %need to verify x <0 and y<0
   Xmore is X +1,
   Yless is Y-1,
@@ -106,11 +102,9 @@ adjacentDown6(Board,X,Y,Adjacents):-
   getTriangleUp(X,Y,Board,Piece2),
   % (x, y-1)
   getPiece(X,Yless,Board,Piece3),
-
   append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
 
-adjacentDown4(Board,X,Y,Adjacents):-
-
+adjacentDown6(Board,X,Y,Adjacents):-
   %need to verify x <0 and y<0
   Xless is X -1,
   Yless is Y-1,
@@ -120,8 +114,71 @@ adjacentDown4(Board,X,Y,Adjacents):-
   getTriangleUp(X,Y,Board,Piece2),
   % (x, y-1)
   getPiece(X,Yless,Board,Piece3),
-
   append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
+
+%
+adjacentOthersLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleDown(Xmore,Y,Board,Piece1),
+  getPiece(Xless,Y,Board,Piece2),
+  getTriangleUp(X,Ymore,Board,Piece4),
+  getPiece(X,Yless,Board,Piece3),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleDown(Xmore,Y,Board,Piece1),
+  getPiece(Xless,Y,Board,Piece2),
+  getTriangleDown(X,Ymore,Board,Piece3),
+  getTriangleUp(X,Yless,Board,Piece4),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleDown(Xmore,Y,Board,Piece1),
+  getTriangleUp(Xless,Y,Board,Piece2),
+  getTriangleUp(X,Ymore,Board,Piece4),
+  getPiece(X,Yless,Board,Piece3),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getPiece(Xmore,Y,Board,Piece1),
+  getTriangleDown(Xless,Y,Board,Piece2),
+  getPiece(X,Ymore,Board,Piece4),
+  getTriangleDown(X,Yless,Board,Piece3),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleUp(Xmore,Y,Board,Piece1),
+  getTriangleDown(Xless,Y,Board,Piece2),
+  getPiece(X,Ymore,Board,Piece3),
+  getTriangleDown(X,Yless,Board,Piece4),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getPiece(Xmore,Y,Board,Piece1),
+  getTriangleDown(Xless,Y,Board,Piece2),
+  getTriangleDown(X,Ymore,Board,Piece3),
+  getTriangleUp(X,Yless,Board,Piece4),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleUp(Xmore,Y,Board,Piece1),
+  getTriangleDown(Xless,Y,Board,Piece2),
+  getTriangleDown(X,Ymore,Board,Piece3),
+  getTriangleUp(X,Yless,Board,Piece4),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+
+
+adjacentOthersOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
+  getTriangleUp(Xmore,Y,Board,Piece1),
+  getTriangleDown(Xless,Y,Board,Piece2),
+  getTriangleDown(X,Ymore,Board,Piece3),
+  getTriangleUp(X,Yless,Board,Piece4),
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
 
 adjacentOthers(Board,X,Y,Adjacents):-
 
@@ -129,30 +186,24 @@ adjacentOthers(Board,X,Y,Adjacents):-
   Ymore is Y+1,
   Xmore is X +1,
   Yless is Y-1,
-
   Mod is X mod 2,
-  ((Mod == 0,
-  % (x-1,y, Down)
-  getTriangleDown(Xless,Y,Board,Piece1),
-  % (x+1,y, Up)
-  getTriangleUp(Xmore,Y,Board,Piece2),
-  % (x,y+1, Down)
-  getTriangleDown(X,Ymore,Board,Piece3),
-  % (x,y-1, Up)
-  getTriangleUp(X,Yless,Board,Piece4))
-  ;
-  % (x-1,y, Up)
-  (getTriangleUp(Xmore,Y,Board,Piece2),
-  % (x+1,y, Down)
-  getTriangleDown(Xless,Y,Board,Piece1),
-  % (x,y+1, Up)
-  getTriangleUp(X,Ymore,Board,Piece3),
-  % (x,y-1, Down)
-  getTriangleDown(X,Yless,Board,Piece4))),
+  ((X == 2, Y==2,
+    adjacentOthersLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (X== 2,
+    adjacentOthersLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (Y == 2,
+    adjacentOthersTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (X==9,Y==9,
+    adjacentOthersRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (Y ==9,
+    adjacentOthersBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (X==9,
+    adjacentOthersRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  (Mod == 0,
+    adjacentOthersEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  adjacentOthersOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
 
-  append([  [[Xless,Y],Piece1],  [[Xmore,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
-
-  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -171,7 +222,7 @@ lookForAdjacent(Board,X,Y,Id,Adjacents):-
     (Id == 4, adjacentDown4(Board,X,NY,Adjacents));
     (Id == 5, adjacentUp5(Board,X,NY,Adjacents));
     (Id == 6, adjacentDown6(Board,X,NY,Adjacents));
-    ((Id == 1; Id== 0; Id == 2), adjacentOthers(Board,X,NY,Adjacents))).
+    ((Id == 1; Id== 0; Id == 2),adjacentOthers(Board,X,NY,Adjacents))).
   
 play(Player, Board, AuxIn, AuxOut,BoardOut):- 
     display_game(Board,Player),                     %display board
@@ -276,11 +327,12 @@ fillPieceOther(TabIn,RowN,ColN,Player,TabOut) :-
   nth1(RowAuxN,TabOut,NRow,NewTab). % insert row into tab
 
 fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
-  nth1(RowN,TabIn,Row,_), %retrieve row
+  atom_number(RowN,RowNN),
+  nth1(RowNN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
   nth1(ColN,Row,[[_,ID|_]|Rest],NewRow), %retrieve column and triangle piece ID
   nth1(ColN,NRow,[[Player,ID|_]|Rest],NewRow), %insert col into row
-  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
+  nth1(RowNN,TabOut,NRow,NewTab). % insert row into tab
 
 fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,_), %retrieve row
