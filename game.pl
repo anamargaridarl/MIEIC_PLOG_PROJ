@@ -44,6 +44,15 @@ getTriangleDown(X,Y,Board,Piece):-
   nth1(X,Row,PieceAux,_),
   PieceAux = [_|[Piece|_]].
 
+isTri(ID,Tri) :-
+  (ID == 1; ID == 2),Tri is -1;
+  (ID == 3; ID == 5), Tri is 0;
+  (ID == 4; ID == 6), Tri is 1.
+
+getOposPlayer(Player,Opos) :-
+  (Player == 1, Opos is 2);
+  (Player == 2, Opos is 1).
+
 %___________________Auxiliar structure helper functions _______________________%
 
 %add other pieces to auxiliar structure
@@ -289,11 +298,11 @@ fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(ColN,NRow,[Rest,[Player,ID|_]|_],NewRow), %insert col into row
   nth1(RowN,TabOut,NRow,NewTab).
 
-fillPiece(TabIn,RowN,ColN,Tri,Player,TabOut) :-
+fillPiece(TabIn,RowN,ColN,Tri,Fill,TabOut) :-
   switch(Tri,[
-    -1:fillPieceOther(TabIn,RowN,ColN,Player,TabOut),
-    0:fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut),
-    1:fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut)
+    -1:fillPieceOther(TabIn,RowN,ColN,Fill,TabOut),
+    0:fillPieceTriUp(TabIn,RowN,ColN,Fill,TabOut),
+    1:fillPieceTriDwn(TabIn,RowN,ColN,Fill,TabOut)
   ]).
   
 fillOne(X) :-
@@ -305,24 +314,37 @@ fillOne(X) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Verify Game State %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%To Implement
+processAdjs(_,_,_,_,_,_,_).
 
-% To implement.
-% 
- checkAdjs(_,_,_).
- processAdjs(_,_,_,_,_,_,_).
-% 
+%checkAdjs(+Adjs,+Player,-AdjacentTo,?Temp,-Result)
+%To check adjacents, we check if piece is empty or belongs to the player,
+%Save adjacent pieces of the same player in a list and determine the result in the end
+checkAdjs(List,Adjs,Temp,Temp,Result):-
+  List == [],(Adjs == [], Result is 2; Result is 1).
+
+checkAdjs([Piece|Rest],Player, AdjcentTo,Temp,Result):-
+  Piece = [_,[Fill,_]],
+  (Fill is 0 -> Result is 0;
+  (Fill is Player -> append(Temp,[Piece],TempN),
+  checkAdjs(Rest,Player,AdjcentTo,TempN,Result))).
 
 %verifyPieceState(+TabIn,+Player,+InPlay,-InPlay2,-TabOut,-PieceState)
 %To verify a piece state, get adjacents, check them, and analyze adjacent pieces of the same player
 %With a DFS-like solution
+%PieceState: 0 - Piece is safe 1 - Piece or block is surrounded
 verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
+  Piece = [[Row,Col],[Fill,ID]],
+  ((\+(Fill is Player), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
   lookForAdjacent(TabIn,Piece,Adjs),
-  checkAdjs(Adjs,AdjcentTo,Result),
+  checkAdjs(Adjs,Player,AdjcentTo,[],Result),
+  isTri(ID,Tri),
+  getOposPlayer(Player,Opos),
   switch(Result, [
-    0: (InPlay2 = Rest, TabOut = TabIn, PieceState = 0),
-    1: processAdjs(TabIn,Player,Rest,AdjcentTo,InPlay2,TabOut,PieceState),
-    2: PieceState is 1
-  ]).  
+    0: (InPlay2 = Rest, fillPiece(TabIn,Row,Col,Tri,0,TabOut), PieceState = 0),
+    1: (fillPiece(TabIn,Row,Col,Tri,Opos,AuxTab), processAdjs(AuxTab,Player,Rest,AdjcentTo,InPlay2,TabOut,PieceState)),
+    2: PieceState = 1
+  ])).  
 
 %verifyPlayerState(+TabIn,+Player,+InPlay,-StateOut)
 %To verify the player's state, verify all pieces in play in order to check 
