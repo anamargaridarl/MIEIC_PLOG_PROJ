@@ -273,7 +273,7 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     getPlayInfo(X,Y,T), 
     lookForAdjacent(Board,X,Y,0,Adjacents),
     print(Adjacents),
-    fillPiece(Board,Y,X,T,Player,BoardOut).         %fill piece with player color
+    fillPiece(Board,Y,X,T,Player,BoardOut),         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).
     %game_state().
 
