@@ -1,5 +1,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INCLUDE FILES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- consult('boardDisplay.pl').
+
+   remove_dups(L, U) :-
+       remove_dups(L, [], U, []).
+   
+   remove_dups([E|L], H0, R0, T) :-
+       ( \+ memberchk(E, H0) ->
+         R0 = [E|R],
+         H = [E|H0 ]
+       ; R = R0,
+         H = H0
+       ),
+       remove_dups(L, H, R, T).
+   remove_dups([], _, T, T).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 switch(X,[Val:Goal | Cases]) :-
   (X=Val -> call(Goal) ; switch(X, Cases)).
@@ -178,6 +192,7 @@ adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(X,Yless,Board,Piece4),
   append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
 
+%adjacents of squares 
 adjacentSquare(Board,X,Y,Adjacents):-
   Xless is X -1,
   Ymore is Y+1,
@@ -200,22 +215,35 @@ adjacentSquare(Board,X,Y,Adjacents):-
     adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
   adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless)).
 
-%calculate possible plays
-
-possiblePlays(Board,[],PossiblePlays).
-possiblePlays(Board,[Piece|Rest],Adjacents,PossiblePlaysIn,PossiblePlaysOut):-
+%Adds to a list adjacent pieces of the ones already played on board
+possiblePlaysAux(Board,[],PossiblePlaysOut,PossiblePlaysOut).
+possiblePlaysAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
   [Coord|[Info|_]] = Piece,
   [X|[Y|_]] = Coord,
   [_|[Id|_]]= Info,
   lookForAdjacent(Board,X,Y,Id, Adjacents),
-  append(Adjacents,PossiblePlaysIn,PossiblePlaysOut),
-  possiblePlays(Board,Rest,PossiblePlaysOut,PossiblePlays).
+  append(Adjacents,PossiblePlaysIn,T),
+  possiblePlaysAux(Board,Rest,T,PossiblePlaysOut).
 
-test():-
-append([ [[3,3],[0,0]] , [[4,3],[0,3]] ],[],Aux),
-buildBlankList(Board),
-possiblePlays(Board,Aux,[],PossiblePlaysOut),
-print(PossiblePlaysOut).
+%remove pieces from possible plays -
+%used to remove pieces that were already played
+removePiecesOnBoard([],List2,List2).
+removePiecesOnBoard([Piece|Rest],List,List2):-
+  delete(List,Piece,T),
+  removePiecesOnBoard(Rest,T,List2).
+
+%true if variable is not instanced
+not_inst(Var):-
+  \+(\+(Var=0)),
+  \+(\+(Var=1)).
+
+%calculate next possible plays based on already played pieces(aux)
+possiblePlays(Board,Aux,NoAux):-
+  not_inst(Aux);                                             %case aux is not instanced
+  (possiblePlaysAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
+  %remove_dups(PossiblePlaysOut,NoDups),
+  removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux)),          %removes from list of adjacents the pieces that were already played
+  print('Possible Plays: '),print(NoAux).                    % shows to player possible plays
 
 
 
@@ -223,11 +251,10 @@ print(PossiblePlaysOut).
 
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
-    atom_number(Y,NY),
     switch(T,[
-    -1:addAuxOther(X,NY,Board,AuxIn,AuxOut),
-    0:addAuxTriangleDown(X,NY,Board,AuxIn,AuxOut),
-    1:addAuxTriangleUp(X,NY,Board,AuxIn,AuxOut)
+    -1:addAuxOther(X,Y,Board,AuxIn,AuxOut),
+    0:addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut),
+    1:addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut)
   ]).
 
 %need to calculate for rectangles too
@@ -238,19 +265,18 @@ lookForAdjacent(Board,X,Y,Id,Adjacents):-
     (Id == 6, adjacentDown6(Board,X,Y,Adjacents));
     (Id == 0,adjacentSquare(Board,X,Y,Adjacents))).
   
-play(Player, Board, AuxIn, AuxOut,BoardOut):- 
+play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
+    possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(X,Y,T), 
     lookForAdjacent(Board,X,Y,0,Adjacents),
-    print(Adjacents),
     fillPiece(Board,Y,X,T,Player,BoardOut),         %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).       %add play to auxiliar structure
+    addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).
     %game_state().
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut).             %player1
-    %play(2,BoardOut,Aux2,AuxF,BoardOut2),           %player2
-    % print(AuxF).         
+    play(1,Board,Aux,Aux2,BoardOut),             %player1
+    play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
     %playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
@@ -333,20 +359,18 @@ buildStartList(L) :-
     ],[],L).
 
 fillPieceOther(TabIn,RowN,ColN,Player,TabOut) :-
-  atom_number(RowN,RowAuxN),
-  nth1(RowAuxN,TabIn,Row,_), %retrieve row
+  nth1(RowN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
   nth1(ColN,Row,[_|ID],NewRow), %retrieve column and piece ID
   nth1(ColN,NRow,[Player|ID],NewRow), %insert col into row
-  nth1(RowAuxN,TabOut,NRow,NewTab). % insert row into tab
+  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
 
 fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
-  atom_number(RowN,RowNN),
-  nth1(RowNN,TabIn,Row,_), %retrieve row
+  nth1(RowN,TabIn,Row,_), %retrieve row
   select(Row,TabIn,NewTab), %delete old row
   nth1(ColN,Row,[[_,ID|_]|Rest],NewRow), %retrieve column and triangle piece ID
   nth1(ColN,NRow,[[Player,ID|_]|Rest],NewRow), %insert col into row
-  nth1(RowNN,TabOut,NRow,NewTab). % insert row into tab
+  nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
 
 fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,_), %retrieve row
