@@ -73,17 +73,17 @@ getOposPlayer(Player,Opos) :-
 addAuxOther(X,Y,Board,AuxIn,AuxOut):-
     nth1(Y,Board,Row,_),                           %get row
     nth1(X,Row,Piece,_),                           %get piece
-    append([[[X,Y],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
+    append([[[Y,X],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
   getTriangleUp(X,Y,Board,Piece),          
-  append([[[X,Y],Piece]], AuxIn, AuxOut).
+  append([[[Y,X],Piece]], AuxIn, AuxOut).
 
 %add triangle down to auxiliar structure
 addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
   getTriangleDown(X,Y,Board,Piece),
-  append([[[X,Y],Piece]], AuxIn, AuxOut).
+  append([[[Y,X],Piece]], AuxIn, AuxOut).
 
 %____________________ Adjacent Pieces _____________________________________________%
 
@@ -99,7 +99,7 @@ adjacentUp5(Board,X,Y,Adjacents):-
   getPiece(Xmore,Y,Board,Piece1),
   getTriangleDown(X,Y,Board,Piece2),
   getPiece(X,Ymore,Board,Piece3),
-  append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents).
 
 %adjacents to triangle3
 adjacentUp3(Board,X,Y,Adjacents):-
@@ -108,7 +108,7 @@ adjacentUp3(Board,X,Y,Adjacents):-
   getPiece(Xless,Y,Board,Piece1),  
   getTriangleDown(X,Y,Board,Piece2),
   getPiece(X,Ymore,Board,Piece3),
-  append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Ymore], Piece3]],[],Adjacents).
+  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents).
 
 %adjacents to triangle4
 adjacentDown4(Board,X,Y,Adjacents):-
@@ -117,7 +117,7 @@ adjacentDown4(Board,X,Y,Adjacents):-
   getPiece(Xmore,Y.Board,Piece1),
   getTriangleUp(X,Y,Board,Piece2),
   getPiece(X,Yless,Board,Piece3),
-  append([  [[Xmore,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents).
 
 %adjacent to triangle6
 adjacentDown6(Board,X,Y,Adjacents):-
@@ -126,7 +126,7 @@ adjacentDown6(Board,X,Y,Adjacents):-
   getPiece(Xless,Y,Board,Piece1),
   getTriangleUp(X,Y,Board,Piece2),
   getPiece(X,Yless,Board,Piece3),
-  append([  [[Xless,Y],Piece1],  [[X,Y],Piece2], [ [X,Yless], Piece3]],[],Adjacents).
+  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents).
 
 %adjacents of squares in case of left top unit in board (not counting rectangles)
 adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -134,7 +134,7 @@ adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getPiece(Xless,Y,Board,Piece2),
   getTriangleUp(X,Ymore,Board,Piece4),
   getPiece(X,Yless,Board,Piece3),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of left column in board (not counting rectangles)
 adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -142,7 +142,7 @@ adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getPiece(Xless,Y,Board,Piece2),
   getTriangleDown(X,Ymore,Board,Piece3),
   getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of top line in board (not counting rectangles)
 adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -150,7 +150,7 @@ adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(Xless,Y,Board,Piece2),
   getTriangleUp(X,Ymore,Board,Piece4),
   getPiece(X,Yless,Board,Piece3),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of right bottom unit in board (not counting rectangles)
 adjacentSquareRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -158,7 +158,7 @@ adjacentSquareRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xless,Y,Board,Piece2),
   getPiece(X,Ymore,Board,Piece4),
   getTriangleDown(X,Yless,Board,Piece3),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of bottom line in board (not counting rectangles)
 adjacentSquareBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -166,7 +166,7 @@ adjacentSquareBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xless,Y,Board,Piece2),
   getPiece(X,Ymore,Board,Piece3),
   getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of right column in board (not counting rectangles)
 adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -174,7 +174,7 @@ adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xless,Y,Board,Piece2),
   getTriangleDown(X,Ymore,Board,Piece3),
   getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in even rows
 adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -182,15 +182,15 @@ adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xless,Y,Board,Piece2),
   getTriangleDown(X,Ymore,Board,Piece3),
   getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Ymore,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in odd rows
 adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(Xmore,Y,Board,Piece1),
   getTriangleDown(Xless,Y,Board,Piece2),
-  getTriangleDown(X,Ymore,Board,Piece3),
-  getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Xmore,Y],Piece1],  [[Xless,Y],Piece2], [ [X,Ymore], Piece3], [[X,Yless],Piece4]],[],Adjacents).
+  getTriangleUp(X,Ymore,Board,Piece3),
+  getTriangleDown(X,Yless,Board,Piece4),
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares 
 adjacentSquare(Board,X,Y,Adjacents):-
@@ -237,6 +237,12 @@ not_inst(Var):-
   \+(\+(Var=0)),
   \+(\+(Var=1)).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% validPlay(X,Y,T,PossiblePlays):-
+%   member([ [X,Y],[0,]       ])
+
+
+
 %calculate next possible plays based on already played pieces(aux)
 possiblePlays(Board,Aux,NoAux):-
   not_inst(Aux);                                             %case aux is not instanced
@@ -244,10 +250,6 @@ possiblePlays(Board,Aux,NoAux):-
   %remove_dups(PossiblePlaysOut,NoDups),
   removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux)),          %removes from list of adjacents the pieces that were already played
   print('Possible Plays: '),print(NoAux).                    % shows to player possible plays
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
@@ -270,13 +272,14 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(X,Y,T), 
     lookForAdjacent(Board,X,Y,0,Adjacents),
-    fillPiece(Board,Y,X,T,Player,BoardOut),         %fill piece with player color
+    print(Adjacents),
+    fillPiece(Board,Y,X,T,Player,BoardOut).         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,X,Y,T, AuxOut).
     %game_state().
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut),             %player1
-    play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
+    play(1,Board,Aux,Aux2,BoardOut).                %player1
+    %play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
     %playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
