@@ -23,9 +23,10 @@ isTriangle(AuxT,T):-
 
 getPlayInfo(X,Y,T):-
     writef("Write coordinates: (xyT)"),nl,
-    get_char(AuxX),get_char(Y),get_char(AuxT),
+    get_char(AuxX),get_char(AuxY),get_char(AuxT),
     isTriangle(AuxT,T),
     char_code(AuxX,AuxX2), 
+    atom_number(AuxY,Y),
     X is AuxX2-64.
 
 playerTurn(Player) :-
