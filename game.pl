@@ -104,11 +104,11 @@ adjacentUp5(Board,X,Y,Adjacents):-
 %adjacents to triangle3
 adjacentUp3(Board,X,Y,Adjacents):-
   Xless is X -1,
-  Ymore is Y +1,
+  Yless is Y -1,
   getPiece(Xless,Y,Board,Piece1),  
   getTriangleDown(X,Y,Board,Piece2),
-  getPiece(X,Ymore,Board,Piece3),
-  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents).
+  getPiece(X,Yless,Board,Piece3),
+  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents).
 
 %adjacents to triangle4
 adjacentDown4(Board,X,Y,Adjacents):-
@@ -271,7 +271,7 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(Col,Row,T), 
-    lookForAdjacent(Board,Col,Row,5,Adjacents),
+    lookForAdjacent(Board,Col,Row,3,Adjacents),
     print(Adjacents),
     fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut).
