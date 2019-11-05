@@ -38,17 +38,6 @@ getPieceFill(TabIn,Row,Col,Tri,FillOut) :-
     1:getPieceFillTriDwn(TabIn,Row,Col,FillOut)
   ]).
 
-%without triangles
-% validPlay(Aux,X,Y,T) :- 
-%   Xless is X -1,
-%   Xmore is X +1,
-%   Yless is Y-1,
-%   Ymore is Y+1,
-%   member([Xless,Y], Aux);
-%   member([Xmore,Y], Aux);
-%   member([X,Ymore], Aux);
-%   member([X,Yless], Aux).
-
 getTriangleUp(X,Y,Board,Piece):-
   nth1(Y,Board,Row,_),                                  
   nth1(X,Row,PieceAux,_),
@@ -69,7 +58,12 @@ getOposPlayer(Player,Opos) :-
   (Player == 1, Opos = 2);
   (Player == 2, Opos = 1).  
 
-%___________________Auxiliar structure helper functions _______________________%
+%true if variable is not instanced
+not_inst(Var):-
+  \+(\+(Var=0)),
+  \+(\+(Var=1)).
+
+%___________________Auxiliar structure Aux - help functions _______________________%
 
 %add other pieces to auxiliar structure
 addAuxOther(X,Y,Board,AuxIn,AuxOut):-
@@ -87,7 +81,7 @@ addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
   getTriangleDown(X,Y,Board,Piece),
   append([[[Y,X],Piece]], AuxIn, AuxOut).
 
-%____________________ Adjacent Pieces _____________________________________________%
+%____________________ Adjacent Pieces - help functions ________________________________%
 
 %get piece full info
 getFullPiece(X,Y,Board,[[Y,X],Info]) :-
@@ -97,6 +91,15 @@ getFullPiece(X,Y,Board,[[Y,X],Info]) :-
 getPiece(X,Y,Board,Piece):-
   nth1(Y,Board,Row,_),
   nth1(X,Row,Piece,_).
+
+%get shape 
+getShapeAddCoord(Board,Row,Col,Tri,Piece) :-
+  switch(Tri,[
+    -1:getPiece(Row,Col,Board,PieceAux),
+    0:getTriangleUp(Row,Col,Board,PieceAux),
+    1:getTriangleDown(Row,Col,Board,PieceAux)
+  ]),
+  append([[Row,Col]],[PieceAux],Piece).
 
 %adjacents to triangle5
 adjacentUp5(Board,X,Y,Adjacents):-
@@ -221,6 +224,8 @@ adjacentSquare(Board,X,Y,Adjacents):-
     adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
   adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless)).
 
+%____________________ Possible plays - help functions ________________________________%
+
 %Adds to a list adjacent pieces of the ones already played on board
 possiblePlaysAux(Board,[],PossiblePlaysOut,PossiblePlaysOut).
 possiblePlaysAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
@@ -237,11 +242,6 @@ removePiecesOnBoard([],List2,List2).
 removePiecesOnBoard([Piece|Rest],List,List2):-
   delete(List,Piece,T),
   removePiecesOnBoard(Rest,T,List2).
-
-%true if variable is not instanced
-not_inst(Var):-
-  \+(\+(Var=0)),
-  \+(\+(Var=1)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % validPlay(X,Y,T,PossiblePlays):-
@@ -266,19 +266,22 @@ addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
   ]).
 
 %need to calculate for rectangles too
-lookForAdjacent(Board,X,Y,Id,Adjacents):-
+lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
+    (Info = [_|[Id|_]],
+    Coord = [X|[Y|_]]),
     ((Id == 3, adjacentUp3(Board,X,Y,Adjacents));
     (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
     (Id == 5, adjacentUp5(Board,X,Y,Adjacents));
     (Id == 6, adjacentDown6(Board,X,Y,Adjacents));
     (Id == 0,adjacentSquare(Board,X,Y,Adjacents))).
   
+
 play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(Col,Row,T), 
-    lookForAdjacent(Board,Col,Row,4,Adjacents),
-    print(Adjacents),
+    getShapeAddCoord(Board,Row,Col,T,Piece),
+    lookForAdjacent(Board,Piece,Adjacents),
     fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut).
     %game_state().
