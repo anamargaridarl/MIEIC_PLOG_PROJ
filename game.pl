@@ -86,11 +86,19 @@ addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
   append([[[Y,X],Piece]], AuxIn, AuxOut).
 
 %____________________ Adjacent Pieces _____________________________________________%
-
 %get piece from board based on X and Y position
 getPiece(X,Y,Board,Piece):-
   nth1(Y,Board,Row,_),
   nth1(X,Row,Piece,_).
+
+%get shape 
+getShapeAddCoord(Board,Row,Col,Tri,Piece) :-
+  switch(Tri,[
+    -1:getPiece(Row,Col,Board,PieceAux),
+    0:getTriangleUp(Row,Col,Board,PieceAux),
+    1:getTriangleDown(Row,Col,Board,PieceAux)
+  ]),
+  append([[Row,Col]],[PieceAux],Piece).
 
 %adjacents to triangle5
 adjacentUp5(Board,X,Y,Adjacents):-
@@ -260,18 +268,22 @@ addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
   ]).
 
 %need to calculate for rectangles too
-lookForAdjacent(Board,X,Y,Id,Adjacents):-
+lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
+    (Info = [_|[Id|_]],
+    Coord = [X|[Y|_]]),
     ((Id == 3, adjacentUp3(Board,X,Y,Adjacents));
     (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
     (Id == 5, adjacentUp5(Board,X,Y,Adjacents));
     (Id == 6, adjacentDown6(Board,X,Y,Adjacents));
     (Id == 0,adjacentSquare(Board,X,Y,Adjacents))).
   
+
 play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(Col,Row,T), 
-    lookForAdjacent(Board,Col,Row,4,Adjacents),
+    getShapeAddCoord(Board,Row,Col,T,Piece),
+    lookForAdjacent(Board,Piece,Adjacents),
     print(Adjacents),
     fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut).
