@@ -59,13 +59,13 @@ getTriangleDown(X,Y,Board,Piece):-
   PieceAux = [_|[Piece|_]].
 
 isTri(ID,Tri) :-
-  (ID == 1; ID == 2),Tri is -1;
-  (ID == 3; ID == 5), Tri is 0;
-  (ID == 4; ID == 6), Tri is 1.
+  (ID == 0; ID == 1; ID == 2), Tri = -1;
+  (ID == 3; ID == 5), Tri = 0;
+  (ID == 4; ID == 6), Tri = 1.
 
 getOposPlayer(Player,Opos) :-
-  (Player == 1, Opos is 2);
-  (Player == 2, Opos is 1).
+  (Player == 1, Opos = 2);
+  (Player == 2, Opos = 1).  
 
 %___________________Auxiliar structure helper functions _______________________%
 
@@ -353,7 +353,7 @@ buildStartList(L) :-
         [ [0,1], [0,0], [[0,5], [0,6]], [0,0], [[0,5],[0,6]], [0,0], [[0,5],[0,6]], [0,0], [[0,5],[0,6]], [0,2] ],
         [ [0,1], [[0,3],[0,4]], [0,0], [[0,3],[0,4]], [0,0], [[0,3],[0,4]], [0,0], [[0,3], [0,4]], [0,0], [0,2] ],
         [ [0,1], [0,0], [[0,5],[0,6]], [0,0], [[1,5],[1,6]], [2,0], [[2,5],[2,6]], [0,0], [[0,5], [0,6]], [0,2] ],        
-        [ [0,1], [[0,3],[0,4]], [0,0], [[0,3],[1,4]], [1,0], [[1,3],[2,4]], [2,0], [[0,3], [0,4]], [0,0], [0,2] ],      
+        [ [0,1], [[0,3],[0,4]], [0,0], [[0,3],[1,4]], [2,0], [[1,3],[2,4]], [2,0], [[0,3], [0,4]], [0,0], [0,2] ],      
         [ [0,2], [0,0], [[0,5],[0,6]], [1,0], [[1,5],[1,6]], [2,0], [[2,5],[2,6]], [0,0], [[0,5],[0,6]], [0,2] ],
         [ [0,2], [[0,3],[0,4]], [0,0], [[0,3],[0,4]], [0,0], [[1,3],[0,4]], [0,0], [[0,3],[0,4]], [0,0], [0,2] ], 
         [ [0,2], [0,0], [[0,5],[0,6]], [0,0], [[0,5],[0,6]], [0,0], [[0,5],[0,6]], [0,0], [[0,5],[0,6]], [0,2] ],
@@ -388,30 +388,45 @@ fillPiece(TabIn,RowN,ColN,Tri,Fill,TabOut) :-
     0:fillPieceTriUp(TabIn,RowN,ColN,Fill,TabOut),
     1:fillPieceTriDwn(TabIn,RowN,ColN,Fill,TabOut)
   ]).
-  
-fillOne(X) :-
-    buildBlankList(L),
-    display_game(L,2),
-    fillPieceTriDwn(L,3,2,1,L2),
-    getPieceFill(L2,3,3,0,X),
-    display_game(L2,1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Verify Game State %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%To Implement
-processAdjs(_,_,_,_,_,_,_).
+%verifyAdjPieceState(+TabIn,+Player,+Adj,+InPlay,-InPlay2,-TabOut,-PieceState)
+%Very similar to verifyPieceState/6, except that recieves a piece to check externally
+%to the pieces in play and then removes it from the list
+verifyAdjPieceState(TabIn,Player,Adj,InPlay,InPlay2,TabOut,PieceState) :-
+  Adj = [[Row,Col],[_,ID]],
+  lookForAdjacent(TabIn,Col,Row,ID,Adjs),
+  checkAdjs(Adjs,Player,AdjcentTo,[],Result),
+  isTri(ID,Tri),
+  getOposPlayer(Player,Opos),
+  ((Result == 0, InPlay2 = InPlay, fillPiece(TabIn,Row,Col,Tri,0,TabOut), PieceState = 0);
+  (Result == 1, fillPiece(TabIn,Row,Col,Tri,Opos,AuxTab), select(Adj,InPlay,InPlayO), processAdjs(AuxTab,Player,AdjcentTo,InPlayO,InPlay2,TabOut,PieceState));
+  (Result == 2, PieceState = 1, TabOut = TabIn)).
 
+
+%processAdjs(+TabIn,+Player,+Adjs,+Inplay,-InPlay2,-TabOut,-PieceState)
+%Process adjacents of a piece sequentially, and if one of them is free then the main piece
+%is free. Otherwise, if the processing reaches its end, it means the block is trapped
+processAdjs(TabOut,_,[],_,_,TabOut,1).
+
+processAdjs(TabIn,Player,[Adj|Rest],InPlay,InPlay2,TabOut,PieceState):-
+  verifyAdjPieceState(TabIn,Player,Adj,InPlay,InplayO,AuxTab,PieceResult),
+  ((PieceResult == 0, PieceState = 0, TabOut = AuxTab);
+  processAdjs(AuxTab,Player,Rest,InplayO,InPlay2,TabOut,PieceState)).
+  
 %checkAdjs(+Adjs,+Player,-AdjacentTo,?Temp,-Result)
-%To check adjacents, we check if piece is empty or belongs to the player,
+%To check adjacents, we check if piece is empty or belongs to the player (and/or rectangle),
 %Save adjacent pieces of the same player in a list and determine the result in the end
-checkAdjs(List,Adjs,Temp,Temp,Result):-
-  List == [],(Adjs == [], Result is 2; Result is 1).
+%Result: 0 - Piece is safe 1 - Piece has adjacents of the same player 2 - Piece is surrounded
+checkAdjs(List,_,Temp,Temp,Result):-
+  List == [],(Temp == [], Result = 2; Result = 1).
 
 checkAdjs([Piece|Rest],Player, AdjcentTo,Temp,Result):-
-  Piece = [_,[Fill,_]],
-  (Fill is 0 -> Result is 0;
-  (Fill is Player -> append(Temp,[Piece],TempN),
-  checkAdjs(Rest,Player,AdjcentTo,TempN,Result))).
+  Piece = [_,[Fill,Type]],
+  (((Fill == 0; (Fill == Player, (Type == 1; Type == 2))), Result = 0);
+  (Fill == Player, append(Temp,[Piece],TempN), checkAdjs(Rest,Player,AdjcentTo,TempN,Result));
+  checkAdjs(Rest,Player,AdjcentTo,Temp,Result)).
 
 %verifyPieceState(+TabIn,+Player,+InPlay,-InPlay2,-TabOut,-PieceState)
 %To verify a piece state, get adjacents, check them, and analyze adjacent pieces of the same player
@@ -419,16 +434,14 @@ checkAdjs([Piece|Rest],Player, AdjcentTo,Temp,Result):-
 %PieceState: 0 - Piece is safe 1 - Piece or block is surrounded
 verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
   Piece = [[Row,Col],[Fill,ID]],
-  ((\+(Fill is Player), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
-  lookForAdjacent(TabIn,Piece,Adjs),
+  ((\+(Fill == Player), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
+  (lookForAdjacent(TabIn,Col,Row,ID,Adjs),
   checkAdjs(Adjs,Player,AdjcentTo,[],Result),
   isTri(ID,Tri),
   getOposPlayer(Player,Opos),
-  switch(Result, [
-    0: (InPlay2 = Rest, fillPiece(TabIn,Row,Col,Tri,0,TabOut), PieceState = 0),
-    1: (fillPiece(TabIn,Row,Col,Tri,Opos,AuxTab), processAdjs(AuxTab,Player,Rest,AdjcentTo,InPlay2,TabOut,PieceState)),
-    2: PieceState = 1
-  ])).  
+  ((Result == 0, InPlay2 = Rest, fillPiece(TabIn,Row,Col,Tri,0,TabOut), PieceState = 0);
+  (Result == 1, fillPiece(TabIn,Row,Col,Tri,Opos,AuxTab), processAdjs(AuxTab,Player,AdjcentTo,Rest,InPlay2,TabOut,PieceState));
+  (Result == 2, PieceState = 1,TabOut = TabIn)))).  
 
 %verifyPlayerState(+TabIn,+Player,+InPlay,-StateOut)
 %To verify the player's state, verify all pieces in play in order to check 
@@ -436,8 +449,9 @@ verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
 %StateOut: 0 - Player continues; 1 - Player loses
 verifyPlayerState(_,_,[],0).
 verifyPlayerState(TabIn,Player,InPlay,StateOut) :-
-  verifyPieceState(TabIn,Player, InPlay, [], InPlay2, AuxTab, PieceState),
-  (PieceState is 0 -> verifyPlayerState(AuxTab,Player,InPlay2,StateOut); StateOut is 1).
+  verifyPieceState(TabIn,Player, InPlay, InPlay2, AuxTab, PieceState),
+  ((PieceState == 0, verifyPlayerState(AuxTab,Player,InPlay2,StateOut));
+  (PieceState == 1, display_game(TabIn,1), StateOut = 1)).
 
 %verifyGameState(+TabIn,+InPlay,-StateOut)
 %To verify game state, verify if player 1 and player 2 has some piece/pieces surrounded
@@ -445,5 +459,77 @@ verifyPlayerState(TabIn,Player,InPlay,StateOut) :-
 verifyGameState(TabIn,InPlay,StateOut) :-
   verifyPlayerState(TabIn,1,InPlay,P1State), 
   verifyPlayerState(TabIn,2,InPlay,P2State), 
-  (P1State is 0 -> (P2State is 0 -> StateOut is 0; StateOut is 1 );
-  (P1State is 1 -> (P2State is 0 -> StateOut is 2; StateOut is 3))).
+  ((P1State == 0, P2State == 0, StateOut = 0);
+  (P1State == 0, P2State == 1, StateOut = 1);
+  (P1State == 1, P2State == 0, StateOut = 2);
+  (P1State == 1, P2State == 1, StateOut = 3)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TESTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fillOne(X) :-
+    buildBlankList(L),
+    display_game(L,2),
+    fillPieceTriDwn(L,3,2,1,L2),
+    getPieceFill(L2,3,3,0,X),
+    display_game(L2,1).
+
+lookAdjsTest(Adjs,Row,Col,ID) :-
+  buildIntList(L),
+  display_game(L,1),
+  lookForAdjacent(L,Col,Row,ID,Adjs).
+
+processAdjsTest(InPlay2,PieceState) :-
+  buildFinalList(L),
+  display_game(L,1),
+  AdjsTo = [[[5,7],[2,0]]],
+  InPlay = [[[3,6],[2,4]],
+            [[4,5],[2,6]],[[4,5],[1,5]],[[4,6],[1,0]],[[4,7],[1,6]],[[4,8],[1,0]],
+            [[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],[[5,8],[1,4]],
+            [[6,5],[2,5]],[[6,6],[1,0]],[[6,7],[1,5]],[[6,7],[2,6]],[[6,8],[1,0]],
+            [[7,8],[2,3]]],
+  processAdjs(L,2,AdjsTo, InPlay,InPlay2,TabOut,PieceState),
+  display_game(TabOut,1).
+
+%PState is expected to return 1, losing
+verifyPlayerTest(PState) :-
+  buildFinalList(L),
+  display_game(L,2),
+  InPlay = [[[3,6],[2,4]],
+            [[4,5],[2,6]],[[4,5],[1,5]],[[4,6],[1,0]],[[4,7],[1,6]],[[4,8],[1,0]],
+            [[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],[[5,8],[1,4]],
+            [[6,5],[2,5]],[[6,6],[1,0]],[[6,7],[1,5]],[[6,7],[2,6]],[[6,8],[1,0]],
+            [[7,8],[2,3]]],
+  verifyPlayerState(L,2,InPlay,PState).
+
+%Both P1State and P2State must return 1, both losing (tie)
+verifyTieTest2(P1State,P2State) :-
+  buildTieList(L),
+  display_game(L,2),
+  InPlay = [[[4,5],[1,6]],[[4,5],[1,5]],[[4,6],[2,0]],[[4,7],[2,6]],[[4,7],[2,5]],
+            [[5,4],[1,4]],[[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],
+            [[6,4],[1,0]],[[6,5],[1,6]],[[6,5],[1,5]],[[6,6],[2,0]],[[6,7],[2,5]],[[6,7],[2,6]],
+            [[7,6],[1,3]]],
+  verifyPlayerState(L,2,InPlay,P2State),verifyPlayerState(L,1,InPlay,P1State).
+
+%State expected is 3 - Tie game
+verifyGameTestTie(StateOut) :-
+  buildTieList(L),
+  display_game(L,2),
+  InPlay = [[[4,5],[1,6]],[[4,5],[1,5]],[[4,6],[2,0]],[[4,7],[2,6]],[[4,7],[2,5]],
+          [[5,4],[1,4]],[[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],
+          [[6,4],[1,0]],[[6,5],[1,6]],[[6,5],[1,5]],[[6,6],[2,0]],[[6,7],[2,5]],[[6,7],[2,6]],
+          [[7,6],[1,3]]],
+  verifyGameState(L,InPlay,StateOut).
+
+%State expected is 1 - Player 1 wins
+verifyGameTestEnd(StateOut) :-
+  buildFinalList(L),
+  display_game(L,2),
+  InPlay = [[[3,6],[2,4]],
+            [[4,5],[2,6]],[[4,5],[1,5]],[[4,6],[1,0]],[[4,7],[1,6]],[[4,8],[1,0]],
+            [[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],[[5,8],[1,4]],
+            [[6,5],[2,5]],[[6,6],[1,0]],[[6,7],[1,5]],[[6,7],[2,6]],[[6,8],[1,0]],
+            [[7,8],[2,3]]],
+  verifyGameState(L,InPlay,StateOut). 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
