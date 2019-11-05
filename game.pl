@@ -229,10 +229,7 @@ adjacentSquare(Board,X,Y,Adjacents):-
 %Adds to a list adjacent pieces of the ones already played on board
 possiblePlaysAux(Board,[],PossiblePlaysOut,PossiblePlaysOut).
 possiblePlaysAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
-  [Coord|[Info|_]] = Piece,
-  [X|[Y|_]] = Coord,
-  [_|[Id|_]]= Info,
-  lookForAdjacent(Board,X,Y,Id, Adjacents),
+  lookForAdjacent(Board,Piece, Adjacents),
   append(Adjacents,PossiblePlaysIn,T),
   possiblePlaysAux(Board,Rest,T,PossiblePlaysOut).
 
@@ -287,8 +284,8 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     %game_state().
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut).                %player1
-    %play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
+    play(1,Board,Aux,Aux2,BoardOut),                %player1
+    play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
     %playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
@@ -473,8 +470,7 @@ fillPiece(TabIn,RowN,ColN,Tri,Fill,TabOut) :-
 %Very similar to verifyPieceState/6, except that recieves a piece to check externally
 %to the pieces in play and then removes it from the list
 verifyAdjPieceState(TabIn,Player,Adj,InPlay,InPlay2,TabOut,PieceState) :-
-  Adj = [[Row,Col],[_,ID]],
-  lookForAdjacent(TabIn,Col,Row,ID,Adjs),
+  lookForAdjacent(TabIn,Adj,Adjs),
   checkAdjs(Adjs,Player,AdjcentTo,[],Result),
   isTri(ID,Tri),
   getOposPlayer(Player,Opos),
