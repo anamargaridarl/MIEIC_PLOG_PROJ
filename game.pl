@@ -96,9 +96,10 @@ getPiece(X,Y,Board,Piece):-
 getShapeAddCoord(Board,Row,Col,Tri,Piece) :-
   switch(Tri,[
     -1:getPiece(Row,Col,Board,PieceAux),
-    0:getTriangleUp(Row,Col,Board,PieceAux),
-    1:getTriangleDown(Row,Col,Board,PieceAux)
+    0:getTriangleUp(Col,Row,Board,PieceAux),
+    1:getTriangleDown(Col,Row,Board,PieceAux)
   ]),
+  print('anananananan'),print(PieceAux),
   append([[Row,Col]],[PieceAux],Piece).
 
 %adjacents to triangle5
@@ -241,18 +242,20 @@ removePiecesOnBoard([Piece|Rest],List,List2):-
   removePiecesOnBoard(Rest,T,List2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% validPlay(X,Y,T,PossiblePlays):-
-%   member([ [X,Y],[0,]       ])
+list_empty([]).
 
+validPlay(Piece,PossiblePlays):-
+trace,
+  list_empty(PossiblePlays);
+  member(Piece,PossiblePlays).
 
 
 %calculate next possible plays based on already played pieces(aux)
 possiblePlays(Board,Aux,NoAux):-
-  not_inst(Aux);                                             %case aux is not instanced
-  (possiblePlaysAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
+  possiblePlaysAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
   %remove_dups(PossiblePlaysOut,NoDups),
-  removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux)),          %removes from list of adjacents the pieces that were already played
-  print('Possible Plays: '),print(NoAux).                    % shows to player possible plays
+  removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux),          %removes from list of adjacents the pieces that were already played
+  print('Possible Plays: '),print(NoAux),nl.                    % shows to player possible plays
 
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
@@ -276,15 +279,17 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
 play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
-    getPlayInfo(Col,Row,T), 
+    getPlayInfo(Col,Row,T),
     getShapeAddCoord(Board,Row,Col,T,Piece),
+    !,
+    validPlay(Piece,NoAux),
     lookForAdjacent(Board,Piece,Adjacents),
     fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut).
     %game_state().
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut),                %player1
+    play(1,Board,Aux,Aux2,BoardOut),!,               %player1
     play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
     %playsLoop(BoardOut2,AuxF).                      
 
