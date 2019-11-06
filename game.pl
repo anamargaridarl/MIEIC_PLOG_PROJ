@@ -514,7 +514,7 @@ checkAdjs([Piece|Rest],Player, AdjcentTo,Temp,Result):-
 verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
   Piece = [[Row,Col],[Fill,ID]],
   ((\+(Fill == Player), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
-  (lookForAdjacent(TabIn,Col,Row,ID,Adjs),
+  (lookForAdjacent(TabIn,Piece,Adjs),
   checkAdjs(Adjs,Player,AdjcentTo,[],Result),
   isTri(ID,Tri),
   getOposPlayer(Player,Opos),
@@ -554,7 +554,7 @@ fillPieceTest() :-
 lookAdjsTest(Adjs,Row,Col,ID) :-
   buildIntList(L),
   display_game(L,1),
-  lookForAdjacent(L,Col,Row,ID,Adjs).
+  lookForAdjacent(L,[[Row,Col],[_,ID]],Adjs).
 
 processAdjsTest(InPlay2,PieceState) :-
   buildFinalList(L),
