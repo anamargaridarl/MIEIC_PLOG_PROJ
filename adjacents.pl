@@ -74,8 +74,8 @@ adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
 adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xmore,Y,Board,Piece1),
   getTriangleUp(Xless,Y,Board,Piece2),
-  getTriangleUp(X,Ymore,Board,Piece4),
-  getPiece(X,Yless,Board,Piece3),
+  getTriangleUp(X,Ymore,Board,Piece3),
+  getPiece(X,Yless,Board,Piece4),
   append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in case of right bottom unit in board (not counting rectangles)
@@ -125,6 +125,7 @@ adjacentSquare(Board,X,Y,Adjacents):-
   Xmore is X +1,
   Yless is Y-1,
   Mod is X mod 2,
+
   ((X == 2, Y==2,
     adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
   (X== 2,

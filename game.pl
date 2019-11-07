@@ -48,7 +48,6 @@ addAuxOther(X,Y,Board,AuxIn,AuxOut):-
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
-  print('banans'),
   getTriangleUp(X,Y,Board,Piece),          
   append([[[Y,X],Piece]], AuxIn, AuxOut).
 
@@ -79,9 +78,9 @@ removePiecesOnBoard([Piece|Rest],List,List2):-
 % State: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
 resultGame(State):-
   (State == 0,print('nada'));
-  \+ (State == 1, print('PLAYER 1 WINS!!!!'));
-  \+ (State == 2, print('PLAYER 2 WINS!!!!'));
-  \+ (State == 3, print('TIE')).
+  \+ (State == 1, winMessage(State));
+  \+ (State == 2, winMessage(State));
+  \+ (State == 3, tieMessage()).
 
 
 
