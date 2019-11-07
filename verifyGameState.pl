@@ -4,6 +4,7 @@
 %Very similar to verifyPieceState/6, except that recieves a piece to check externally
 %to the pieces in play and then removes it from the list
 verifyAdjPieceState(TabIn,Player,Adj,InPlay,InPlay2,TabOut,PieceState) :-
+  Adj = [[Row,Col],[_,ID]],
   lookForAdjacent(TabIn,Adj,Adjs),
   checkAdjs(Adjs,Player,AdjcentTo,[],Result),
   isTri(ID,Tri),

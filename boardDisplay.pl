@@ -16,17 +16,23 @@ color(white,0).
 color(green,2).
 
 isTriangle(AuxT,T):-
-    AuxT == '\n', T is -1;
     AuxT == 'U', T is 0;
     AuxT == 'D', T is 1.
 
 getPlayInfo(X,Y,T):-
-    writef("Write coordinates: (xyT)"),nl,
-    get_char(AuxX),get_char(AuxY),get_char(AuxT),
-    isTriangle(AuxT,T),
-    char_code(AuxX,AuxX2), 
+    (writef("Write coordinates: (xyT)"),nl,
+    read_line_to_codes(user_input,Codes),
+    string_codes(String,Codes), 
+    atom_chars(String,ListChar),
+    length(ListChar,Length),
+    nth0(0,ListChar,AuxX),
+    nth0(1,ListChar,AuxY)),
+    (Length ==2;
+    (nth0(2,ListChar,AuxT),
+    isTriangle(AuxT,T))),
+    (char_code(AuxX,AuxX2), 
     atom_number(AuxY,Y),
-    X is AuxX2-64.
+    X is AuxX2-64).
 
 playerTurn(Player) :-
     color(C,Player),

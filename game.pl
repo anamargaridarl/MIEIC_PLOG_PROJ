@@ -48,6 +48,7 @@ addAuxOther(X,Y,Board,AuxIn,AuxOut):-
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
+  print('banans'),
   getTriangleUp(X,Y,Board,Piece),          
   append([[[Y,X],Piece]], AuxIn, AuxOut).
 
@@ -77,7 +78,7 @@ removePiecesOnBoard([Piece|Rest],List,List2):-
 
 % State: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
 resultGame(State):-
-  State == 0;
+  (State == 0,print('nada'));
   \+ (State == 1, print('PLAYER 1 WINS!!!!'));
   \+ (State == 2, print('PLAYER 2 WINS!!!!'));
   \+ (State == 3, print('TIE')).
@@ -101,14 +102,14 @@ possiblePlays(Board,Aux,NoAux):-
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     switch(T,[
     -1:addAuxOther(X,Y,Board,AuxIn,AuxOut),
-    0:addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut),
-    1:addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut)
+    0:addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut),
+    1:addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut)
   ]).
 
 %need to calculate for rectangles too
 lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     (Info = [_|[Id|_]],
-    Coord = [X|[Y|_]]),
+    Coord = [Y|[X|_]]),
     ((Id == 3, adjacentUp3(Board,X,Y,Adjacents));
     (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
     (Id == 5, adjacentUp5(Board,X,Y,Adjacents));
@@ -119,21 +120,21 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
 play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
-    getPlayInfo2(Col,Row,T),
+    getPlayInfo(Col,Row,T),
     getShapeAddCoord(Board,Row,Col,T,Piece),
     !,
     validPlay(Piece,NoAux),
     lookForAdjacent(Board,Piece,Adjacents),
-    fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
+    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     verifyGameState(BoardOut,AuxOut,StateOut),
     resultGame(StateOut).
 
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut),!,               %player1
-    play(2,BoardOut,Aux2,AuxF,BoardOut2).
-    %playsLoop(BoardOut2,AuxF).                      
+    play(1,Board,Aux,Aux2,BoardOut),!,     %player1
+    play(2,BoardOut,Aux2,AuxF,BoardOut2),!,
+    playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
     buildBlankList(L),!,                              %build board

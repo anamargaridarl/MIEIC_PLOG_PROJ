@@ -29,8 +29,8 @@ adjacentUp5(Board,X,Y,Adjacents):-
 
 %adjacents to triangle3
 adjacentUp3(Board,X,Y,Adjacents):-
-  Xless is X -1,
-  Yless is Y -1,
+  Xless is X-1,
+  Yless is Y-1,
   getPiece(Xless,Y,Board,Piece1),  
   getTriangleDown(X,Y,Board,Piece2),
   getPiece(X,Yless,Board,Piece3),
