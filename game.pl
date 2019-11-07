@@ -60,7 +60,7 @@ addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
 %____________________ Possible plays - help functions ________________________________%
 
 %Adds to a list adjacent pieces of the ones already played on board
-possiblePlaysAux(Board,[],PossiblePlaysOut,PossiblePlaysOut).
+possiblePlaysAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
 possiblePlaysAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
   lookForAdjacent(Board,Piece, Adjacents),
   append(Adjacents,PossiblePlaysIn,T),
@@ -75,13 +75,20 @@ removePiecesOnBoard([Piece|Rest],List,List2):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% State: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
+resultGame(State):-
+  State == 0;
+  \+ (State == 1, print('PLAYER 1 WINS!!!!'));
+  \+ (State == 2, print('PLAYER 2 WINS!!!!'));
+  \+ (State == 3, print('TIE')).
+
+
+
 
 %validate play
 validPlay(Piece,PossiblePlays):-
-trace,
   list_empty(PossiblePlays);
   member(Piece,PossiblePlays).
-
 
 %calculate next possible plays based on already played pieces(aux)
 possiblePlays(Board,Aux,NoAux):-
@@ -112,21 +119,23 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
 play(Player, Board, AuxIn, AuxOut,BoardOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
-    getPlayInfo(Col,Row,T),
+    getPlayInfo2(Col,Row,T),
     getShapeAddCoord(Board,Row,Col,T,Piece),
     !,
     validPlay(Piece,NoAux),
     lookForAdjacent(Board,Piece,Adjacents),
     fillPiece(Board,Row,Col,T,Player,BoardOut),         %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut).
-    %verifyGameState(BoardOut,AuxOut,StateOut).
+    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+    verifyGameState(BoardOut,AuxOut,StateOut),
+    resultGame(StateOut).
+
 
 playsLoop(Board,Aux):-
     play(1,Board,Aux,Aux2,BoardOut),!,               %player1
-    play(2,BoardOut,Aux2,AuxF,BoardOut2).           %player2
+    play(2,BoardOut,Aux2,AuxF,BoardOut2).
     %playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
-    buildBlankList(L),                              %build board
+    buildBlankList(L),!,                              %build board
     playsLoop(L,[]).                                
 
