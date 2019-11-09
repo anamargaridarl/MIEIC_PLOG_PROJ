@@ -49,7 +49,7 @@ getPiece(Col,Row,Board,Piece):-
   nth1(Col,RowAux,Piece,_).
 
 getShapeRecSq(Row,Col,Board,PieceAux,T):-
-      getPiece(Row,Col,Board,PieceAux),
+      getPiece(Col,Row,Board,PieceAux),
       PieceAux = [Color|[Id|_]],
       isTri(Id,T).
 
@@ -147,7 +147,6 @@ play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     getPlayInfo(Col,Row,T), 
     getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
     validPlay(Piece,NoAux),
-    lookForAdjacent(Board,Piece,Adjacents),
     fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     verifyGameState(BoardOut,AuxOut,StateOut),
