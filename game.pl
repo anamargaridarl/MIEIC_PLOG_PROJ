@@ -113,7 +113,9 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
     (Id == 5, adjacentUp5(Board,X,Y,Adjacents));
     (Id == 6, adjacentDown6(Board,X,Y,Adjacents));
-    (Id == 0,adjacentSquare(Board,X,Y,Adjacents))).
+    (Id == 0,adjacentSquare(Board,X,Y,Adjacents));
+    ((Id == 1; Id == 2),adjacentRectangle(Board,X,Y,Adjacents) )
+    ).
   
 
 play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-  

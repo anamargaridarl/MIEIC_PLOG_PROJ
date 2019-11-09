@@ -1,13 +1,13 @@
 %____________________ Adjacent Pieces - help functions ________________________________%
 
-%get piece full info
-getFullPiece(X,Y,Board,[[Y,X],Info]) :-
-  getPiece(X,Y,Board,Info).
+% %get piece full info
+getFullPiece(Col,Row,Board,[[Y,X],Info]) :-
+  getPiece(Col,Row,Board,Info).
 
 %get piece from board based on X and Y position
-getPiece(X,Y,Board,Piece):-
-  nth1(Y,Board,Row,_),
-  nth1(X,Row,Piece,_).
+getPiece(Col,Row,Board,Piece):-
+  nth1(Row,Board,RowAux,_),
+  nth1(Col,RowAux,Piece,_).
 
 %get shape 
 getShapeAddCoord(Board,Row,Col,Tri,Piece) :-
@@ -141,3 +141,99 @@ adjacentSquare(Board,X,Y,Adjacents):-
   (Mod == 0,
     adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
   adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless)).
+
+
+adjRect1(Board,Adjacents):-
+    X is 2,
+    getPiece(X,1,Board,Piece1),
+    getPiece(X,2,Board,Piece2),
+    getTriangleUp(X,3,Board,Piece3),
+    getPiece(X,4,Board,Piece4),
+    getTriangleUp(X,5,Board,Piece5),
+    append([  [[1,X],Piece1],  [[2,X],Piece2], [ [3,X], Piece3], [[4,X],Piece4],[[4,X],Piece5]],[],Adjacents).
+
+adjRect2(Board,Adjacents):-
+    Y is 2,
+    getPiece(2,Y,Board,Piece1),
+    getTriangleUp(3,Y,Board,Piece2),
+    getPiece(4,Y,Board,Piece3),
+    getTriangleUp(5,Y,Board,Piece4),
+    getPiece(1,1,Board,Piece5),
+    append([  [[Y,2],Piece1],  [[Y,3],Piece2], [ [Y,4], Piece3], [[Y,5],Piece4],[[1,1],Piece5]],[],Adjacents).
+
+
+adjRect3(Board,Adjacents):-
+    Y is 2,
+    getPiece(6,Y,Board,Piece1),
+    getTriangleUp(7,Y,Board,Piece2),
+    getPiece(8,Y,Board,Piece3),
+    getTriangleUp(9,Y,Board,Piece4),
+    getPiece(10,Y,Board,Piece5),
+    append([  [[Y,6],Piece1],  [[Y,7],Piece2], [ [Y,8], Piece3], [[Y,9],Piece4],[[Y,10],Piece5]],[],Adjacents).
+
+adjRect4(Board,Adjacents):-
+    X is 9,
+    getTriangleUp(X,2,Board,Piece1),
+    getPiece(X,3,Board,Piece2),
+    getTriangleUp(X,4,Board,Piece3),
+    getPiece(X,5,Board,Piece4),
+    getPiece(10,1,Board,Piece5),
+    append([  [[2,X],Piece1],  [[3,X],Piece2], [ [4,X], Piece3], [[5,X],Piece4],[[1,10],Piece5]],[],Adjacents).
+
+adjRect5(Board,Adjacents):-
+    X is 9,
+    getTriangleUp(X,6,Board,Piece1),
+    getPiece(X,7,Board,Piece2),
+    getTriangleUp(X,8,Board,Piece3),
+    getPiece(X,9,Board,Piece4),
+    getPiece(X,10,Board,Piece5),
+    append([  [[6,X],Piece1],  [[7,X],Piece2], [ [8,X], Piece3], [[9,X],Piece4],[[10,X],Piece5]],[],Adjacents).
+
+adjRect6(Board,Adjacents):-
+    Y is 9,
+    getTriangleDown(6,Y,Board,Piece1),
+    getPiece(7,Y,Board,Piece2),
+    getTriangleDown(8,Y,Board,Piece3),
+    getPiece(9,Y,Board,Piece4),
+    getPiece(10,10,Board,Piece5),
+    append([  [[Y,6],Piece1],  [[Y,7],Piece2], [ [Y,8], Piece3], [[Y,9],Piece4],[[10,10],Piece5]],[],Adjacents).
+
+adjRect7(Board,Adjacents):-
+    Y is 9,
+    getTriangleDown(2,Y,Board,Piece1),
+    getPiece(3,Y,Board,Piece2),
+    getTriangleUp(4,Y,Board,Piece3),
+    getPiece(5,Y,Board,Piece4),
+    getPiece(1,Y,Board,Piece5),
+    append([  [[Y,2],Piece1],  [[Y,3],Piece2], [ [Y,4], Piece3], [[Y,5],Piece4],[[Y,1],Piece5]],[],Adjacents).
+
+
+adjRect8(Board,Adjacents):-
+    X is 2,
+    getPiece(X,6,Board,Piece1),
+    getTriangleUp(X,7,Board,Piece2),
+    getPiece(X,8,Board,Piece3),
+    getTriangleUp(X,9,Board,Piece4),
+    getPiece(1,10,Board,Piece5),
+    append([  [[6,X],Piece1],  [[7,X],Piece2], [ [8,X], Piece3], [[9,X],Piece4],[[10,1],Piece5]],[],Adjacents).
+
+%adjacents of rectangles 
+adjacentRectangle(Board,X,Y,Adjacents):-
+
+  ((X == 1, Y < 6,
+    adjRect1(Board,Adjacents));
+  (X== 1, Y >= 6, Y < 10,
+    adjRect8(Board,Adjacents));
+  (Y == 1, X < 6,
+    adjRect2(Board,Adjacents));
+  (Y == 1, X >= 6,
+    adjRect3(Board,Adjacents));
+  (X == 10, Y < 6,
+    adjRect4(Board,Adjacents));
+  (X == 10, Y >= 6,
+    adjRect5(Board,Adjacents));
+  (Y == 10, X < 6,
+    adjRect7(Board,Adjacents));
+  (Y == 10, X >= 6,
+    adjRect7(Board,Adjacents))    
+    ).
