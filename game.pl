@@ -1,11 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INCLUDE FILES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- consult('boardDisplay.pl').
-:- consult('tests.pl').
 :- consult('boards.pl').
 :- consult('verifyGameState.pl').
 :- consult('filling.pl').
 :- consult('adjacents.pl').
-
+:- consult('computer.pl').
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 list_empty([]).
@@ -141,4 +140,3 @@ playsLoop(Board,Aux):-
 gameStart():-
     buildBlankList(L),!, 
     playsLoop(L,[]).                                
-

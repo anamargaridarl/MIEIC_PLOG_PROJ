@@ -115,4 +115,3 @@ fillPiece(TabIn,RowN,ColN,Tri,Fill,TabOut) :-
     0:fillPieceTriUp(TabIn,RowN,ColN,Fill,TabOut),
     1:fillPieceTriDwn(TabIn,RowN,ColN,Fill,TabOut)
   ]).
-
