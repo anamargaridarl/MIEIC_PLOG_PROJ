@@ -23,6 +23,8 @@ getTriangleDown(X,Y,Board,Piece):-
   nth1(X,Row,PieceAux,_),
   PieceAux = [_|[Piece|_]].
 
+isT(Id):- Id == 3;Id ==4; Id ==6; Id ==6.
+
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;
   (ID == 1; ID == 2), Tri = -2;
@@ -107,7 +109,10 @@ resultGame(State):-
 
 %validate play
 validPlay(Piece,PossiblePlays):-
-  list_empty(PossiblePlays);
+  (list_empty(PossiblePlays),
+   Piece = [_|[Info|_]],
+   Info = [_ |[Id |_]],
+   isT(Id));
   member(Piece,PossiblePlays).
 
 %calculate next possible plays based on already played pieces(aux)
@@ -138,11 +143,10 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     ).
   
 play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
-    display_game(Board,Player),                     %display board
+    display_game(Board,Player),!,                   %display board
     possiblePlays(Board,AuxIn,NoAux),repeat,
     getPlayInfo(Col,Row,T), 
     getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
-    !,
     validPlay(Piece,NoAux),
     lookForAdjacent(Board,Piece,Adjacents),
     fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
