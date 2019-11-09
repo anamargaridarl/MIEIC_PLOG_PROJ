@@ -38,6 +38,29 @@ not_inst(Var):-
   \+(\+(Var=0)),
   \+(\+(Var=1)).
 
+  % %get piece full info
+getFullPiece(Col,Row,Board,[[Y,X],Info]) :-
+  getPiece(Col,Row,Board,Info).
+
+%get piece from board based on X and Y position
+getPiece(Col,Row,Board,Piece):-
+  nth1(Row,Board,RowAux,_),
+  nth1(Col,RowAux,Piece,_).
+
+getShapeRecSq(Row,Col,Board,PieceAux,T):-
+      getPiece(Row,Col,Board,PieceAux),
+      PieceAux = [Color|[Id|_]],
+      isTri(Id,T).
+
+%get shape 
+getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
+  switch(Tri,[
+    -1:getShapeRecSq(Row,Col,Board,PieceAux,Tout),
+    0: (getTriangleUp(Col,Row,Board,PieceAux), Tout is Tri),
+    1: (getTriangleDown(Col,Row,Board,PieceAux),  Tout is Tri)
+  ]),
+  append([[Row,Col]],[PieceAux],Piece).
+
 %___________________Auxiliar structure Aux - help functions _______________________%
 
 %add other pieces to auxiliar structure
@@ -82,9 +105,6 @@ resultGame(State):-
   \+ (State == 2, winMessage(State));
   \+ (State == 3, tieMessage()).
 
-
-
-
 %validate play
 validPlay(Piece,PossiblePlays):-
   list_empty(PossiblePlays);
@@ -118,15 +138,16 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     ).
   
 
-play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-  
+
+play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     display_game(Board,Player),                     %display board
-    possiblePlays(Board,AuxIn,NoAux),
-    getPlayInfo(Col,Row,T),
-    getShapeAddCoord(Board,Row,Col,T,Piece),
+    possiblePlays(Board,AuxIn,NoAux),repeat,
+    getPlayInfo(Col,Row,T), 
+    getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
     !,
     validPlay(Piece,NoAux),
     lookForAdjacent(Board,Piece,Adjacents),
-    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+    fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     verifyGameState(BoardOut,AuxOut,StateOut),
     resultGame(StateOut).

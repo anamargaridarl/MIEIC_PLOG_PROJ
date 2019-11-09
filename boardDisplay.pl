@@ -21,17 +21,33 @@ isTriangle(AuxT,T):-
     % -1 --> quadrado
     % -2 --> rectangulo
 
+errorDetect1(Codes):-
+    length(Codes,Length),
+    Length >1 , Length < 4,
+    nth0(0,Codes,First),First < 75, First > 64,
+    nth0(1,Codes,Second),Second > 48 , Second < 58.
+
+errorDetect2(ListChar,Length):-
+    length(ListChar,Length),
+    Length == 3,
+    nth0(2,ListChar,AuxT),
+    (AuxT == 'U' ;  AuxT == 'D'; 
+    (AuxT == '0', nth0(1,ListChar,AuxY), AuxY == '1')).
+
+
 getPlayInfo(X,Y,T):-
     (writef("Write coordinates: (xyT)"),nl,
     read_line_to_codes(user_input,Codes),
+    errorDetect1(Codes),!,
     string_codes(String,Codes), 
     atom_chars(String,ListChar),
-    length(ListChar,Length),
+    errorDetect2(ListChar,Length),!,
     nth0(0,ListChar,AuxX),
     nth0(1,ListChar,AuxY)),
-    (Length ==2;
-    (nth0(2,ListChar,AuxT),
-    isTriangle(AuxT,T))),
+    ((Length ==2, T is -1);
+     ((Length == 3 , nth0(2,ListChar,AuxT)),
+        ((AuxT == '0', T is -1) ;
+        ( isTriangle(AuxT,T) )))),
     (char_code(AuxX,AuxX2), 
     atom_number(AuxY,Y),
     X is AuxX2-64).

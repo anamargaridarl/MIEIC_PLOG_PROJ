@@ -1,23 +1,5 @@
 %____________________ Adjacent Pieces - help functions ________________________________%
 
-% %get piece full info
-getFullPiece(Col,Row,Board,[[Y,X],Info]) :-
-  getPiece(Col,Row,Board,Info).
-
-%get piece from board based on X and Y position
-getPiece(Col,Row,Board,Piece):-
-  nth1(Row,Board,RowAux,_),
-  nth1(Col,RowAux,Piece,_).
-
-%get shape 
-getShapeAddCoord(Board,Row,Col,Tri,Piece) :-
-  switch(Tri,[
-    -1:getPiece(Row,Col,Board,PieceAux),
-    0:getTriangleUp(Col,Row,Board,PieceAux),
-    1:getTriangleDown(Col,Row,Board,PieceAux)
-  ]),
-  append([[Row,Col]],[PieceAux],Piece).
-
 %adjacents to triangle5
 adjacentUp5(Board,X,Y,Adjacents):-
   Xmore is X +1,
