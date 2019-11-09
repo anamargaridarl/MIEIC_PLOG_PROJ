@@ -18,6 +18,8 @@ color(green,2).
 isTriangle(AuxT,T):-
     AuxT == 'U', T is 0;
     AuxT == 'D', T is 1.
+    % -1 --> quadrado
+    % -2 --> rectangulo
 
 getPlayInfo(X,Y,T):-
     (writef("Write coordinates: (xyT)"),nl,

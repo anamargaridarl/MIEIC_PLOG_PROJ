@@ -104,10 +104,10 @@ adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
 
 %adjacents of squares in even rows
 adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleUp(Xmore,Y,Board,Piece1),
-  getTriangleDown(Xless,Y,Board,Piece2),
-  getTriangleDown(X,Ymore,Board,Piece3),
-  getTriangleUp(X,Yless,Board,Piece4),
+  getTriangleDown(Xmore,Y,Board,Piece1),
+  getTriangleUp(Xless,Y,Board,Piece2),
+  getTriangleUp(X,Ymore,Board,Piece3),
+  getTriangleDown(X,Yless,Board,Piece4),
   append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Ymore,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in odd rows

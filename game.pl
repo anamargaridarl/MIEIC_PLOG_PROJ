@@ -116,7 +116,7 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     (Id == 0,adjacentSquare(Board,X,Y,Adjacents))).
   
 
-play(Player, Board, AuxIn, AuxOut,BoardOut):-  
+play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-  
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),
     getPlayInfo(Col,Row,T),
@@ -129,13 +129,16 @@ play(Player, Board, AuxIn, AuxOut,BoardOut):-
     verifyGameState(BoardOut,AuxOut,StateOut),
     resultGame(StateOut).
 
+state(State):- State ==0.
 
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut),!,     %player1
-    play(2,BoardOut,Aux2,AuxF,BoardOut2),!,
+    play(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+    state(StateOut),
+    play(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut),!,
+    state(StateOut),
     playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
-    buildBlankList(L),!,                              %build board
+    buildBlankList(L),!, 
     playsLoop(L,[]).                                
 
