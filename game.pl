@@ -137,8 +137,6 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     ((Id == 1; Id == 2),adjacentRectangle(Board,X,Y,Adjacents) )
     ).
   
-
-
 play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     display_game(Board,Player),                     %display board
     possiblePlays(Board,AuxIn,NoAux),repeat,
