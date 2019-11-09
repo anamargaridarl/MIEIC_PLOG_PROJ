@@ -23,7 +23,7 @@ getTriangleDown(X,Y,Board,Piece):-
   nth1(X,Row,PieceAux,_),
   PieceAux = [_|[Piece|_]].
 
-isT(Id):- Id == 3;Id ==4; Id ==6; Id ==6.
+isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
 
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;

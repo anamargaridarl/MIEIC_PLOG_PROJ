@@ -29,10 +29,10 @@ errorDetect1(Codes):-
 
 errorDetect2(ListChar,Length):-
     length(ListChar,Length),
-    ((Length == 3,
+    (Length == 3,
     nth0(2,ListChar,AuxT),
     (AuxT == 'U' ;  AuxT == 'D'; 
-    (AuxT == '0', nth0(1,ListChar,AuxY), AuxY == '1'))); 
+    (AuxT == '0', nth0(1,ListChar,AuxY), AuxY == '1')); 
     Length ==2).
 
 
