@@ -74,7 +74,7 @@ drawRowID(ID):- format('~d',ID).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD BUILDING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------
-drawHorizontalLine(0).
+drawHorizontalLine(0):- !.
 drawHorizontalLine(X):-
     X1 is X-1,put_char('-'),drawHorizontalLine(X1).
 

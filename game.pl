@@ -40,7 +40,7 @@ not_inst(Var):-
   \+(\+(Var=1)).
 
   % %get piece full info
-getFullPiece(Col,Row,Board,[[Y,X],Info]) :-
+getFullPiece(Col,Row,Board,[[_,_],Info]) :-
   getPiece(Col,Row,Board,Info).
 
 %get piece from board based on X and Y position
@@ -50,7 +50,7 @@ getPiece(Col,Row,Board,Piece):-
 
 getShapeRecSq(Row,Col,Board,PieceAux,T):-
       getPiece(Col,Row,Board,PieceAux),
-      PieceAux = [Color|[Id|_]],
+      PieceAux = [_|[Id|_]],
       isTri(Id,T).
 
 %get shape 

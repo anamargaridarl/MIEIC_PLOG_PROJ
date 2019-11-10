@@ -5,8 +5,14 @@
 fillPieceTest() :-
     buildBlankList(L),
     display_game(L,1),
-    fillPiece(L,10,9,-2,1,L2),
+    fillPiece(L,1,10,-2,1,L2),
+    printBoardByRow(L2),
     display_game(L2,2).
+
+printBoardByRow([]) :- !.
+printBoardByRow([Row|Rest]):-
+  print(Row),nl,
+  printBoardByRow(Rest).
 
 lookAdjsTest(Adjs,Row,Col,ID) :-
   buildIntList(L),
@@ -71,4 +77,16 @@ getRandomPieceTest(Row,Col,Tri) :-
   PieceList = [[[1,2],[0,4]],[[4,2],[2,2]],[[7,8],[1,6]],[[5,1],[2,1]],[[6,8],[1,3]],[[5,4],[0,2]]],
   getRandomPiece(PieceList,Row,Col,Tri).
 
+evalPieceTest(N) :- %expected N is -6/-7
+  buildFinalList(L),
+  Player is 2,
+  InPlay = [[[3,6],[2,4]],
+            [[4,5],[2,6]],[[4,5],[1,5]],[[4,6],[1,0]],[[4,7],[1,6]],[[4,8],[1,0]],
+            [[5,5],[2,0]],[[5,6],[1,3]],[[5,6],[2,4]],[[5,7],[2,0]],[[5,8],[1,4]],[[5,8],[2,3]],
+            [[6,5],[2,5]],[[6,6],[1,0]],[[6,7],[1,5]],[[6,7],[2,6]],[[6,8],[1,0]],
+            [[7,8],[2,3]]],
+  PossPiece = [[3,5],[0,0]],
+  evalPiece(L,InPlay,Player,PossPiece,N).
+
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
