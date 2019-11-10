@@ -90,7 +90,7 @@ adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(Xless,Y,Board,Piece2),
   getTriangleUp(X,Ymore,Board,Piece3),
   getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Ymore,X],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
 
 %adjacents of squares in odd rows
 adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
