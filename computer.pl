@@ -25,7 +25,7 @@ getGreedyPiece(TabIn,Played,Player,PossList,Row,Col,Tri) :-
 
 evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   makeFakeMove(TabIn,Played,Player,Row,Col,ID,Played2,TabOut),
-  validMoves(TabOut,Played2,ToPlay),
+  valid_moves(TabOut,Played2,ToPlay),
   getOposPlayer(Player,Opponent),
   getPlayerPieces(Played2,Opponent,OppPieces),
   getAllAdjacents(TabOut,OppPieces,Adjacents),
