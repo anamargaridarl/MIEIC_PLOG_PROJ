@@ -62,6 +62,7 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
   ]),
   append([[Row,Col]],[PieceAux],Piece).
 
+
 %___________________Auxiliar structure Aux - help functions _______________________%
 
 %add other pieces to auxiliar structure
@@ -84,11 +85,11 @@ addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
 %____________________ Possible plays - help functions ________________________________%
 
 %Adds to a list adjacent pieces of the ones already played on board
-possiblePlaysAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
-possiblePlaysAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
+validMovesAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
+validMovesAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
   lookForAdjacent(Board,Piece, Adjacents),
   append(Adjacents,PossiblePlaysIn,T),
-  possiblePlaysAux(Board,Rest,T,PossiblePlaysOut).
+  validMovesAux(Board,Rest,T,PossiblePlaysOut).
 
 %remove pieces from possible plays -
 %used to remove pieces that were already played
@@ -100,11 +101,11 @@ removePiecesOnBoard([Piece|Rest],List,List2):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % State: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
-resultGame(State):-
-  (State == 0,print('nada'));
-  \+ (State == 1, winMessage(State));
-  \+ (State == 2, winMessage(State));
-  \+ (State == 3, tieMessage()).
+game_over(State):-
+  (State == 0);
+  (State == 1, winMessage(State),fail);
+  (State == 2, winMessage(State),fail);
+  (State == 3, tieMessage(),fail).
 
 %validate play
 validPlay(Piece,PossiblePlays):-
@@ -115,8 +116,8 @@ validPlay(Piece,PossiblePlays):-
   member(Piece,PossiblePlays).
 
 %calculate next possible plays based on already played pieces(aux)
-possiblePlays(Board,Aux,NoAux):-
-  possiblePlaysAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
+valid_moves(Board,Aux,NoAux):-
+  validMovesAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
   %remove_dups(PossiblePlaysOut,NoDups),
   removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux),          %removes from list of adjacents the pieces that were already played
   print('Possible Plays: '),print(NoAux),nl.                    % shows to player possible plays
@@ -141,24 +142,24 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     ((Id == 1; Id == 2),adjacentRectangle(Board,X,Y,Adjacents) )
     ).
   
-play(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
+move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     display_game(Board,Player),!,                   %display board
-    possiblePlays(Board,AuxIn,NoAux),repeat,
+    valid_moves(Board,AuxIn,NoAux),repeat,
     getPlayInfo(Col,Row,T), 
     getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
     validPlay(Piece,NoAux),
     fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
-    verifyGameState(BoardOut,AuxOut,StateOut),
-    resultGame(StateOut).
+    value(BoardOut,AuxOut,StateOut).
 
 state(State):- State ==0.
 
+
 playsLoop(Board,Aux):-
-    play(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-    state(StateOut),
-    play(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut),!,
-    state(StateOut),
+    move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+    game_over(StateOut),
+    move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+    game_over(StateOut2),
     playsLoop(BoardOut2,AuxF).                      
 
 gameStart():-
