@@ -162,6 +162,6 @@ playsLoop(Board,Aux):-
     game_over(StateOut2),
     playsLoop(BoardOut2,AuxF).                      
 
-gameStart():-
+play():-
     buildBlankList(L),!, 
     playsLoop(L,[]).                                
