@@ -30,11 +30,11 @@ adjacentDown4(Board,X,Y,Adjacents):-
 %adjacent to triangle6
 adjacentDown6(Board,X,Y,Adjacents):-
   Xless is X -1,
-  Yless is Y-1,
+  Ymore is Y+1,
   getPiece(Xless,Y,Board,Piece1),
   getTriangleUp(X,Y,Board,Piece2),
-  getPiece(X,Yless,Board,Piece3),
-  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents).
+  getPiece(X,Ymore,Board,Piece3),
+  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents).
 
 %adjacents of squares in case of left top unit in board (not counting rectangles)
 adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
