@@ -62,7 +62,7 @@ verifyPlayerState(TabIn,Player,InPlay,StateOut) :-
   ((PieceState == 0, verifyPlayerState(AuxTab,Player,InPlay2,StateOut));
   (PieceState == 1, display_game(TabIn,1), StateOut = 1)).
 
-%verifyGameState(+TabIn,+InPlay,-StateOut)
+%value(+TabIn,+InPlay,-StateOut)
 %To verify game state, verify if player 1 and player 2 has some piece/pieces surrounded
 % StateOut: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
 value(TabIn,InPlay,StateOut) :-
