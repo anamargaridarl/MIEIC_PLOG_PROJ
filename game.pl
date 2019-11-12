@@ -152,16 +152,13 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     value(BoardOut,AuxOut,StateOut).
 
-state(State):- State ==0.
-
-
 playsLoop(Board,Aux):-
     move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
     game_over(StateOut),
     move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
-    game_over(StateOut2),
+    game_over(StateOut2),!,
     playsLoop(BoardOut2,AuxF).                      
 
 play():-
-    buildBlankList(L),!, 
+    buildBlankList(L),!,
     playsLoop(L,[]).                                

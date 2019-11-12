@@ -125,14 +125,60 @@ adjacentSquare(Board,X,Y,Adjacents):-
   adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless)).
 
 
+adjRectVert(_,Row,_,Id,IdB,PiecesOut,PiecesOut)  :-
+  (Row @< 1; Row @>10);
+  (Id \= IdB).
+
+adjRectVert(Board,Row,Col,Id,IdB,Pieces,PiecesOut) :-
+  RowB is Row - 1,
+  RowA is Row + 1,
+  (RowB @< 1; 
+  RowA @> 10;
+  (getPiece(Col,RowA,Board,Piece1),
+  Piece1= [Color|[IdA|_]],
+  getPiece(Col,RowB,Board,Piece2),
+  Piece2= [Color|[IdB|_]],
+  append([[[Col,RowA],Piece1],[[Col,RowB],Piece2] ],Pieces,PiecesAux),print('PiecesAux:' ),print(PiecesAux),nl)),
+  adjRectVert(Board,RowB,Col,Id,IdB,PiecesAux,PiecesOut2),
+  adjRectVert(Board,RowB,Col,Id,IdA,PiecesOut2,PiecesOut3).
+
+adjRectHorz(_,_,Col,Id,IdB,PiecesOut,PiecesOut) :-
+  (Col @< 1; Col @>10);
+  (Id \= IdB).
+
+adjRectHorz(Board,Row,Col,Id,IdB,Pieces,PiecesOut) :-
+  ColB is Col - 1,
+  ColA is Col + 1,
+  (ColB @< 1;
+  ColA @> 10;
+  (getPiece(ColA,Row,Board,Piece1),
+  Piece1= [Color|[IdA|_]],
+  getPiece(ColB,Row,Board,Piece2),
+  Piece2= [Color|[IdB|_]],
+  append(Pieces,[  [[ColA,Row],Piece1] , [[ColB,Row],Piece2]  ],PiecesAux))),
+  adjRectHorz(Board,Row,ColB,Id,IdA,PiecesAux,PiecesOut2),
+  adjRectHorz(Board,Row,ColB,Id,IdB,PiecesOut2,PiecesOut3).
+
+
+adjRect(Board,Row,Id,Col,Pieces) :-
+  ((Row == 1, Col \= 1, adjRectHorz(Board,Row,Col,Id,_,[],PiecesAux));
+  (Row == 10, Col \= 10,  adjRectHorz(Board,Row,Col,Id,_,[],PiecesAux));
+   adjRectVert(Board,Row,Col,Id,_,[],PiecesAux)),
+  append(PiecesAux,[],Pieces),
+  print('pieces: '),print(Pieces),nl.
+
+
 adjRect1(Board,Adjacents):-
     X is 2,
     getPiece(X,1,Board,Piece1),
+  //  adjRect(Board,X,1,Col,Pieces1),
     getPiece(X,2,Board,Piece2),
     getTriangleUp(X,3,Board,Piece3),
     getPiece(X,4,Board,Piece4),
     getTriangleUp(X,5,Board,Piece5),
-    append([  [[1,X],Piece1],  [[2,X],Piece2], [ [3,X], Piece3], [[4,X],Piece4],[[4,X],Piece5]],[],Adjacents).
+    getPiece(1,6,Board,Piece6),
+   // adjRect(Board,1,6,Col,Pieces2),
+    append([  [[1,X],Piece1],  [[2,X],Piece2], [ [3,X], Piece3], [[4,X],Piece4],[[4,X],Piece5],[[6,1],Piece6]],[],Adjacents).
 
 adjRect2(Board,Adjacents):-
     Y is 2,
