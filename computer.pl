@@ -16,12 +16,23 @@ getRandomPiece(PossList,Row,Col,Tri) :-
 %gives the opponent the lowest number of possible plays.
 %The idea is that the less possible plays, the more restricted the
 %opponent is, therefore being a greedy strategy.
-getGreedyPiece(TabIn,Played,Player,PossList,Row,Col,Tri) :-
-  setof(N-Piece,(validPlay(Piece,PossList),
-                evalPiece(TabIn,Played,Player,Piece,N)),[Play|_]),
-  Play = [N-[[Row,Col],[_|ID]]],
+% getGreedyPiece(TabIn,Played,Player,PossList,Row,Col,Tri) :-
+%   setof(N-Piece,(validPlay(Piece,PossList),
+%                 evalPiece(TabIn,Played,Player,Piece,N)),[Play|_]),
+%   Play = [N-[[Row,Col],[_|ID]]],
+%   isTri(ID,Tri).
+
+getGreedyPiece(TabIn,Played,Player,[First|Rest],Row,Col,Tri) :-
+  evalPiece(TabIn,Played,Player,First,N),
+  getMinValue(TabIn,Played,Player,Rest,N,First,Best),
+  Best = [[Row,Col],[_,ID]],
   isTri(ID,Tri).
-    
+
+getMinValue(_,_,_,[],_,Best,Best).
+getMinValue(TabIn,Played,Player,[Piece|Rest],N,Aux,Best) :-
+  evalPiece(TabIn,Played,Player,Piece,TempN),
+  ((TempN @> N, getMinValue(TabIn,Played,Player,Rest,TempN,Piece,Best));
+  getMinValue(TabIn,Played,Player,Rest,N,Aux,Best)).
 
 evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   makeFakeMove(TabIn,Played,Player,Row,Col,ID,Played2,TabOut),
@@ -29,9 +40,10 @@ evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   getOposPlayer(Player,Opponent),
   getPlayerPieces(Played2,Opponent,OppPieces),
   getAllAdjacents(TabOut,OppPieces,Adjacents),
-  list_to_set(Adjacents,AdjSet),
-  list_to_set(ToPlay,ToPlaySet),  
-  intersection(AdjSet,ToPlaySet,PlayerPoss),
+  % list_to_set(Adjacents,AdjSet),
+  % list_to_set(ToPlay,ToPlaySet),  
+  % intersection(AdjSet,ToPlaySet,PlayerPoss),
+  intersection(Adjacents,ToPlay,PlayerPoss),
   length(PlayerPoss,NumAux),
   N is 0-NumAux.
 
