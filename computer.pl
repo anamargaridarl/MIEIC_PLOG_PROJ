@@ -18,7 +18,7 @@ getRandomPiece(PossList,Row,Col,Tri) :-
 %opponent is, therefore being a greedy strategy.
 getGreedyPiece(TabIn,Played,Player,PossList,Row,Col,Tri) :-
   setof(N-Piece,(validPlay(Piece,PossList),
-                evalPiece(TabIn,Played,Player,Piece,N),[Play|_])),
+                evalPiece(TabIn,Played,Player,Piece,N)),[Play|_]),
   Play = [N-[[Row,Col],[_|ID]]],
   isTri(ID,Tri).
     
@@ -30,15 +30,8 @@ evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   getPlayerPieces(Played2,Opponent,OppPieces),
   getAllAdjacents(TabOut,OppPieces,Adjacents),
   list_to_set(Adjacents,AdjSet),
-  list_to_set(ToPlay,ToPlaySet),
-  
-  display_game(TabOut,1),nl,
-  nl,print('To Play: '), print(ToPlaySet),nl,
-  
+  list_to_set(ToPlay,ToPlaySet),  
   intersection(AdjSet,ToPlaySet,PlayerPoss),
-  
-  nl,print('Player Poss: '),print(PlayerPoss),nl,
-  
   length(PlayerPoss,NumAux),
   N is 0-NumAux.
 

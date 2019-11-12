@@ -119,8 +119,8 @@ validPlay(Piece,PossiblePlays):-
 valid_moves(Board,Aux,NoAux):-
   validMovesAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
   %remove_dups(PossiblePlaysOut,NoDups),
-  removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux),          %removes from list of adjacents the pieces that were already played
-  print('Possible Plays: '),print(NoAux),nl.                    % shows to player possible plays
+  removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux).          %removes from list of adjacents the pieces that were already played
+  %print('Possible Plays: '),print(NoAux),nl.                    % shows to player possible plays
 
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
