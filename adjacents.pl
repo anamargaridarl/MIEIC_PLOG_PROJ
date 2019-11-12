@@ -171,13 +171,13 @@ adjRect(Board,Row,Id,Col,Pieces) :-
 adjRect1(Board,Adjacents):-
     X is 2,
     getPiece(X,1,Board,Piece1),
-  //  adjRect(Board,X,1,Col,Pieces1),
+  %adjRect(Board,X,1,Col,Pieces1),
     getPiece(X,2,Board,Piece2),
     getTriangleUp(X,3,Board,Piece3),
     getPiece(X,4,Board,Piece4),
     getTriangleUp(X,5,Board,Piece5),
     getPiece(1,6,Board,Piece6),
-   // adjRect(Board,1,6,Col,Pieces2),
+   %adjRect(Board,1,6,Col,Pieces2),
     append([  [[1,X],Piece1],  [[2,X],Piece2], [ [3,X], Piece3], [[4,X],Piece4],[[4,X],Piece5],[[6,1],Piece6]],[],Adjacents).
 
 adjRect2(Board,Adjacents):-
