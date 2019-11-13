@@ -152,13 +152,54 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     value(BoardOut,AuxOut,StateOut).
 
-playsLoop(Board,Aux):-
+twoPlayerGame(Board,Aux):-
     move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
     game_over(StateOut),
     move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
     game_over(StateOut2),!,
-    playsLoop(BoardOut2,AuxF).                      
+    twoPlayerGame(BoardOut2,AuxF).                      
 
-play():-
-    buildBlankList(L),!,
-    playsLoop(L,[]).                                
+cpuHumanGame(Board,Aux) :-
+  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+  game_over(StateOut),
+  move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  game_over(StateOut2),!,
+  cpuHumanGame(BoardOut2,AuxF).
+
+humanCPUGame(Board,Aux) :-
+  move(1,BoardOut,Aux,Aux2,BoardOut,StateOut),!,
+  game_over(StateOut),
+  moveCPU(2,Board,Au2,AuxF,BoardOut2,StateOut2),!,
+  game_over(StateOut2),!,
+  humanCPUGame(BoardOut2,AuxF).
+
+twoComputerGame(Board,Aux) :-
+  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+  game_over(StateOut),
+  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  game_over(StateOut2),!,
+  twoComputerGame(BoardOut2,AuxF).
+
+play_mode(Option) :-
+  buildBlankList(L),
+  ((Option == 0, twoPlayerGame(L,[]));
+  (Option == 1, cpuHumanGame(L,[]));
+  (Option == 2, humanCPUGame(L,[]));
+  (Option == 3, twoComputerGame(L,[]))).
+
+getOption(Option) :-
+  read_line_to_codes(user_input,Codes),
+  length(Codes,N), 
+  (N == 1; (writef("Invalid option selected"),nl)),
+  nth0(0,Codes,Code),
+  Option is Code - 48.
+  
+play() :-
+  writef("Welcome to Boco. Choose game mode: "),nl,
+  repeat,
+  writef('0 - Human Vs Human'),nl,
+  writef('1 - Human Vs Computer'),nl,
+  writef('2 - Computer Vs Human'),nl, 
+  writef('3 - Computer Vs Computer'),nl,
+  getOption(Option),
+  play_mode(Option).

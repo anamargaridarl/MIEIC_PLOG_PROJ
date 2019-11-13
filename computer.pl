@@ -1,5 +1,19 @@
 %%%%%%%%%%%%%%%%% Evaluation functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- use_module(library(random)).
+
+%getStartPiece(-Row,-Col,-T)
+%The computer will select a random triangle from the board in order 
+%to start the game
+getStartPiece(Row,Col,T) :-
+  L = [2,3,4,5,6,7,8,9],
+  random_member(Row, L),
+  ((0 is Row mod 2,
+    L2 = [3,5,7,9]);
+    L2 = [2,4,6,8]),
+    random_member(Col,L2),
+    random_member(T,[0,1]).
+
+  
 %%%%%%% Level 0 AI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %getRandomPiece(+PossList,-Row,-Col,-Tri)
 %Computer will select randomly one of the possible pieces
