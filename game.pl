@@ -191,7 +191,7 @@ cpuHumanGame(Board,Aux) :-
 humanCPUGame(Board,Aux) :-
   move(1,BoardOut,Aux,Aux2,BoardOut,StateOut),!,
   game_over(StateOut),
-  moveCPU(2,Board,Au2,AuxF,BoardOut2,StateOut2),!,
+  moveCPU(2,Board,Aux2,AuxF,BoardOut2,StateOut2),!,
   game_over(StateOut2),!,
   humanCPUGame(BoardOut2,AuxF).
 
