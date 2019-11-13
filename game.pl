@@ -12,6 +12,11 @@ list_empty([]).
 switch(X,[Val:Goal | Cases]) :-
   (X=Val -> call(Goal) ; switch(X, Cases)).
 
+printPossibleMoves([]).
+printPossibleMoves([[Coord|_]|Rest]):-
+  print(Coord),print(','),
+  printPossibleMoves(Rest).
+
 getTriangleUp(X,Y,Board,Piece):-
   nth1(Y,Board,Row,_),                                  
   nth1(X,Row,PieceAux,_),
@@ -102,7 +107,8 @@ validMovesAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
 validMovesAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
   lookForAdjacent(Board,Piece, Adjacents),
   append(Adjacents,PossiblePlaysIn,T),
-  validMovesAux(Board,Rest,T,PossiblePlaysOut).
+  sort(T,T1),
+  validMovesAux(Board,Rest,T1,PossiblePlaysOut).
 
 %remove pieces from possible plays -
 %used to remove pieces that were already played
@@ -155,7 +161,10 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
   
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     display_game(Board,Player),!,                   %display board
-    valid_moves(Board,AuxIn,NoAux),repeat,
+    valid_moves(Board,AuxIn,NoAux),
+    print('Possible Plays'),nl,
+    printPossibleMoves(NoAux),nl,
+    repeat,
     getPlayInfo(Col,Row,T), 
     getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
     validPlay(Piece,NoAux),

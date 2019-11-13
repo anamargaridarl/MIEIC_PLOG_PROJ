@@ -41,7 +41,7 @@ adjacentDown4(Board,X,Y,Adjacents):-
   getPiece(X,Ymore,Board,Piece3),
   ((isRectangle(Piece3,Id),
   adjRect(Board,Ymore,Id,X,Pieces,Piece3),
-  append([  [[Y,Xless],Piece1],[[Y,X],Piece2]],Pieces,Adjacents));
+  append([  [[Y,Xmore],Piece1],[[Y,X],Piece2]],Pieces,Adjacents));
   append([  [[Y,Xmore],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents)).
 
 %adjacent to triangle6
@@ -195,7 +195,7 @@ adjRect1(Board,Adjacents):-
     getPiece(1,6,Board,Piece6),
     adjRect(Board,6,2,1,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([ [[2,X],Piece1], [ [3,X], Piece2], [[4,X],Piece3],[[5,X],Piece4] ],Aux,Adjacents),print(Adjacents).
+    append([ [[2,X],Piece1], [ [3,X], Piece2], [[4,X],Piece3],[[5,X],Piece4] ],Aux,Adjacents).
 
 adjRect2(Board,Adjacents):-
     Y is 2,
@@ -218,7 +218,7 @@ adjRect3(Board,Adjacents):-
     getPiece(8,Y,Board,Piece3),
     getTriangleUp(9,Y,Board,Piece4),
     getPiece(10,Y,Board,Piece5),
-    adjRect(Board,Y,2,10,Pieces2,Piece5),
+    adjRect(Board,Y,2,10,Pieces1,Piece5),
     getPiece(5,1,Board,Piece6),
     adjRect(Board,1,2,5,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
@@ -231,7 +231,7 @@ adjRect4(Board,Adjacents):-
     getTriangleUp(X,4,Board,Piece3),
     getPiece(X,5,Board,Piece4),
     getPiece(10,1,Board,Piece5),
-    adjRect(Board,1,1,1,Pieces2,Piece5),
+    adjRect(Board,1,1,1,Pieces1,Piece5),
     getPiece(10,6,Board,Piece6),
     adjRect(Board,1,1,1,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
