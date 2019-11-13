@@ -1,4 +1,3 @@
-%____________________ Adjacent Pieces - help functions ________________________________%
 
 %adjacents to triangle5
 adjacentUp5(Board,Row,Col,Adjacents):-
@@ -57,9 +56,10 @@ adjacentDown6(Board,X,Y,Adjacents):-
 adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleDown(Xmore,Y,Board,Piece1),
   getPiece(Xless,Y,Board,Piece2),
+  adjRect(Board,Y,_,Xless,Pieces1,Piece2),
   getTriangleUp(X,Ymore,Board,Piece4),
   getPiece(X,Yless,Board,Piece3),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],Pieces1,Adjacents).
 
 %adjacents of squares in case of left column in board (not counting rectangles)
 adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -75,7 +75,8 @@ adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(Xless,Y,Board,Piece2),
   getTriangleUp(X,Ymore,Board,Piece3),
   getPiece(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+  adjRect(Board,Yless,_,X,Pieces1,Piece4),
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3]],Pieces1,Adjacents).
 
 %adjacents of squares in case of right bottom unit in board (not counting rectangles)
 adjacentSquareRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
@@ -90,16 +91,18 @@ adjacentSquareBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getTriangleUp(Xmore,Y,Board,Piece1),
   getTriangleDown(Xless,Y,Board,Piece2),
   getPiece(X,Ymore,Board,Piece3),
+  adjRect(Board,Ymore,_,X,Pieces,Piece3),
   getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [[Yless,X],Piece4]],Pieces,Adjacents).
 
 %adjacents of squares in case of right column in board (not counting rectangles)
 adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
   getPiece(Xmore,Y,Board,Piece1),
+  adjRect(Board,Y,_,Xmore,Pieces,Piece1),
   getTriangleDown(Xless,Y,Board,Piece2),
   getTriangleDown(X,Ymore,Board,Piece3),
   getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+  append([ [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],Pieces,Adjacents).
 
 %adjacents of squares in even rows
 adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
