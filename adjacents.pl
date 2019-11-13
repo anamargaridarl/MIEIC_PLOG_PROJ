@@ -1,24 +1,24 @@
 %____________________ Adjacent Pieces - help functions ________________________________%
 
 %adjacents to triangle5
-adjacentUp5(Board,X,Y,Adjacents):-
-  Xmore is X +1,
-  Yless is Y-1,
-  getPiece(Xmore,Y,Board,Piece1), %este
-  getTriangleDown(X,Y,Board,Piece2),
-  getPiece(X,Yless,Board,Piece3), %este
+adjacentUp5(Board,Row,Col,Adjacents):-
+  Xmore is Col +1,
+  Yless is Row-1,
+  getPiece(Xmore,Row,Board,Piece1), %este
+  getTriangleDown(Col,Row,Board,Piece2),
+  getPiece(Col,Yless,Board,Piece3), %este
    ((isRectangle(Piece1,Id),isRectangle(Piece3,Id),
-  adjRect(Board,Y,Id,Xmore,Pieces1,Piece1),
-  adjRect(Board,Yless,Id,X,Pieces2,Piece3),
+  adjRect(Board,Row,Id,Xmore,Pieces1,Piece1),
+  adjRect(Board,Yless,Id,Col,Pieces2,Piece3),
   append(Pieces1,Pieces2,Aux),
-  append([ [[Y,X],Piece2] ] ,Aux,Adjacents));
+  append([ [[Row,Col],Piece2] ] ,Aux,Adjacents));
   (isRectangle(Piece1,Id),
-  adjRect(Board,Y,Id,Xmore,Pieces1,Piece1),
-  append([ [[Y,X],Piece2] , [[X,Yless],Piece3] ] ,Pieces1,Adjacents));
+  adjRect(Board,Row,Id,Xmore,Pieces1,Piece1),
+  append([ [[Row,Col],Piece2] , [[Col,Yless],Piece3] ] ,Pieces1,Adjacents));
   (isRectangle(Piece3,Id),
-  adjRect(Board,Yless,Id,X,Pieces1,Piece3),
-  append([ [[Y,X],Piece2] , [[Xmore,Y],Piece1] ] ,Pieces1,Adjacents));
-  append([  [[Y,Xmore],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents)).
+  adjRect(Board,Yless,Id,Col,Pieces1,Piece3),
+  append([ [[Row,Col],Piece2] , [[Row,Xmore],Piece1] ] ,Pieces1,Adjacents));
+  append([  [[Row,Xmore],Piece1],  [[Row,Col],Piece2], [ [Yless,Col], Piece3]],[],Adjacents)).
 
 %adjacents to triangle3
 adjacentUp3(Board,X,Y,Adjacents):-

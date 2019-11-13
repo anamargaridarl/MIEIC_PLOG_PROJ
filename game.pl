@@ -152,13 +152,13 @@ addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
 %need to calculate for rectangles too
 lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     (getId(Info,Id),
-    Coord = [Y|[X|_]]),
-    ((Id == 3, adjacentUp3(Board,X,Y,Adjacents));
-    (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
-    (Id == 5, adjacentUp5(Board,X,Y,Adjacents));
-    (Id == 6, adjacentDown6(Board,X,Y,Adjacents));
-    (Id == 0,adjacentSquare(Board,X,Y,Adjacents));
-    ((Id == 1; Id == 2),adjacentRectangle(Board,X,Y,Adjacents) )
+    Coord = [Row|[Col|_]]),
+    ((Id == 3, adjacentUp3(Board,Col,Row,Adjacents));
+    (Id == 4, adjacentDown4(Board,Col,Row,Adjacents));
+    (Id == 5, adjacentUp5(Board,Row,Col,Adjacents));
+    (Id == 6, adjacentDown6(Board,Col,Row,Adjacents));
+    (Id == 0,adjacentSquare(Board,Col,Row,Adjacents));
+    ((Id == 1; Id == 2),adjacentRectangle(Board,Col,Row,Adjacents) )
     ).
   
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
