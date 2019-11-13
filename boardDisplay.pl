@@ -47,10 +47,10 @@ getPlayInfo(X,Y,T):-
     nth0(1,ListChar,AuxY)),
     ((Length ==2, T is -1);
      ((Length == 3 , nth0(2,ListChar,AuxT)),
-        ((AuxT == '0', T is -1) ;
+        ((AuxT == '0', T is -1,Y is 10) ;
         ( isTriangle(AuxT,T) )))),
-    (char_code(AuxX,AuxX2), 
-    atom_number(AuxY,Y),
+    (char_code(AuxX,AuxX2),
+    (Y == 10;atom_number(AuxY,Y)),
     X is AuxX2-64).
 
 playerTurn(Player) :-

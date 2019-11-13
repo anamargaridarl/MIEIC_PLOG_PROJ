@@ -24,6 +24,17 @@ getTriangleDown(X,Y,Board,Piece):-
 
 isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
 
+getId(Piece,Id):-
+  [_|[Id|_]] = Piece.
+
+isR(Id):- (Id == 1;Id ==2).
+
+isRectangle(Piece,Id):-
+  getId(Piece,IdAux),
+  isR(IdAux),
+  Id is IdAux.
+  
+
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;
   (ID == 1; ID == 2), Tri = -2;
@@ -68,8 +79,10 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
 %add other pieces to auxiliar structure
 addAuxOther(X,Y,Board,AuxIn,AuxOut):-
     nth1(Y,Board,Row,_),                           %get row
-    nth1(X,Row,Piece,_),                           %get piece
-    append([[[Y,X],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
+    nth1(X,Row,Piece,_),                     %get piece
+    Piece = [_|[Id|_]],
+    (((Id == 1 ; Id ==2), adjRect(Board,Y,Id,X,Pieces,Piece), append(Pieces, AuxIn, AuxOut) );
+    append([[[Y,X],Piece]], AuxIn, AuxOut)).        %add to auxiliar structure
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
@@ -118,9 +131,7 @@ validPlay(Piece,PossiblePlays):-
 %calculate next possible plays based on already played pieces(aux)
 valid_moves(Board,Aux,NoAux):-
   validMovesAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
-  %remove_dups(PossiblePlaysOut,NoDups),
   removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux).          %removes from list of adjacents the pieces that were already played
-  %print('Possible Plays: '),print(NoAux),nl.                    % shows to player possible plays
 
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
