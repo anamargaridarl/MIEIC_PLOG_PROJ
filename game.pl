@@ -18,17 +18,17 @@ printPossibleMoves([[Coord|_]|Rest]):-
   printPossibleMoves(Rest).
 
 getTriangleUp(X,Y,Board,Piece):-
-  nth1(Y,Board,Row,_),                                  
-  nth1(X,Row,PieceAux,_),
+  getPiece(X,Y,Board,PieceAux),
   PieceAux = [Piece|_].   
 
 getTriangleDown(X,Y,Board,Piece):-
-  nth1(Y,Board,Row,_),
-  nth1(X,Row,PieceAux,_),
+  getPiece(X,Y,Board,PieceAux),
   PieceAux = [_|[Piece|_]].
 
 isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
 
+% Get Id from Pieces [ [Row,Col], [Cor,Id] ] 
+% Use in auxiliar structure and valid_plays
 getId(Piece,Id):-
   [_|[Id|_]] = Piece.
 
@@ -38,8 +38,9 @@ isRectangle(Piece,Id):-
   getId(Piece,IdAux),
   isR(IdAux),
   Id is IdAux.
-  
 
+%Conversion from Id to T 
+%used for functions
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;
   (ID == 1; ID == 2), Tri = -2;
@@ -50,12 +51,7 @@ getOposPlayer(Player,Opos) :-
   (Player == 1, Opos = 2);
   (Player == 2, Opos = 1).  
 
-%true if variable is not instanced
-not_inst(Var):-
-  \+(\+(Var=0)),
-  \+(\+(Var=1)).
-
-  % %get piece full info
+%get piece full info
 getFullPiece(Col,Row,Board,[[_,_],Info]) :-
   getPiece(Col,Row,Board,Info).
 
@@ -66,7 +62,7 @@ getPiece(Col,Row,Board,Piece):-
 
 getShapeRecSq(Row,Col,Board,PieceAux,T):-
       getPiece(Col,Row,Board,PieceAux),
-      PieceAux = [_|[Id|_]],
+      getId(PieceAux,Id),
       isTri(Id,T).
 
 %get shape 
@@ -82,12 +78,16 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
 %___________________Auxiliar structure Aux - help functions _______________________%
 
 %add other pieces to auxiliar structure
-addAuxOther(X,Y,Board,AuxIn,AuxOut):-
-    nth1(Y,Board,Row,_),                           %get row
-    nth1(X,Row,Piece,_),                     %get piece
-    Piece = [_|[Id|_]],
-    (((Id == 1 ; Id ==2), adjRect(Board,Y,Id,X,Pieces,Piece), append(Pieces, AuxIn, AuxOut) );
-    append([[[Y,X],Piece]], AuxIn, AuxOut)).        %add to auxiliar structure
+addAuxSq(X,Y,Board,AuxIn,AuxOut):-
+    getPiece(X,Y,Board,Piece),               %get piece
+    append([[[Y,X],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
+
+addAuxRec(X,Y,Board,AuxIn,AuxOut):-
+    getPiece(X,Y,Board,Piece),               
+    adjRect(Board,Y,_,X,Pieces,Piece), 
+    append(Pieces, AuxIn, AuxOut).
+
+
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
@@ -127,10 +127,11 @@ game_over(State):-
   (State == 3, tieMessage(),fail).
 
 %validate play
+%Pieces - [ [Row,Col], [Color,Id] ]
 validPlay(Piece,PossiblePlays):-
   (list_empty(PossiblePlays),
    Piece = [_|[Info|_]],
-   Info = [_ |[Id |_]],
+   getId(Info,Id),
    isT(Id));
   member(Piece,PossiblePlays).
 
@@ -142,14 +143,15 @@ valid_moves(Board,Aux,NoAux):-
 %add piece to auxiliar structure
 addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
     switch(T,[
-    -1:addAuxOther(X,Y,Board,AuxIn,AuxOut),
+    -1:addAuxSq(X,Y,Board,AuxIn,AuxOut),
+    -2:addAuxRec(X,Y,Board,AuxIn,AuxOut),
     0:addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut),
     1:addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut)
   ]).
 
 %need to calculate for rectangles too
 lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
-    (Info = [_|[Id|_]],
+    (getId(Info,Id),
     Coord = [Y|[X|_]]),
     ((Id == 3, adjacentUp3(Board,X,Y,Adjacents));
     (Id == 4, adjacentDown4(Board,X,Y,Adjacents));
@@ -161,15 +163,15 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
   
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     display_game(Board,Player),!,                   %display board
-    valid_moves(Board,AuxIn,NoAux),
+    valid_moves(Board,AuxIn,PossiblePlays),
     print('Possible Plays'),nl,
-    printPossibleMoves(NoAux),nl,
+    printPossibleMoves(PossiblePlays),nl,
     repeat,
-    getPlayInfo(Col,Row,T), 
+    getPlayInfo(Col,Row,T),
     getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
-    validPlay(Piece,NoAux),
+    validPlay(Piece,PossiblePlays),
     fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+    addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),
     value(BoardOut,AuxOut,StateOut).
 
 playsLoop(Board,Aux):-

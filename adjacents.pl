@@ -153,9 +153,9 @@ adjRectVert(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   (RowB @< 1; 
   RowA @> 10;
   (getPiece(Col,RowA,Board,Piece1),
-  Piece1= [_|[IdA|_]],
+  getId(Piece1,IdA),
   getPiece(Col,RowB,Board,Piece2),
-  Piece2= [_|[IdB|_]])),
+  getId(Piece2,IdB))),
   adjRectVert(Board,RowA,Col,Id,IdA,PiecesAux,PiecesOut2,Piece1),
   adjRectVert(Board,RowB,Col,Id,IdB,PiecesOut2,PiecesOut,Piece2).
 
@@ -170,9 +170,9 @@ adjRectHorz(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   (ColB @< 1; 
   ColA @> 10;
   (getPiece(ColA,Row,Board,Piece1),
-  Piece1= [_|[IdA|_]],
+  getId(Piece1,IdA),
   getPiece(ColB,Row,Board,Piece2),
-  Piece2= [_|[IdB|_]])),
+  getId(Piece2,IdB))),
   adjRectHorz(Board,Row,ColA,Id,IdA,PiecesAux,PiecesOut2,Piece1),
   adjRectHorz(Board,Row,ColB,Id,IdB,PiecesOut2,PiecesOut,Piece2).
 
