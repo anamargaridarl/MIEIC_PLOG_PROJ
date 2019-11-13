@@ -17,12 +17,12 @@ printPossibleMoves([[Coord|_]|Rest]):-
   print(Coord),print(','),
   printPossibleMoves(Rest).
 
-getTriangleUp(X,Y,Board,Piece):-
-  getPiece(X,Y,Board,PieceAux),
+getTriangleUp(Col,Row,Board,Piece):-
+  getPiece(Col,Row,Board,PieceAux),
   PieceAux = [Piece|_].   
 
-getTriangleDown(X,Y,Board,Piece):-
-  getPiece(X,Y,Board,PieceAux),
+getTriangleDown(Col,Row,Board,Piece):-
+  getPiece(Col,Row,Board,PieceAux),
   PieceAux = [_|[Piece|_]].
 
 isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
@@ -55,7 +55,7 @@ getOposPlayer(Player,Opos) :-
 getFullPiece(Col,Row,Board,[[_,_],Info]) :-
   getPiece(Col,Row,Board,Info).
 
-%get piece from board based on X and Y position
+%get piece from board based on Col and Row position
 getPiece(Col,Row,Board,Piece):-
   nth1(Row,Board,RowAux,_),
   nth1(Col,RowAux,Piece,_).
@@ -78,26 +78,26 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
 %___________________Auxiliar structure Aux - help functions _______________________%
 
 %add other pieces to auxiliar structure
-addAuxSq(X,Y,Board,AuxIn,AuxOut):-
-    getPiece(X,Y,Board,Piece),               %get piece
-    append([[[Y,X],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
+addAuxSq(Col,Row,Board,AuxIn,AuxOut):-
+    getPiece(Col,Row,Board,Piece),               %get piece
+    append([[[Row,Col],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
 
-addAuxRec(X,Y,Board,AuxIn,AuxOut):-
-    getPiece(X,Y,Board,Piece),               
-    adjRect(Board,Y,_,X,Pieces,Piece), 
+addAuxRec(Col,Row,Board,AuxIn,AuxOut):-
+    getPiece(Col,Row,Board,Piece),               
+    adjRect(Board,Row,_,Col,Pieces,Piece), 
     append(Pieces, AuxIn, AuxOut).
 
 
 
 %add triangle up to auxiliar structure
-addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut):-
-  getTriangleUp(X,Y,Board,Piece),          
-  append([[[Y,X],Piece]], AuxIn, AuxOut).
+addAuxTriangleUp(Col,Row,Board,AuxIn,AuxOut):-
+  getTriangleUp(Col,Row,Board,Piece),          
+  append([[[Row,Col],Piece]], AuxIn, AuxOut).
 
 %add triangle down to auxiliar structure
-addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut):-
-  getTriangleDown(X,Y,Board,Piece),
-  append([[[Y,X],Piece]], AuxIn, AuxOut).
+addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut):-
+  getTriangleDown(Col,Row,Board,Piece),
+  append([[[Row,Col],Piece]], AuxIn, AuxOut).
 
 
 %____________________ Possible plays - help functions ________________________________%
@@ -141,12 +141,12 @@ valid_moves(Board,Aux,NoAux):-
   removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux).          %removes from list of adjacents the pieces that were already played
 
 %add piece to auxiliar structure
-addPlayAux(AuxIn,Board,X,Y,T, AuxOut):-
+addPlayAux(AuxIn,Board,Col,Row,T, AuxOut):-
     switch(T,[
-    -1:addAuxSq(X,Y,Board,AuxIn,AuxOut),
-    -2:addAuxRec(X,Y,Board,AuxIn,AuxOut),
-    0:addAuxTriangleUp(X,Y,Board,AuxIn,AuxOut),
-    1:addAuxTriangleDown(X,Y,Board,AuxIn,AuxOut)
+    -1:addAuxSq(Col,Row,Board,AuxIn,AuxOut),
+    -2:addAuxRec(Col,Row,Board,AuxIn,AuxOut),
+    0:addAuxTriangleUp(Col,Row,Board,AuxIn,AuxOut),
+    1:addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut)
   ]).
 
 %need to calculate for rectangles too

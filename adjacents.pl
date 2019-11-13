@@ -1,148 +1,155 @@
 
 %adjacents to triangle5
 adjacentUp5(Board,Row,Col,Adjacents):-
-  Xmore is Col +1,
-  Yless is Row-1,
-  getPiece(Xmore,Row,Board,Piece1), %este
+  Colmore is Col +1,
+  Rowless is Row-1,
+  getPiece(Colmore,Row,Board,Piece1), %este
   getTriangleDown(Col,Row,Board,Piece2),
-  getPiece(Col,Yless,Board,Piece3), %este
+  getPiece(Col,Rowless,Board,Piece3), %este
    ((isRectangle(Piece1,Id),isRectangle(Piece3,Id),
-  adjRect(Board,Row,Id,Xmore,Pieces1,Piece1),
-  adjRect(Board,Yless,Id,Col,Pieces2,Piece3),
+  adjRect(Board,Row,Id,Colmore,Pieces1,Piece1),
+  adjRect(Board,Rowless,Id,Col,Pieces2,Piece3),
   append(Pieces1,Pieces2,Aux),
   append([ [[Row,Col],Piece2] ] ,Aux,Adjacents));
   (isRectangle(Piece1,Id),
-  adjRect(Board,Row,Id,Xmore,Pieces1,Piece1),
-  append([ [[Row,Col],Piece2] , [[Col,Yless],Piece3] ] ,Pieces1,Adjacents));
+  adjRect(Board,Row,Id,Colmore,Pieces1,Piece1),
+  append([ [[Row,Col],Piece2] , [[Col,Rowless],Piece3] ] ,Pieces1,Adjacents));
   (isRectangle(Piece3,Id),
-  adjRect(Board,Yless,Id,Col,Pieces1,Piece3),
-  append([ [[Row,Col],Piece2] , [[Row,Xmore],Piece1] ] ,Pieces1,Adjacents));
-  append([  [[Row,Xmore],Piece1],  [[Row,Col],Piece2], [ [Yless,Col], Piece3]],[],Adjacents)).
+  adjRect(Board,Rowless,Id,Col,Pieces1,Piece3),
+  append([ [[Row,Col],Piece2] , [[Row,Colmore],Piece1] ] ,Pieces1,Adjacents));
+  append([  [[Row,Colmore],Piece1],  [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],[],Adjacents)).
 
 %adjacents to triangle3
-adjacentUp3(Board,X,Y,Adjacents):-
-  Xless is X-1,
-  Yless is Y-1,
-  getPiece(Xless,Y,Board,Piece1),
-  getTriangleDown(X,Y,Board,Piece2),
-  getPiece(X,Yless,Board,Piece3),
+adjacentUp3(Board,Col,Row,Adjacents):-
+  Colless is Col-1,
+  Rowless is Row-1,
+  getPiece(Colless,Row,Board,Piece1),
+  getTriangleDown(Col,Row,Board,Piece2),
+  getPiece(Col,Rowless,Board,Piece3),
   ((isRectangle(Piece1,Id),
-  adjRect(Board,Y,Id,Xless,Pieces,Piece1),
-  append([ [[Y,X],Piece2], [ [Yless,X], Piece3]],Pieces,Adjacents));
-  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Yless,X], Piece3]],[],Adjacents)).
+  adjRect(Board,Row,Id,Colless,Pieces,Piece1),
+  append([ [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],Pieces,Adjacents));
+  append([  [[Row,Colless],Piece1],  [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],[],Adjacents)).
 
 %adjacents to triangle4
-adjacentDown4(Board,X,Y,Adjacents):-
-  Xmore is X +1,
-  Ymore is Y+1,
-  getPiece(Xmore,Y,Board,Piece1),
-  getTriangleUp(X,Y,Board,Piece2),
-  getPiece(X,Ymore,Board,Piece3),
+adjacentDown4(Board,Col,Row,Adjacents):-
+  Colmore is Col +1,
+  Rowmore is Row+1,
+  getPiece(Colmore,Row,Board,Piece1),
+  getTriangleUp(Col,Row,Board,Piece2),
+  getPiece(Col,Rowmore,Board,Piece3),
   ((isRectangle(Piece3,Id),
-  adjRect(Board,Ymore,Id,X,Pieces,Piece3),
-  append([  [[Y,Xmore],Piece1],[[Y,X],Piece2]],Pieces,Adjacents));
-  append([  [[Y,Xmore],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents)).
+  adjRect(Board,Rowmore,Id,Col,Pieces,Piece3),
+  append([  [[Row,Colmore],Piece1],[[Row,Col],Piece2]],Pieces,Adjacents));
+  append([  [[Row,Colmore],Piece1],  [[Row,Col],Piece2], [ [Rowmore,Col], Piece3]],[],Adjacents)).
 
 %adjacent to triangle6
-adjacentDown6(Board,X,Y,Adjacents):-
-  Xless is X -1,
-  Ymore is Y+1,
-  getPiece(Xless,Y,Board,Piece1),
-  getTriangleUp(X,Y,Board,Piece2),
-  getPiece(X,Ymore,Board,Piece3),
-  append([  [[Y,Xless],Piece1],  [[Y,X],Piece2], [ [Ymore,X], Piece3]],[],Adjacents).
+adjacentDown6(Board,Col,Row,Adjacents):-
+  Colless is Col -1,
+  Rowmore is Row+1,
+  getPiece(Colless,Row,Board,Piece1),
+  getTriangleUp(Col,Row,Board,Piece2),
+  getPiece(Col,Rowmore,Board,Piece3),
+  append([  [[Row,Colless],Piece1],  [[Row,Col],Piece2], [ [Rowmore,Col], Piece3]],[],Adjacents).
 
 %adjacents of squares in case of left top unit in board (not counting rectangles)
-adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleDown(Xmore,Y,Board,Piece1),
-  getPiece(Xless,Y,Board,Piece2),
-  adjRect(Board,Y,_,Xless,Pieces1,Piece2),
-  getTriangleUp(X,Ymore,Board,Piece4),
-  getPiece(X,Yless,Board,Piece3),
-  append([  [[Y,Xmore],Piece1], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],Pieces1,Adjacents).
+adjacentSquareLeftTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleDown(Colmore,Row,Board,Piece1),
+  getPiece(Colless,Row,Board,Piece2),
+  adjRect(Board,Row,_,Colless,Pieces1,Piece2),
+  getTriangleUp(Col,Rowmore,Board,Piece4),
+  getPiece(Col,Rowless,Board,Piece3),
+  adjRect(Board,Rowless,_,Col,Pieces2,Piece3),
+  append(Pieces1,Pieces2,Aux),
+  append([  [[Row,Colmore],Piece1], [[Rowless,Col],Piece4]],Aux,Adjacents).
 
 %adjacents of squares in case of left column in board (not counting rectangles)
-adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleDown(Xmore,Y,Board,Piece1),
-  getPiece(Xless,Y,Board,Piece2),
-  getTriangleDown(X,Ymore,Board,Piece3),
-  getTriangleUp(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+adjacentSquareLeft(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleDown(Colmore,Row,Board,Piece1),
+  getPiece(Colless,Row,Board,Piece2),
+  adjRect(Board,Row,_,Colless,Pieces1,Piece2),
+  getTriangleDown(Col,Rowmore,Board,Piece3),
+  getTriangleUp(Col,Rowless,Board,Piece4),
+  append([  [[Row,Colmore],Piece1],[ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],Pieces1,Adjacents).
 
 %adjacents of squares in case of top line in board (not counting rectangles)
-adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleDown(Xmore,Y,Board,Piece1),
-  getTriangleUp(Xless,Y,Board,Piece2),
-  getTriangleUp(X,Ymore,Board,Piece3),
-  getPiece(X,Yless,Board,Piece4),
-  adjRect(Board,Yless,_,X,Pieces1,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3]],Pieces1,Adjacents).
+adjacentSquareTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleDown(Colmore,Row,Board,Piece1),
+  getTriangleUp(Colless,Row,Board,Piece2),
+  getTriangleUp(Col,Rowmore,Board,Piece3),
+  getPiece(Col,Rowless,Board,Piece4),
+  adjRect(Board,Rowless,_,Col,Pieces1,Piece4),
+  append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3]],Pieces1,Adjacents).
 
 %adjacents of squares in case of right bottom unit in board (not counting rectangles)
-adjacentSquareRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getPiece(Xmore,Y,Board,Piece1),
-  getTriangleDown(Xless,Y,Board,Piece2),
-  getPiece(X,Ymore,Board,Piece4),
-  getTriangleDown(X,Yless,Board,Piece3),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+adjacentSquareRightBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getPiece(Colmore,Row,Board,Piece1),
+  adjRect(Board,Row,_,Colmore,Pieces1,Piece1),
+  getTriangleDown(Colless,Row,Board,Piece2),
+  getPiece(Col,Rowmore,Board,Piece4),
+  adjRect(Board,Rowmore,_,Col,Pieces2,Piece4),
+  print(Pieces2),nl,
+  getTriangleDown(Col,Rowless,Board,Piece3),
+  append(Pieces1,Pieces2,Aux),
+  append([  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3] ],Aux,Adjacents).
 
 %adjacents of squares in case of bottom line in board (not counting rectangles)
-adjacentSquareBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleUp(Xmore,Y,Board,Piece1),
-  getTriangleDown(Xless,Y,Board,Piece2),
-  getPiece(X,Ymore,Board,Piece3),
-  adjRect(Board,Ymore,_,X,Pieces,Piece3),
-  getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [[Yless,X],Piece4]],Pieces,Adjacents).
+adjacentSquareBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleUp(Colmore,Row,Board,Piece1),
+  getTriangleDown(Colless,Row,Board,Piece2),
+  getPiece(Col,Rowmore,Board,Piece3),
+  adjRect(Board,Rowmore,_,Col,Pieces,Piece3),
+  getTriangleDown(Col,Rowless,Board,Piece4),
+  append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [[Rowless,Col],Piece4]],Pieces,Adjacents).
 
 %adjacents of squares in case of right column in board (not counting rectangles)
-adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getPiece(Xmore,Y,Board,Piece1),
-  adjRect(Board,Y,_,Xmore,Pieces,Piece1),
-  getTriangleDown(Xless,Y,Board,Piece2),
-  getTriangleDown(X,Ymore,Board,Piece3),
-  getTriangleUp(X,Yless,Board,Piece4),
-  append([ [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],Pieces,Adjacents).
+adjacentSquareRight(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getPiece(Colmore,Row,Board,Piece1),
+  adjRect(Board,Row,_,Colmore,Pieces,Piece1),
+  getTriangleDown(Colless,Row,Board,Piece2),
+  getTriangleDown(Col,Rowmore,Board,Piece3),
+  getTriangleUp(Col,Rowless,Board,Piece4),
+  append([ [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],Pieces,Adjacents).
 
 %adjacents of squares in even rows
-adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleDown(Xmore,Y,Board,Piece1),
-  getTriangleUp(Xless,Y,Board,Piece2),
-  getTriangleUp(X,Ymore,Board,Piece3),
-  getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+adjacentSquareEvenRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleDown(Colmore,Row,Board,Piece1),
+  getTriangleUp(Colless,Row,Board,Piece2),
+  getTriangleUp(Col,Rowmore,Board,Piece3),
+  getTriangleDown(Col,Rowless,Board,Piece4),
+  append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],[],Adjacents).
 
 %adjacents of squares in odd rows
-adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless):-
-  getTriangleUp(Xmore,Y,Board,Piece1),
-  getTriangleDown(Xless,Y,Board,Piece2),
-  getTriangleUp(X,Ymore,Board,Piece3),
-  getTriangleDown(X,Yless,Board,Piece4),
-  append([  [[Y,Xmore],Piece1],  [[Y,Xless],Piece2], [ [Ymore,X], Piece3], [[Yless,X],Piece4]],[],Adjacents).
+adjacentSquareOddRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
+  getTriangleUp(Colmore,Row,Board,Piece1),
+  getTriangleDown(Colless,Row,Board,Piece2),
+  getTriangleUp(Col,Rowmore,Board,Piece3),
+  getTriangleDown(Col,Rowless,Board,Piece4),
+  append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],[],Adjacents).
 
 %adjacents of squares 
-adjacentSquare(Board,X,Y,Adjacents):-
-  Xless is X -1,
-  Ymore is Y+1,
-  Xmore is X +1,
-  Yless is Y-1,
-  Mod is X mod 2,
+adjacentSquare(Board,Col,Row,Adjacents):-
+  Colless is Col -1,
+  Rowmore is Row+1,
+  Colmore is Col +1,
+  Rowless is Row-1,
+  Mod is Col mod 2,
 
-  ((X == 2, Y==2,
-    adjacentSquareLeftTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  (X== 2,
-    adjacentSquareLeft(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  (Y == 2,
-    adjacentSquareTop(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  (X==9,Y==9,
-    adjacentSquareRightBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  (Y ==9,
-    adjacentSquareBottom(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  (X==9,
-    adjacentSquareRight(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
+  ((Col == 2, Row==2,
+    adjacentSquareLeftTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  (Col== 2,
+    adjacentSquareLeft(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  (Row == 2,
+    adjacentSquareTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  (Col==9,Row==9,
+    adjacentSquareRightBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  (Row ==9,
+    adjacentSquareBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  (Col==9,
+    adjacentSquareRight(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
   (Mod == 0,
-    adjacentSquareEvenRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless));
-  adjacentSquareOddRows(X,Y,Board,Adjacents,Xmore,Xless,Ymore,Yless)).
+    adjacentSquareEvenRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless));
+  adjacentSquareOddRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless)).
 
 
 adjRectVert(_,Row,Col,ID,IDB,PiecesOutA,PiecesOut,Piece)  :-
@@ -188,128 +195,128 @@ adjRect(Board,Row,Id,Col,Pieces,Piece1) :-
 
 
 adjRect1(Board,Adjacents):-
-    X is 2,
-    getPiece(X,2,Board,Piece1),
-    getTriangleUp(X,3,Board,Piece2),
-    getPiece(X,4,Board,Piece3),
-    getTriangleUp(X,5,Board,Piece4),
-    getPiece(X,1,Board,Piece5),
-    adjRect(Board,1,2,X,Pieces1,Piece5),
+    Col is 2,
+    getPiece(Col,2,Board,Piece1),
+    getTriangleUp(Col,3,Board,Piece2),
+    getPiece(Col,4,Board,Piece3),
+    getTriangleUp(Col,5,Board,Piece4),
+    getPiece(Col,1,Board,Piece5),
+    adjRect(Board,1,2,Col,Pieces1,Piece5),
     getPiece(1,6,Board,Piece6),
     adjRect(Board,6,2,1,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([ [[2,X],Piece1], [ [3,X], Piece2], [[4,X],Piece3],[[5,X],Piece4] ],Aux,Adjacents).
+    append([ [[2,Col],Piece1], [ [3,Col], Piece2], [[4,Col],Piece3],[[5,Col],Piece4] ],Aux,Adjacents).
 
 adjRect2(Board,Adjacents):-
-    Y is 2,
-    getPiece(2,Y,Board,Piece1),
-    getTriangleUp(3,Y,Board,Piece2),
-    getPiece(4,Y,Board,Piece3),
-    getTriangleUp(5,Y,Board,Piece4),
+    Row is 2,
+    getPiece(2,Row,Board,Piece1),
+    getTriangleUp(3,Row,Board,Piece2),
+    getPiece(4,Row,Board,Piece3),
+    getTriangleUp(5,Row,Board,Piece4),
     getPiece(1,1,Board,Piece5),
     adjRect(Board,1,1,1,Pieces1,Piece5),
     getPiece(6,1,Board,Piece6),
     adjRect(Board,1,1,6,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[Y,2],Piece1],  [[Y,3],Piece2], [ [Y,4], Piece3], [[Y,5],Piece4]],Aux,Adjacents).
+    append([  [[Row,2],Piece1],  [[Row,3],Piece2], [ [Row,4], Piece3], [[Row,5],Piece4]],Aux,Adjacents).
 
 
 adjRect3(Board,Adjacents):-
-    Y is 2,
-    getPiece(6,Y,Board,Piece1),
-    getTriangleUp(7,Y,Board,Piece2),
-    getPiece(8,Y,Board,Piece3),
-    getTriangleUp(9,Y,Board,Piece4),
-    getPiece(10,Y,Board,Piece5),
-    adjRect(Board,Y,2,10,Pieces1,Piece5),
+    Row is 2,
+    getPiece(6,Row,Board,Piece1),
+    getTriangleUp(7,Row,Board,Piece2),
+    getPiece(8,Row,Board,Piece3),
+    getTriangleUp(9,Row,Board,Piece4),
+    getPiece(10,Row,Board,Piece5),
+    adjRect(Board,Row,2,10,Pieces1,Piece5),
     getPiece(5,1,Board,Piece6),
     adjRect(Board,1,2,5,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[Y,6],Piece1],  [[Y,7],Piece2], [ [Y,8], Piece3], [[Y,9],Piece4]],Aux,Adjacents).
+    append([  [[Row,6],Piece1],  [[Row,7],Piece2], [ [Row,8], Piece3], [[Row,9],Piece4]],Aux,Adjacents).
 
 adjRect4(Board,Adjacents):-
-    X is 9,
-    getTriangleUp(X,2,Board,Piece1),
-    getPiece(X,3,Board,Piece2),
-    getTriangleUp(X,4,Board,Piece3),
-    getPiece(X,5,Board,Piece4),
+    Col is 9,
+    getTriangleUp(Col,2,Board,Piece1),
+    getPiece(Col,3,Board,Piece2),
+    getTriangleUp(Col,4,Board,Piece3),
+    getPiece(Col,5,Board,Piece4),
     getPiece(10,1,Board,Piece5),
     adjRect(Board,1,1,1,Pieces1,Piece5),
     getPiece(10,6,Board,Piece6),
     adjRect(Board,1,1,1,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[2,X],Piece1],  [[3,X],Piece2], [ [4,X], Piece3], [[5,X],Piece4],[[1,10],Piece5]],Aux,Adjacents).
+    append([  [[2,Col],Piece1],  [[3,Col],Piece2], [ [4,Col], Piece3], [[5,Col],Piece4],[[1,10],Piece5]],Aux,Adjacents).
 
 adjRect5(Board,Adjacents):-
-    X is 9,
-    getTriangleUp(X,6,Board,Piece1),
-    getPiece(X,7,Board,Piece2),
-    getTriangleUp(X,8,Board,Piece3),
-    getPiece(X,9,Board,Piece4),
-    getPiece(X,10,Board,Piece5),
-    adjRect(Board,10,2,X,Pieces1,Piece5),
+    Col is 9,
+    getTriangleUp(Col,6,Board,Piece1),
+    getPiece(Col,7,Board,Piece2),
+    getTriangleUp(Col,8,Board,Piece3),
+    getPiece(Col,9,Board,Piece4),
+    getPiece(Col,10,Board,Piece5),
+    adjRect(Board,10,2,Col,Pieces1,Piece5),
     getPiece(10,5,Board,Piece6),
     adjRect(Board,5,2,10,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[6,X],Piece1],  [[7,X],Piece2], [ [8,X], Piece3], [[9,X],Piece4]],Aux,Adjacents).
+    append([  [[6,Col],Piece1],  [[7,Col],Piece2], [ [8,Col], Piece3], [[9,Col],Piece4]],Aux,Adjacents).
 
 adjRect6(Board,Adjacents):-
-    Y is 9,
-    getTriangleDown(6,Y,Board,Piece1),
-    getPiece(7,Y,Board,Piece2),
-    getTriangleDown(8,Y,Board,Piece3),
-    getPiece(9,Y,Board,Piece4),
+    Row is 9,
+    getTriangleDown(6,Row,Board,Piece1),
+    getPiece(7,Row,Board,Piece2),
+    getTriangleDown(8,Row,Board,Piece3),
+    getPiece(9,Row,Board,Piece4),
     getPiece(10,10,Board,Piece5),
     adjRect(Board,10,1,10,Pieces1,Piece5),
     getPiece(5,10,Board,Piece6),
     adjRect(Board,10,1,5,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[Y,6],Piece1],  [[Y,7],Piece2], [ [Y,8], Piece3], [[Y,9],Piece4]],Aux,Adjacents).
+    append([  [[Row,6],Piece1],  [[Row,7],Piece2], [ [Row,8], Piece3], [[Row,9],Piece4]],Aux,Adjacents).
 
 adjRect7(Board,Adjacents):-
-    Y is 9,
-    getTriangleDown(2,Y,Board,Piece1),
-    getPiece(3,Y,Board,Piece2),
-    getTriangleUp(4,Y,Board,Piece3),
-    getPiece(5,Y,Board,Piece4),
-    getPiece(1,Y,Board,Piece5),
-    adjRect(Board,Y,2,1,Pieces1,Piece5),
+    Row is 9,
+    getTriangleDown(2,Row,Board,Piece1),
+    getPiece(3,Row,Board,Piece2),
+    getTriangleUp(4,Row,Board,Piece3),
+    getPiece(5,Row,Board,Piece4),
+    getPiece(1,Row,Board,Piece5),
+    adjRect(Board,Row,2,1,Pieces1,Piece5),
     getPiece(6,10,Board,Piece6),
     adjRect(Board,10,2,6,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[Y,2],Piece1],  [[Y,3],Piece2], [ [Y,4], Piece3], [[Y,5],Piece4]],Aux,Adjacents).
+    append([  [[Row,2],Piece1],  [[Row,3],Piece2], [ [Row,4], Piece3], [[Row,5],Piece4]],Aux,Adjacents).
 
 
 adjRect8(Board,Adjacents):-
-    X is 2,
-    getPiece(X,6,Board,Piece1),
-    getTriangleUp(X,7,Board,Piece2),
-    getPiece(X,8,Board,Piece3),
-    getTriangleUp(X,9,Board,Piece4),
+    Col is 2,
+    getPiece(Col,6,Board,Piece1),
+    getTriangleUp(Col,7,Board,Piece2),
+    getPiece(Col,8,Board,Piece3),
+    getTriangleUp(Col,9,Board,Piece4),
     getPiece(1,10,Board,Piece5),
     adjRect(Board,10,1,1,Pieces1,Piece5),
     getPiece(1,5,Board,Piece6),
     adjRect(Board,5,1,1,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
-    append([  [[6,X],Piece1],  [[7,X],Piece2], [ [8,X], Piece3], [[9,X],Piece4]],Aux,Adjacents).
+    append([  [[6,Col],Piece1],  [[7,Col],Piece2], [ [8,Col], Piece3], [[9,Col],Piece4]],Aux,Adjacents).
 
 %adjacents of rectangles 
-adjacentRectangle(Board,X,Y,Adjacents):-
+adjacentRectangle(Board,Col,Row,Adjacents):-
 
-  ((X == 1, Y < 6,
+  ((Col == 1, Row < 6,
     adjRect1(Board,Adjacents));
-  (X== 1, Y >= 6, Y < 10,
+  (Col== 1, Row >= 6, Row < 10,
     adjRect8(Board,Adjacents));
-  (Y == 1, X < 6,
+  (Row == 1, Col < 6,
     adjRect2(Board,Adjacents));
-  (Y == 1, X >= 6,
+  (Row == 1, Col >= 6,
     adjRect3(Board,Adjacents));
-  (X == 10, Y < 6,
+  (Col == 10, Row < 6,
     adjRect4(Board,Adjacents));
-  (X == 10, Y >= 6,
+  (Col == 10, Row >= 6,
     adjRect5(Board,Adjacents));
-  (Y == 10, X < 6,
+  (Row == 10, Col < 6,
     adjRect7(Board,Adjacents));
-  (Y == 10, X >= 6,
+  (Row == 10, Col >= 6,
     adjRect6(Board,Adjacents))    
     ).

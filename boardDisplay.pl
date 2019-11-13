@@ -32,26 +32,26 @@ errorDetect2(ListChar,Length):-
     (Length == 3,
     nth0(2,ListChar,AuxT),
     (AuxT == 'U' ;  AuxT == 'D'; 
-    (AuxT == '0', nth0(1,ListChar,AuxY), AuxY == '1')); 
+    (AuxT == '0', nth0(1,ListChar,AuxRow), AuxRow == '1')); 
     Length ==2).
 
 
-getPlayInfo(X,Y,T):-
+getPlayInfo(Col,Row,T):-
     (writef("Write coordinates: (xyT)"),nl,
     read_line_to_codes(user_input,Codes),
     errorDetect1(Codes),!,
     string_codes(String,Codes), 
     atom_chars(String,ListChar),
     errorDetect2(ListChar,Length),!,
-    nth0(0,ListChar,AuxX),
-    nth0(1,ListChar,AuxY)),
+    nth0(0,ListChar,AuxCol),
+    nth0(1,ListChar,AuxRow)),
     ((Length ==2, T is -1);
      ((Length == 3 , nth0(2,ListChar,AuxT)),
-        ((AuxT == '0', T is -1,Y is 10) ;
+        ((AuxT == '0', T is -1,Row is 10) ;
         ( isTriangle(AuxT,T) )))),
-    (char_code(AuxX,AuxX2),
-    (Y == 10;atom_number(AuxY,Y)),
-    X is AuxX2-64).
+    (char_code(AuxCol,AuxCol2),
+    (Row == 10;atom_number(AuxRow,Row)),
+    Col is AuxCol2-64).
 
 playerTurn(Player) :-
     color(C,Player),
