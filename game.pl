@@ -232,8 +232,7 @@ play_mode(Option) :-
   ((Option == 0,twoPlayerGame(L,[]));
   (Option == 1,getAILevel(Lvl), humanCPUGame(L,[],Lvl));
   (Option == 2,getAILevel(Lvl), cpuHumanGame(L,[],Lvl));
-  (Option == 3,getAILvls(Lvl1,Lvl2), twoComputerGame(L,[],Lvl1,Lvl2));
-  (Option == 'e',halt)).
+  (Option == 3,getAILvls(Lvl1,Lvl2), trace,twoComputerGame(L,[],Lvl1,Lvl2))).
 
 getOption(Option) :-
   read_line_to_codes(user_input,Codes),
