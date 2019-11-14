@@ -239,29 +239,29 @@ moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
 
 twoPlayerGame(Board,Aux,StateOut):-
   (game_over(StateOut);
-  (move(1,Board,Aux,Aux2,BoardOut,StateOut2),
+  (clear,move(1,Board,Aux,Aux2,BoardOut,StateOut2),
   (game_over(StateOut2);
-  (move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut3),
+  (clear,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut3),
   twoPlayerGame(BoardOut2,AuxF,StateOut3))))).                      
 
 cpuHumanGame(Board,Aux,Lvl) :-
-  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),
+  clear,moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),
   (game_over(StateOut);
-  (move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  (clear,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
   (game_over(StateOut2);
   (cpuHumanGame(BoardOut2,AuxF,Lvl),!)))).
 
 humanCPUGame(Board,Aux,Lvl) :-
-  move(1,Board,Aux,Aux2,BoardOut,StateOut),
+  clear,move(1,Board,Aux,Aux2,BoardOut,StateOut),
   (game_over(StateOut);
-  (moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
+  (clear,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
   (game_over(StateOut2);
   (humanCPUGame(BoardOut2,AuxF,Lvl),!)))).
 
 twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
-  nodebug,moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),
+  clear,moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),
   (game_over(StateOut);
-  (moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
+  (clear,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
   (game_over(StateOut2);
   (twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2),!)))).
 
