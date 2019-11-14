@@ -23,7 +23,7 @@ getAILvls(Lvl1,Lvl2) :-
 
 play_mode(Option) :-
   buildBlankList(L),
-  ((Option == 0,!,twoPlayerGame(L,[]));
+  ((Option == 0,!,twoPlayerGame(L,[],0));
   (Option == 1,getAILevel(Lvl),!, humanCPUGame(L,[],Lvl));
   (Option == 2,getAILevel(Lvl),!, cpuHumanGame(L,[],Lvl));
   (Option == 3,getAILvls(Lvl1,Lvl2),!, twoComputerGame(L,[],Lvl1,Lvl2))).

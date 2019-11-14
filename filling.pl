@@ -91,8 +91,8 @@ fillPieceOther(TabIn,RowN,ColN,Player,TabOut) :-
 %from the board where its stored in the format: [[Fill,Type],_]
 fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,NewTab), %retrieve row
-  nth1(ColN,Row,[[_,ID|_]|Rest],NewRow), %retrieve column and triangle piece ID
-  nth1(ColN,NRow,[[Player,ID|_]|Rest],NewRow), %insert col into row
+  nth1(ColN,Row,[[_,ID|_]|[Rest]],NewRow), %retrieve column and triangle piece ID
+  nth1(ColN,NRow,[[Player,ID],Rest],NewRow), %insert col into row
   nth1(RowN,TabOut,NRow,NewTab). % insert row into tab
 
 %fillPieceTriDwn(+TabIn,+RowN,+ColN,+Player,-TabOut)
@@ -101,16 +101,13 @@ fillPieceTriUp(TabIn,RowN,ColN,Player,TabOut):-
 fillPieceTriDwn(TabIn,RowN,ColN,Player,TabOut):-
   nth1(RowN,TabIn,Row,NewTab), %retrieve row
   nth1(ColN,Row,[Rest,[_,ID|_]|_],NewRow), %retrieve column and triangle piece ID
-  nth1(ColN,NRow,[Rest,[Player,ID|_]|_],NewRow), %insert col into row
+  nth1(ColN,NRow,[Rest,[Player,ID]],NewRow), %insert col into row
   nth1(RowN,TabOut,NRow,NewTab).
 
 %fillPiece(+TabIn,+RowN,+ColN,+Tri,+Fill,-TabOut)
 %To fill a piece with color, we need to decide whether the kind of piece is:
 %Rectangle : -2 // Square : -1 // Triangle Up : 0 // Triangle Down : 1
-fillPiece(TabIn,RowN,ColN,Tri,Fill,TabOut) :-
-  switch(Tri,[
-    -2:fillPieceRect(TabIn,RowN,ColN,Fill,TabOut),
-    -1:fillPieceOther(TabIn,RowN,ColN,Fill,TabOut),
-    0:fillPieceTriUp(TabIn,RowN,ColN,Fill,TabOut),
-    1:fillPieceTriDwn(TabIn,RowN,ColN,Fill,TabOut)
-  ]).
+fillPiece(TabIn,RowN,ColN,-2,Fill,TabOut) :- fillPieceRect(TabIn,RowN,ColN,Fill,TabOut).
+fillPiece(TabIn,RowN,ColN,-1,Fill,TabOut) :- fillPieceOther(TabIn,RowN,ColN,Fill,TabOut).
+fillPiece(TabIn,RowN,ColN,0,Fill,TabOut) :- fillPieceTriUp(TabIn,RowN,ColN,Fill,TabOut).
+fillPiece(TabIn,RowN,ColN,1,Fill,TabOut) :- fillPieceTriDwn(TabIn,RowN,ColN,Fill,TabOut).
