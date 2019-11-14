@@ -21,6 +21,7 @@ adjacentUp5(Board,Row,Col,Adjacents):-
 
 %adjacents to triangle3
 adjacentUp3(Board,Col,Row,Adjacents):-
+trace,
   Colless is Col-1,
   Rowless is Row-1,
   getPiece(Colless,Row,Board,Piece1),
@@ -242,9 +243,9 @@ adjRect4(Board,Adjacents):-
     getTriangleUp(Col,4,Board,Piece3),
     getPiece(Col,5,Board,Piece4),
     getPiece(10,1,Board,Piece5),
-    adjRect(Board,1,1,Pieces1,Piece5),
+    adjRect(Board,1,10,Pieces1,Piece5),
     getPiece(10,6,Board,Piece6),
-    adjRect(Board,1,1,Pieces2,Piece6),
+    adjRect(Board,6,10,Pieces2,Piece6),
     append(Pieces1,Pieces2,Aux),
     append([  [[2,Col],Piece1],  [[3,Col],Piece2], [ [4,Col], Piece3], [[5,Col],Piece4],[[1,10],Piece5]],Aux,Adjacents).
 
