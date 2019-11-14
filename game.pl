@@ -208,6 +208,7 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
 
 moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
     display_game(Board,Player),!,
+    sleep(1),    
     valid_moves(Board,AuxIn,PossiblePlays),
     repeat,
     getRandomPiece(PossiblePlays,Row,Col,T),
@@ -217,6 +218,7 @@ moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
 
 moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
   display_game(Board,Player),!,
+  sleep(1),
   valid_moves(Board,AuxIn,PossiblePlays),
   repeat,
   getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T),
