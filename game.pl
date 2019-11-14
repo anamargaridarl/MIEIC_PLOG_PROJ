@@ -81,7 +81,7 @@ addAuxSq(Col,Row,Board,AuxIn,AuxOut):-
 
 addAuxRec(Col,Row,Board,AuxIn,AuxOut):-
     getPiece(Col,Row,Board,Piece),               
-    adjRect(Board,Row,_,Col,Pieces,Piece), 
+    adjRect(Board,Row,Col,Pieces,Piece), 
     append(Pieces, AuxIn, AuxOut).
 
 %add triangle up to auxiliar structure
@@ -185,8 +185,24 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
     addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
     value(BoardOut,AuxOut,StateOut).                       %evalues game state 
 
+moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
+    display_game(Board,Player),!,
+    valid_moves(Board,AuxIn,PossiblePlays),
+    repeat,
+    getRandomPiece(PossiblePlays,Row,Col,T),
+    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+    value(BoardOut,AuxOut,StateOut).
 
-%Diferent Play Modes
+  moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
+    display_game(Board,Player),!,
+    valid_moves(Board,AuxIn,PossiblePlays),
+    repeat,
+    getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T),
+    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+    value(BoardOut,AuxOut,StateOut).
+
 twoPlayerGame(Board,Aux):-
     move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
     game_over(StateOut),!,
@@ -194,24 +210,24 @@ twoPlayerGame(Board,Aux):-
     game_over(StateOut2),!,
     twoPlayerGame(BoardOut2,AuxF).                      
 
-cpuHumanGame(Board,Aux) :-
-  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-  game_over(StateOut),
+cpuHumanGame(Board,Aux,Lvl) :-
+  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),!,
+  game_over(StateOut),!,
   move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
   game_over(StateOut2),!,
-  cpuHumanGame(BoardOut2,AuxF).
+  cpuHumanGame(BoardOut2,AuxF,Lvl).
 
-humanCPUGame(Board,Aux) :-
-  move(1,BoardOut,Aux,Aux2,BoardOut,StateOut),!,
-  game_over(StateOut),
-  moveCPU(2,Board,Aux2,AuxF,BoardOut2,StateOut2),!,
+humanCPUGame(Board,Aux,Lvl) :-
+  move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+  game_over(StateOut),!,
+  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
   game_over(StateOut2),!,
-  humanCPUGame(BoardOut2,AuxF).
+  humanCPUGame(BoardOut2,AuxF,Lvl).
 
-twoComputerGame(Board,Aux) :-
-  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-  game_over(StateOut),
-  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
+  moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),!,
+  game_over(StateOut),!,
+  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
   game_over(StateOut2),!,
-  twoComputerGame(BoardOut2,AuxF).
+  twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2).
 
