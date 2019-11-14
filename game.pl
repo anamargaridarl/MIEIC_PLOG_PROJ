@@ -190,21 +190,21 @@ moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
     addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
     value(BoardOut,AuxOut,StateOut).
 
-  moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
-    display_game(Board,Player),!,
-    valid_moves(Board,AuxIn,PossiblePlays),
-    repeat,
-    getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T),
-    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
-    value(BoardOut,AuxOut,StateOut).
+moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
+  display_game(Board,Player),!,
+  valid_moves(Board,AuxIn,PossiblePlays),
+  repeat,
+  getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T),
+  fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+  addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+  value(BoardOut,AuxOut,StateOut).
 
 twoPlayerGame(Board,Aux):-
-    move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-    game_over(StateOut),!,
-    move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
-    game_over(StateOut2),!,
-    twoPlayerGame(BoardOut2,AuxF).                      
+  move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
+  game_over(StateOut),!,
+  move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  game_over(StateOut2),!,
+  twoPlayerGame(BoardOut2,AuxF).                      
 
 cpuHumanGame(Board,Aux,Lvl) :-
   moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),!,
