@@ -161,10 +161,10 @@ printPossibleMoves([[Coord|_]|Rest]):-
 
 % State: 0 - continue; 1- Player 1 wins; 2- Player 2 wins; 3- Tie game
 game_over(State):-
-  (State == 0);
-  (State == 1, winMessage(State),fail);
-  (State == 2, winMessage(State),fail);
-  (State == 3, tieMessage(),fail).
+  (State == 0,fail);
+  (State == 1, winMessage(State));
+  (State == 2, winMessage(State));
+  (State == 3, tieMessage()).
 
 
 %validate play
@@ -194,27 +194,27 @@ addPlayAux(AuxIn,Board,Col,Row,T, AuxOut):-
 
   
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
-    display_game(Board,Player),!,                          %display board with last move
-    valid_moves(Board,AuxIn,PossiblePlays),                %compute possible plays --> format: [[Row,Col],[Color,Id]],...
-    print('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
-    printPossibleMoves(PossiblePlays),nl,
-    repeat,
-    getPlayInfo(Col,Row,T),                                %process play from user input (Error proof)
-    getShapeAddCoord(Board,Row,Col,T,Tout,Piece),          %fetch played piece from board --> board piece format: [Color,Id]; 'Piece' format: [[Row,Col],[Color,Id]]
-    validPlay(Piece,PossiblePlays),                        %validate play - true if Piece is in possible plays list
-    fillPiece(Board,Row,Col,Tout,Player,BoardOut),         %fill played piece color field in board 
-    addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
-    value(BoardOut,AuxOut,StateOut).                       %evalues game state 
+  display_game(Board,Player),!,                          %display board with last move
+  valid_moves(Board,AuxIn,PossiblePlays),                %compute possible plays --> format: [[Row,Col],[Color,Id]],...
+  print('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
+  printPossibleMoves(PossiblePlays),nl,
+  repeat,
+  getPlayInfo(Col,Row,T),                                %process play from user input (Error proof)
+  getShapeAddCoord(Board,Row,Col,T,Tout,Piece),          %fetch played piece from board --> board piece format: [Color,Id]; 'Piece' format: [[Row,Col],[Color,Id]]
+  validPlay(Piece,PossiblePlays),                        %validate play - true if Piece is in possible plays list
+  fillPiece(Board,Row,Col,Tout,Player,BoardOut),         %fill played piece color field in board 
+  addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
+  value(BoardOut,AuxOut,StateOut).                       %evalues game state 
 
 moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
-    display_game(Board,Player),!,
-    sleep(1),    
-    valid_moves(Board,AuxIn,PossiblePlays),
-    repeat,
-    getRandomPiece(PossiblePlays,Row,Col,T),
-    fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
-    value(BoardOut,AuxOut,StateOut).
+  display_game(Board,Player),!,
+  sleep(1),    
+  valid_moves(Board,AuxIn,PossiblePlays),
+  repeat,
+  getRandomPiece(PossiblePlays,Row,Col,T),
+  fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+  addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
+  value(BoardOut,AuxOut,StateOut).
 
 moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
   display_game(Board,Player),!,
@@ -228,29 +228,29 @@ moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
 
 twoPlayerGame(Board,Aux):-
   move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-  game_over(StateOut),!,
-  move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
-  game_over(StateOut2),!,
-  twoPlayerGame(BoardOut2,AuxF).                      
+  (game_over(StateOut);
+  (!,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  (game_over(StateOut2);
+  (!,twoPlayerGame(BoardOut2,AuxF))))).                      
 
 cpuHumanGame(Board,Aux,Lvl) :-
   moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),!,
-  game_over(StateOut),!,
-  move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
-  game_over(StateOut2),!,
-  cpuHumanGame(BoardOut2,AuxF,Lvl).
+  (game_over(StateOut);
+  (!,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
+  (game_over(StateOut2);
+  (!,cpuHumanGame(BoardOut2,AuxF,Lvl))))).
 
 humanCPUGame(Board,Aux,Lvl) :-
   move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-  game_over(StateOut),!,
-  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
-  game_over(StateOut2),!,
-  humanCPUGame(BoardOut2,AuxF,Lvl).
+  (game_over(StateOut);
+  (!,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
+  (game_over(StateOut2);
+  (!,humanCPUGame(BoardOut2,AuxF,Lvl))))).
 
 twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
   moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),!,
-  game_over(StateOut),!,
-  moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
-  game_over(StateOut2),!,
-  twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2).
+  (game_over(StateOut);
+  (!,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
+  (game_over(StateOut2);
+  (!,twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2))))).
 
