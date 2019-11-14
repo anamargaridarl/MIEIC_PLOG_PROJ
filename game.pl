@@ -147,10 +147,21 @@ lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
     ((Id == 1; Id == 2),adjacentRectangle(Board,Col,Row,Adjacents) )
     ).
 
-%print possible moves
-printPossibleMoves([Coord|Rest]):-
-print(Coord),print(','),
-printPossibleMoves(Rest).
+removeform([],ListAux,ListAux).
+removeform([[Coord|_]|Rest],ListAux,ListOut):-
+  removeform(Rest,[Coord|ListAux],ListOut).
+
+printPossibleMoves2([]).
+printPossibleMoves2([X|Rest]):-
+  print(X),print(','),
+  printPossibleMoves2(Rest).
+
+printPossibleMoves(PossiblePlays):-
+  buildTriList(T),
+  PossiblePlays == T,
+  removeform(PossiblePlays,[],ListOut),
+  sort(ListOut,L),
+  printPossibleMoves2(L).
 
 printPossibleMoves([]).
 printPossibleMoves([[Coord|_]|Rest]):-
