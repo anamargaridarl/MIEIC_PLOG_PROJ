@@ -5,6 +5,7 @@
 :- consult('filling.pl').
 :- consult('adjacents.pl').
 :- consult('computer.pl').
+:- consult('menu.pl').
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 list_empty([]).
@@ -12,39 +13,29 @@ list_empty([]).
 switch(X,[Val:Goal | Cases]) :-
   (X=Val -> call(Goal) ; switch(X, Cases)).
 
-printPossibleMoves([Coord|Rest]):-
-print(Coord),print(','),
-printPossibleMoves(Rest).
-
-printPossibleMoves([]).
-printPossibleMoves([[Coord|_]|Rest]):-
-  print(Coord),print(','),
-  printPossibleMoves(Rest).
-
-getTriangleUp(Col,Row,Board,Piece):-
-  getPiece(Col,Row,Board,PieceAux),
-  PieceAux = [Piece|_].   
-
-getTriangleDown(Col,Row,Board,Piece):-
-  getPiece(Col,Row,Board,PieceAux),
-  PieceAux = [_|[Piece|_]].
-
+%isT(+Id)
+%verify if piece is a triangle based on Id
 isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
 
-% Get Id from Pieces [ [Row,Col], [Cor,Id] ] 
+%isR(+Id)
+%verify if piece is a rectangle based on Id
+isR(Id):- (Id == 1;Id ==2).
+
+% getId(+Piece,+Id)
+% Get Id from Pieces --> format:[ [Row,Col], [Cor,Id] ] 
 % Use in auxiliar structure and valid_plays
 getId(Piece,Id):-
   [_|[Id|_]] = Piece.
 
-isR(Id):- (Id == 1;Id ==2).
-
+%isRectangle(+Piece,+Id)
+%verify if is rectangle and gets Id
 isRectangle(Piece,Id):-
   getId(Piece,IdAux),
   isR(IdAux),
   Id is IdAux.
 
-%Conversion from Id to T 
-%used for functions
+%isTri(+ID,+Tri) 
+%Conversion from Id to T identifier
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;
   (ID == 1; ID == 2), Tri = -2;
@@ -55,21 +46,44 @@ getOposPlayer(Player,Opos) :-
   (Player == 1, Opos = 2);
   (Player == 2, Opos = 1).  
 
-%get piece full info
+%getFullPiece(+Col,+Row,+Board,+[[_,_],Info]) 
+%based on row and column get piece from board 
+%and returns it with the format [[Row,Col],[Color,Id]]
 getFullPiece(Col,Row,Board,[[_,_],Info]) :-
   getPiece(Col,Row,Board,Info).
 
+%getPiece(+Col,+Row,+Board,+Piece)
 %get piece from board based on Col and Row position
+%return format: [Color,Id]
 getPiece(Col,Row,Board,Piece):-
   nth1(Row,Board,RowAux,_),
   nth1(Col,RowAux,Piece,_).
 
-getShapeRecSq(Row,Col,Board,PieceAux,T):-
-      getPiece(Col,Row,Board,PieceAux),
-      getId(PieceAux,Id),
+%_________________ getShapeAddCoord aux_________________
+
+%getTriangleUp(+Col,+Row,+Board,+Piece)
+%getTriangle Up from board based on row and column
+getTriangleUp(Col,Row,Board,Piece):-
+  getPiece(Col,Row,Board,PieceAux),
+  PieceAux = [Piece|_].   
+
+%getTriangleDown(+Col,+Row,+Board,+Piece)
+%getTriangle Down from board based on row and column
+getTriangleDown(Col,Row,Board,Piece):-
+  getPiece(Col,Row,Board,PieceAux),
+  PieceAux = [_|[Piece|_]].
+
+%getShapeRecSq(+Row,+Col,+Board,+Piece,+T)
+%get rectangle or square from board based on row and column
+%updates T identifier
+getShapeRecSq(Row,Col,Board,Piece,T):-
+      getPiece(Col,Row,Board,Piece),
+      getId(Piece,Id),
       isTri(Id,T).
 
-%get shape 
+%getShapeAddCoord(+Board,+Row,+Col,+Tri,+Tout,+Piece) 
+%get piece from board based on input from user
+%Piece fomat: [[Row,Column],[Color,Id]]
 getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
   switch(Tri,[
     -1:getShapeRecSq(Row,Col,Board,PieceAux,Tout),
@@ -79,7 +93,7 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
   append([[Row,Col]],[PieceAux],Piece).
 
 
-%___________________Auxiliar structure Aux - help functions _______________________%
+%___________________addPlayAux - help functions _______________________%
 
 %add other pieces to auxiliar structure
 addAuxSq(Col,Row,Board,AuxIn,AuxOut):-
@@ -90,8 +104,6 @@ addAuxRec(Col,Row,Board,AuxIn,AuxOut):-
     getPiece(Col,Row,Board,Piece),               
     adjRect(Board,Row,Col,Pieces,Piece), 
     append(Pieces, AuxIn, AuxOut).
-
-
 
 %add triangle up to auxiliar structure
 addAuxTriangleUp(Col,Row,Board,AuxIn,AuxOut):-
@@ -104,7 +116,7 @@ addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut):-
   append([[[Row,Col],Piece]], AuxIn, AuxOut).
 
 
-%____________________ Possible plays - help functions ________________________________%
+%____________________ valid_moves auxiliares ________________________________%
 
 %Adds to a list adjacent pieces of the ones already played on board
 validMovesAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
@@ -115,11 +127,35 @@ validMovesAux(Board,[Piece|Rest],PossiblePlaysIn,PossiblePlaysOut):-
   validMovesAux(Board,Rest,T1,PossiblePlaysOut).
 
 %remove pieces from possible plays -
-%used to remove pieces that were already played
+%valid_moves auxiliar
 removePiecesOnBoard([],List2,List2).
 removePiecesOnBoard([Piece|Rest],List,List2):-
   delete(List,Piece,T),
   removePiecesOnBoard(Rest,T,List2).
+
+%______________________________________________________________________________%
+
+%look for adjacent of a piece
+lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
+    (getId(Info,Id),
+    Coord = [Row|[Col|_]]),
+    ((Id == 3, adjacentUp3(Board,Col,Row,Adjacents));
+    (Id == 4, adjacentDown4(Board,Col,Row,Adjacents));
+    (Id == 5, adjacentUp5(Board,Row,Col,Adjacents));
+    (Id == 6, adjacentDown6(Board,Col,Row,Adjacents));
+    (Id == 0,adjacentSquare(Board,Col,Row,Adjacents));
+    ((Id == 1; Id == 2),adjacentRectangle(Board,Col,Row,Adjacents) )
+    ).
+
+%print possible moves
+printPossibleMoves([Coord|Rest]):-
+print(Coord),print(','),
+printPossibleMoves(Rest).
+
+printPossibleMoves([]).
+printPossibleMoves([[Coord|_]|Rest]):-
+  print(Coord),print(','),
+  printPossibleMoves(Rest).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -135,7 +171,7 @@ game_over(State):-
 %Pieces - [ [Row,Col], [Color,Id] ]
 validPlay(Piece,PossiblePlays):-
   (buildTriList(T),
-    PossiblePlays == T,
+   PossiblePlays == T,
    Piece = [_|[Info|_]],
    getId(Info,Id),
    isT(Id));
@@ -156,30 +192,19 @@ addPlayAux(AuxIn,Board,Col,Row,T, AuxOut):-
     1:addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut)
   ]).
 
-%need to calculate for rectangles too
-lookForAdjacent(Board,[Coord|[Info|_]],Adjacents):-
-    (getId(Info,Id),
-    Coord = [Row|[Col|_]]),
-    ((Id == 3, adjacentUp3(Board,Col,Row,Adjacents));
-    (Id == 4, adjacentDown4(Board,Col,Row,Adjacents));
-    (Id == 5, adjacentUp5(Board,Row,Col,Adjacents));
-    (Id == 6, adjacentDown6(Board,Col,Row,Adjacents));
-    (Id == 0,adjacentSquare(Board,Col,Row,Adjacents));
-    ((Id == 1; Id == 2),adjacentRectangle(Board,Col,Row,Adjacents) )
-    ).
   
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
-    display_game(Board,Player),!,                   %display board
-    valid_moves(Board,AuxIn,PossiblePlays),
-    print('Possible Plays'),nl,
+    display_game(Board,Player),!,                          %display board with last move
+    valid_moves(Board,AuxIn,PossiblePlays),                %compute possible plays --> format: [[Row,Col],[Color,Id]],...
+    print('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
     printPossibleMoves(PossiblePlays),nl,
     repeat,
-    getPlayInfo(Col,Row,T),
-    getShapeAddCoord(Board,Row,Col,T,Tout,Piece),
-    validPlay(Piece,PossiblePlays),
-    fillPiece(Board,Row,Col,Tout,Player,BoardOut),        %fill piece with player color
-    addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),
-    value(BoardOut,AuxOut,StateOut).
+    getPlayInfo(Col,Row,T),                                %process play from user input (Error proof)
+    getShapeAddCoord(Board,Row,Col,T,Tout,Piece),          %fetch played piece from board --> board piece format: [Color,Id]; 'Piece' format: [[Row,Col],[Color,Id]]
+    validPlay(Piece,PossiblePlays),                        %validate play - true if Piece is in possible plays list
+    fillPiece(Board,Row,Col,Tout,Player,BoardOut),         %fill played piece color field in board 
+    addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
+    value(BoardOut,AuxOut,StateOut).                       %evalues game state 
 
 moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
     display_game(Board,Player),!,
@@ -227,42 +252,3 @@ twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
   game_over(StateOut2),!,
   twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2).
 
-play_mode(Option) :-
-  buildBlankList(L),
-  ((Option == 0,twoPlayerGame(L,[]));
-  (Option == 1,getAILevel(Lvl), humanCPUGame(L,[],Lvl));
-  (Option == 2,getAILevel(Lvl), cpuHumanGame(L,[],Lvl));
-  (Option == 3,getAILvls(Lvl1,Lvl2), trace,twoComputerGame(L,[],Lvl1,Lvl2))).
-
-getOption(Option) :-
-  read_line_to_codes(user_input,Codes),
-  length(Codes,N), 
-  (N == 1; (writef("Invalid option selected"),nl)),
-  nth0(0,Codes,Code),
-  Option is Code - 48.
-
-getAILevel(Lvl) :-
-  repeat,
-  writef('Set CPU level:'),nl,
-  writef('0 - Easy: computer does random choices. Like the average joe.'),nl,
-  writef('1 - Harder?: computer gets greedy. Might beat you, might make your life easier.'),nl,
-  getOption(Lvl),(Lvl == 0; Lvl == 1).
-
-getAILvls(Lvl1,Lvl2) :-
-  repeat,
-  writef('Set CPU1 level:'),nl,
-  writef('0 - Easy: computer does random choices. Like the average joe.'),nl,
-  writef('1 - Harder?: computer gets greedy. Might beat you, might make your life easier.'),nl,
-  getOption(Lvl1),(Lvl1 == 0; Lvl1 == 1),
-  writef('Set CPU2 level:'),nl,
-  getOption(Lvl2),(Lvl2 == 0; Lvl2 == 1).
-  
-play() :-
-  writef("Welcome to Boco. Choose game mode: "),nl,
-  repeat,
-  writef('0 - Human Vs Human'),nl,
-  writef('1 - Human Vs Computer'),nl,
-  writef('2 - Computer Vs Human'),nl, 
-  writef('3 - Computer Vs Computer'),nl,
-  getOption(Option),!,
-  play_mode(Option).
