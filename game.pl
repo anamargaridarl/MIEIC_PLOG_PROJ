@@ -13,22 +13,29 @@ list_empty([]).
 switch(X,[Val:Goal | Cases]) :-
   (X=Val -> call(Goal) ; switch(X, Cases)).
 
+%isT(+Id)
+%verify if piece is a triangle based on Id
 isT(Id):- (Id == 3;Id ==4; Id ==5; Id ==6).
 
-% Get Id from Pieces [ [Row,Col], [Cor,Id] ] 
+%isR(+Id)
+%verify if piece is a rectangle based on Id
+isR(Id):- (Id == 1;Id ==2).
+
+% getId(+Piece,+Id)
+% Get Id from Pieces --> format:[ [Row,Col], [Cor,Id] ] 
 % Use in auxiliar structure and valid_plays
 getId(Piece,Id):-
   [_|[Id|_]] = Piece.
 
-isR(Id):- (Id == 1;Id ==2).
-
+%isRectangle(+Piece,+Id)
+%verify if is rectangle and gets Id
 isRectangle(Piece,Id):-
   getId(Piece,IdAux),
   isR(IdAux),
   Id is IdAux.
 
-%Conversion from Id to T 
-%used for functions
+%isTri(+ID,+Tri) 
+%Conversion from Id to T identifier
 isTri(ID,Tri) :-
   ID == 0, Tri = -1;
   (ID == 1; ID == 2), Tri = -2;
@@ -39,30 +46,44 @@ getOposPlayer(Player,Opos) :-
   (Player == 1, Opos = 2);
   (Player == 2, Opos = 1).  
 
-%get piece full info
+%getFullPiece(+Col,+Row,+Board,+[[_,_],Info]) 
+%based on row and column get piece from board 
+%and returns it with the format [[Row,Col],[Color,Id]]
 getFullPiece(Col,Row,Board,[[_,_],Info]) :-
   getPiece(Col,Row,Board,Info).
 
+%getPiece(+Col,+Row,+Board,+Piece)
 %get piece from board based on Col and Row position
+%return format: [Color,Id]
 getPiece(Col,Row,Board,Piece):-
   nth1(Row,Board,RowAux,_),
   nth1(Col,RowAux,Piece,_).
 
 %_________________ getShapeAddCoord aux_________________
+
+%getTriangleUp(+Col,+Row,+Board,+Piece)
+%getTriangle Up from board based on row and column
 getTriangleUp(Col,Row,Board,Piece):-
   getPiece(Col,Row,Board,PieceAux),
   PieceAux = [Piece|_].   
 
+%getTriangleDown(+Col,+Row,+Board,+Piece)
+%getTriangle Down from board based on row and column
 getTriangleDown(Col,Row,Board,Piece):-
   getPiece(Col,Row,Board,PieceAux),
   PieceAux = [_|[Piece|_]].
 
-getShapeRecSq(Row,Col,Board,PieceAux,T):-
-      getPiece(Col,Row,Board,PieceAux),
-      getId(PieceAux,Id),
+%getShapeRecSq(+Row,+Col,+Board,+Piece,+T)
+%get rectangle or square from board based on row and column
+%updates T identifier
+getShapeRecSq(Row,Col,Board,Piece,T):-
+      getPiece(Col,Row,Board,Piece),
+      getId(Piece,Id),
       isTri(Id,T).
 
-%get shape 
+%getShapeAddCoord(+Board,+Row,+Col,+Tri,+Tout,+Piece) 
+%get piece from board based on input from user
+%Piece fomat: [[Row,Column],[Color,Id]]
 getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
   switch(Tri,[
     -1:getShapeRecSq(Row,Col,Board,PieceAux,Tout),
