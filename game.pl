@@ -176,7 +176,7 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
 
 twoPlayerGame(Board,Aux):-
     move(1,Board,Aux,Aux2,BoardOut,StateOut),!,
-    game_over(StateOut),
+    game_over(StateOut),!,
     move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
     game_over(StateOut2),!,
     twoPlayerGame(BoardOut2,AuxF).                      
@@ -204,7 +204,7 @@ twoComputerGame(Board,Aux) :-
 
 play_mode(Option) :-
   buildBlankList(L),
-  ((Option == 0, twoPlayerGame(L,[]));
+  ((Option == 0,twoPlayerGame(L,[]));
   (Option == 1, cpuHumanGame(L,[]));
   (Option == 2, humanCPUGame(L,[]));
   (Option == 3, twoComputerGame(L,[]))).
@@ -223,5 +223,5 @@ play() :-
   writef('1 - Human Vs Computer'),nl,
   writef('2 - Computer Vs Human'),nl, 
   writef('3 - Computer Vs Computer'),nl,
-  getOption(Option),
+  getOption(Option),!,
   play_mode(Option).
