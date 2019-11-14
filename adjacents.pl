@@ -13,7 +13,7 @@ adjacentUp5(Board,Row,Col,Adjacents):-
   append([ [[Row,Col],Piece2] ] ,Aux,Adjacents));
   (isRectangle(Piece1,_),
   adjRect(Board,Row,Colmore,Pieces1,Piece1),
-  append([ [[Row,Col],Piece2] , [[Col,Rowless],Piece3] ] ,Pieces1,Adjacents));
+  append([ [[Row,Col],Piece2] , [[Rowless,Col],Piece3] ] ,Pieces1,Adjacents));
   (isRectangle(Piece3,_),
   adjRect(Board,Rowless,Col,Pieces1,Piece3),
   append([ [[Row,Col],Piece2] , [[Row,Colmore],Piece1] ] ,Pieces1,Adjacents));
