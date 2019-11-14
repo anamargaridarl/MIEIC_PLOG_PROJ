@@ -15,6 +15,8 @@ color(blue,1).
 color(white,0).
 color(green,2).
 
+clear :- write('\e[2J\n').
+
 isTriangle(AuxT,T):-
     AuxT == 'U', T is 0;
     AuxT == 'D', T is 1.
