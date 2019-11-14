@@ -12,6 +12,10 @@ list_empty([]).
 switch(X,[Val:Goal | Cases]) :-
   (X=Val -> call(Goal) ; switch(X, Cases)).
 
+printPossibleMoves([Coord|Rest]):-
+print(Coord),print(','),
+printPossibleMoves(Rest).
+
 printPossibleMoves([]).
 printPossibleMoves([[Coord|_]|Rest]):-
   print(Coord),print(','),
@@ -126,6 +130,7 @@ game_over(State):-
   (State == 2, winMessage(State),fail);
   (State == 3, tieMessage(),fail).
 
+
 %validate play
 %Pieces - [ [Row,Col], [Color,Id] ]
 validPlay(Piece,PossiblePlays):-
@@ -134,8 +139,9 @@ validPlay(Piece,PossiblePlays):-
    getId(Info,Id),
    isT(Id));
   member(Piece,PossiblePlays).
-
+            
 %calculate next possible plays based on already played pieces(aux)
+valid_moves(_,[],NoAux) :- buildTriList(NoAux).
 valid_moves(Board,Aux,NoAux):-
   validMovesAux(Board,Aux,[],PossiblePlaysOut),          %adds all adjacent pieces to the ones played on the board
   removePiecesOnBoard(Aux,PossiblePlaysOut,NoAux).          %removes from list of adjacents the pieces that were already played
