@@ -134,7 +134,8 @@ game_over(State):-
 %validate play
 %Pieces - [ [Row,Col], [Color,Id] ]
 validPlay(Piece,PossiblePlays):-
-  (list_empty(PossiblePlays),
+  (buildTriList(T),
+    PossiblePlays == T,
    Piece = [_|[Info|_]],
    getId(Info,Id),
    isT(Id));
