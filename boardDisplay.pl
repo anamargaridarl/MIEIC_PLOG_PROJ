@@ -11,7 +11,7 @@ print(Term) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Color codes
-color(magenta,1).
+color(blue,1).
 color(white,0).
 color(green,2).
 
