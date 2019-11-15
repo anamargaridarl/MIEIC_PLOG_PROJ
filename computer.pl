@@ -1,8 +1,5 @@
 %%%%%%%%%%%%%%%%% Evaluation functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- use_module(library(random)).
-
-
-
   
 %%%%%%% Level 0 AI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %getRandomPiece(+PossList,-Row,-Col,-Tri)
@@ -20,12 +17,6 @@ getRandomPiece(PossList,Row,Col,Tri) :-
 %gives the opponent the lowest number of possible plays.
 %The idea is that the less possible plays, the more restricted the
 %opponent is, therefore being a greedy strategy.
-% getGreedyPiece(TabIn,Played,Player,PossList,Row,Col,Tri) :-
-%   setof(N-Piece,(validPlay(Piece,PossList),
-%                 evalPiece(TabIn,Played,Player,Piece,N)),[Play|_]),
-%   Play = [N-[[Row,Col],[_|ID]]],
-%   isTri(ID,Tri).
-
 getGreedyPiece(TabIn,Played,Player,[First|Rest],Row,Col,Tri) :-
   evalPiece(TabIn,Played,Player,First,N),
   getMinValue(TabIn,Played,Player,Rest,N,First,Best),
@@ -44,9 +35,6 @@ evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   getOposPlayer(Player,Opponent),
   getPlayerPieces(Played2,Opponent,OppPieces),
   getAllAdjacents(TabOut,OppPieces,Adjacents),
-  % list_to_set(Adjacents,AdjSet),
-  % list_to_set(ToPlay,ToPlaySet),  
-  % intersection(AdjSet,ToPlaySet,PlayerPoss),
   intersection(Adjacents,ToPlay,PlayerPoss),
   length(PlayerPoss,NumAux),
   N is 0-NumAux.

@@ -43,7 +43,7 @@ checkAdjs([Piece|Rest],Player, AdjcentTo,Temp,Result):-
 %PieceState: 0 - Piece is safe 1 - Piece or block is surrounded
 verifyPieceState(TabIn,Player,[Piece|Rest],InPlay2,TabOut,PieceState) :-
   Piece = [[Row,Col],[Fill,ID]],
-  ((\+(Fill == Player), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
+  (((\+(Fill == Player); ID == 1; ID == 2), InPlay2 = Rest, TabOut = TabIn, PieceState = 0);
   (lookForAdjacent(TabIn,Piece,Adjs),
   checkAdjs(Adjs,Player,AdjcentTo,[],Result),
   isTri(ID,Tri),
