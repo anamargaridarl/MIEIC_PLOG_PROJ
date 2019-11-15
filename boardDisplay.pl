@@ -39,7 +39,9 @@ errorDetect2(ListChar,Length):-
 
 
 getPlayInfo(Col,Row,T):-
-    (writef("Write coordinates: (xyT)"),nl,
+    (writef("Write coordinates: <Column><Row>/<T>:"),nl,
+    writef("            (T--> 'U':Triangle Up"),nl,
+    writef("                 'D':Triangle Down)"),nl,
     read_line_to_codes(user_input,Codes),
     errorDetect1(Codes),!,
     string_codes(String,Codes), 
