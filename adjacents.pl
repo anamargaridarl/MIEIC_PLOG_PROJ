@@ -21,7 +21,6 @@ adjacentUp5(Board,Row,Col,Adjacents):-
 
 %adjacents to triangle3
 adjacentUp3(Board,Col,Row,Adjacents):-
-trace,
   Colless is Col-1,
   Rowless is Row-1,
   getPiece(Colless,Row,Board,Piece1),
@@ -62,7 +61,7 @@ adjacentSquareLeftTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getPiece(Col,Rowless,Board,Piece3),
   adjRect(Board,Rowless,Col,Pieces2,Piece3),
   append(Pieces1,Pieces2,Aux),
-  append([  [[Row,Colmore],Piece1], [[Rowless,Col],Piece4]],Aux,Adjacents).
+  append([  [[Row,Colmore],Piece1], [[Rowmore,Col],Piece4]],Aux,Adjacents).
 
 %adjacents of squares in case of left column in board (not counting rectangles)
 adjacentSquareLeft(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
@@ -89,10 +88,9 @@ adjacentSquareRightBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowles
   getTriangleDown(Colless,Row,Board,Piece2),
   getPiece(Col,Rowmore,Board,Piece4),
   adjRect(Board,Rowmore,Col,Pieces2,Piece4),
-  print(Pieces2),nl,
   getTriangleDown(Col,Rowless,Board,Piece3),
   append(Pieces1,Pieces2,Aux),
-  append([  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3] ],Aux,Adjacents).
+  append([  [[Row,Colless],Piece2], [ [Rowless,Col], Piece3] ],Aux,Adjacents).
 
 %adjacents of squares in case of bottom line in board (not counting rectangles)
 adjacentSquareBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
