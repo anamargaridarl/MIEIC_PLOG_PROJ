@@ -59,7 +59,7 @@ getPiece(Col,Row,Board,Piece):-
   nth1(Row,Board,RowAux,_),
   nth1(Col,RowAux,Piece,_).
 
-%_________________ getShapeAddCoord aux_________________
+%_________________ getShapeAddCoord Auxiliar Functions _________________%
 
 %getTriangleUp(+Col,+Row,+Board,+Piece)
 %getTriangle Up from board based on row and column
@@ -93,13 +93,14 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
   append([[Row,Col]],[PieceAux],Piece).
 
 
-%___________________addPlayAux - help functions _______________________%
+%___________________addPlayAux - Auxiliar Functions _______________________%
 
-%add other pieces to auxiliar structure
+%add square pieces to auxiliar structure
 addAuxSq(Col,Row,Board,AuxIn,AuxOut):-
     getPiece(Col,Row,Board,Piece),               %get piece
-    append([[[Row,Col],Piece]], AuxIn, AuxOut).        %add to auxiliar structure
+    append([[[Row,Col],Piece]], AuxIn, AuxOut).   %add to auxiliar structure
 
+%add rectangle pieces to auxiliar structure
 addAuxRec(Col,Row,Board,AuxIn,AuxOut):-
     getPiece(Col,Row,Board,Piece),               
     adjRect(Board,Row,Col,Pieces,Piece), 
@@ -116,7 +117,7 @@ addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut):-
   append([[[Row,Col],Piece]], AuxIn, AuxOut).
 
 
-%____________________ valid_moves auxiliares ________________________________%
+%____________________ valid_moves Auxiliar Functions_____________________________%
 
 %Adds to a list adjacent pieces of the ones already played on board
 validMovesAux(_,[],PossiblePlaysOut,PossiblePlaysOut).
@@ -153,7 +154,7 @@ removeform([[Coord|_]|Rest],ListAux,ListOut):-
 
 printPossibleMoves2([]).
 printPossibleMoves2([X|Rest]):-
-  print(X),print(','),
+  print(X),writef(','),
   printPossibleMoves2(Rest).
 
 printPossibleMoves(PossiblePlays):-
@@ -165,7 +166,7 @@ printPossibleMoves(PossiblePlays):-
 
 printPossibleMoves([]).
 printPossibleMoves([[Coord|_]|Rest]):-
-  print(Coord),print(','),
+  print(Coord),writef(','),
   printPossibleMoves(Rest).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +208,7 @@ addPlayAux(AuxIn,Board,Col,Row,T, AuxOut):-
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
   display_game(Board,Player),!,                          %display board with last move
   valid_moves(Board,AuxIn,PossiblePlays),                %compute possible plays --> format: [[Row,Col],[Color,Id]],...
-  print('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
+  writef('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
   printPossibleMoves(PossiblePlays),nl,
   repeat,
   getPlayInfo(Col,Row,T),                                %process play from user input (Error proof)

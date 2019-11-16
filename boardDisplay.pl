@@ -8,8 +8,8 @@ print(Term) :-
                        numbervars(true),
                        quoted(true)
                      ]).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %Color codes
 color(blue,1).
 color(white,0).
@@ -17,18 +17,43 @@ color(green,2).
 
 clear :- write('\e[2J\n').
 
+playerTurn(Player) :-
+    color(C,Player),
+    writef("  Player "),
+    ansi_format([bold,fg(C)], '~w', [Player]), writef(" turn."),nl.
+
+winMessage(Player) :-
+    color(C,Player),
+    writef("  Player "),
+    ansi_format([bold,fg(C)], '~w', [Player]),writef(" wins!"),nl.
+
+tieMessage() :-
+    writef("Its a tie!"),nl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GET PLAY INFORMATION FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%isTriangle(+AuxT,+T)
+%transforms input related to triangle in a number to use internally in the game logic
 isTriangle(AuxT,T):-
     AuxT == 'U', T is 0;
     AuxT == 'D', T is 1.
-    % -1 --> quadrado
-    % -2 --> rectangulo
 
+%errorDetect1(+Codes)
+%input error check
+%based on list of codes input verifies if:
+%  - length is correct
+%  - input are in right range of values
 errorDetect1(Codes):-
     length(Codes,Length),
     Length >1 , Length < 4,
     nth0(0,Codes,First),First < 75, First > 64,
     nth0(1,Codes,Second),Second > 48 , Second < 58.
 
+%errorDetect2(+ListChar,+Length)
+%input error check
+%based on list of chars and length verifies if:
+%    - length 3: - third char is U or D;
+%                - third char is 0 and second is 1;
 errorDetect2(ListChar,Length):-
     length(ListChar,Length),
     (Length == 3,
@@ -37,7 +62,8 @@ errorDetect2(ListChar,Length):-
     (AuxT == '0', nth0(1,ListChar,AuxRow), AuxRow == '1')); 
     Length ==2).
 
-
+%getPlayInfo(+Col,+Row,+T)
+%gets input information of play
 getPlayInfo(Col,Row,T):-
     (writef("Write coordinates: <Column><Row>/<T>:"),nl,
     writef("            (T--> 'U':Triangle Up"),nl,
@@ -57,25 +83,12 @@ getPlayInfo(Col,Row,T):-
     (Row == 10;atom_number(AuxRow,Row)),
     Col is AuxCol2-64).
 
-playerTurn(Player) :-
-    color(C,Player),
-    writef("  Player "),
-    ansi_format([bold,fg(C)], '~w', [Player]), writef(" turn."),nl.
-
-winMessage(Player) :-
-    color(C,Player),
-    writef("  Player "),
-    ansi_format([bold,fg(C)], '~w', [Player]),writef(" wins!"),nl.
-
-tieMessage() :-
-    writef("Its a tie!"),nl.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD BUILDING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 drawColumnIds():-
     writef("  | A | B | C | D | E | F | G | H | I | J |"),nl.
 
 drawRowID(ID):- format('~d',ID).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD BUILDING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------
 drawHorizontalLine(0):- !.

@@ -1,5 +1,11 @@
 
-%adjacents to triangle5
+% Triangle3 - ◤
+% Triangle4 - ◢
+% Triangle5 - ◥ 
+% Triangle6 - ◣
+
+%adjacentUp5(+Board,+Row,+Col,+Adjacents)
+%calculates adjacent pieces of a given triangle5 based on it row and column
 adjacentUp5(Board,Row,Col,Adjacents):-
   Colmore is Col +1,
   Rowless is Row-1,
@@ -19,7 +25,8 @@ adjacentUp5(Board,Row,Col,Adjacents):-
   append([ [[Row,Col],Piece2] , [[Row,Colmore],Piece1] ] ,Pieces1,Adjacents));
   append([  [[Row,Colmore],Piece1],  [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],[],Adjacents)).
 
-%adjacents to triangle3
+%adjacentUp3(+Board,+Col,+Row,+Adjacents)
+%calculates adjacent pieces of a given triangle3 based on it row and column
 adjacentUp3(Board,Col,Row,Adjacents):-
   Colless is Col-1,
   Rowless is Row-1,
@@ -31,7 +38,8 @@ adjacentUp3(Board,Col,Row,Adjacents):-
   append([ [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],Pieces,Adjacents));
   append([  [[Row,Colless],Piece1],  [[Row,Col],Piece2], [ [Rowless,Col], Piece3]],[],Adjacents)).
 
-%adjacents to triangle4
+%adjacentUp4(+Board,+Col,+Row,+Adjacents)
+%calculates adjacent pieces of a given triangle4 based on it row and column
 adjacentDown4(Board,Col,Row,Adjacents):-
   Colmore is Col +1,
   Rowmore is Row+1,
@@ -43,7 +51,8 @@ adjacentDown4(Board,Col,Row,Adjacents):-
   append([  [[Row,Colmore],Piece1],[[Row,Col],Piece2]],Pieces,Adjacents));
   append([  [[Row,Colmore],Piece1],  [[Row,Col],Piece2], [ [Rowmore,Col], Piece3]],[],Adjacents)).
 
-%adjacent to triangle6
+%adjacentUp6(+Board,+Col,+Row,+Adjacents)
+%calculates adjacent pieces of a given triangle6 based on it row and column
 adjacentDown6(Board,Col,Row,Adjacents):-
   Colless is Col -1,
   Rowmore is Row+1,
@@ -52,7 +61,19 @@ adjacentDown6(Board,Col,Row,Adjacents):-
   getPiece(Col,Rowmore,Board,Piece3),
   append([  [[Row,Colless],Piece1],  [[Row,Col],Piece2], [ [Rowmore,Col], Piece3]],[],Adjacents).
 
-%adjacents of squares in case of left top unit in board (not counting rectangles)
+% Square Adjacencie Functions
+%
+% Need to calculate with different predicates based on it position
+%     - top row
+%     - left column 
+%     - right column
+%     - bottom row
+%     - even rows
+%     - odd rows
+%     - corner pieces
+
+%adjacentSquareLeftTop(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to corner left top square 
 adjacentSquareLeftTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Colmore,Row,Board,Piece1),
   getPiece(Colless,Row,Board,Piece2),
@@ -63,7 +84,8 @@ adjacentSquareLeftTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   append(Pieces1,Pieces2,Aux),
   append([  [[Row,Colmore],Piece1], [[Rowmore,Col],Piece4]],Aux,Adjacents).
 
-%adjacents of squares in case of left column in board (not counting rectangles)
+%adjacentSquareLeft(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to left column square based on its coordinates
 adjacentSquareLeft(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Colmore,Row,Board,Piece1),
   getPiece(Colless,Row,Board,Piece2),
@@ -72,7 +94,8 @@ adjacentSquareLeft(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleUp(Col,Rowless,Board,Piece4),
   append([  [[Row,Colmore],Piece1],[ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],Pieces1,Adjacents).
 
-%adjacents of squares in case of top line in board (not counting rectangles)
+%adjacentSquareTop(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to top row square based on its coordinates 
 adjacentSquareTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Colmore,Row,Board,Piece1),
   getTriangleUp(Colless,Row,Board,Piece2),
@@ -81,7 +104,8 @@ adjacentSquareTop(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   adjRect(Board,Rowless,Col,Pieces1,Piece4),
   append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3]],Pieces1,Adjacents).
 
-%adjacents of squares in case of right bottom unit in board (not counting rectangles)
+%adjacentSquareRightBottom(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to corner right bottom square 
 adjacentSquareRightBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getPiece(Colmore,Row,Board,Piece1),
   adjRect(Board,Row,Colmore,Pieces1,Piece1),
@@ -92,7 +116,8 @@ adjacentSquareRightBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowles
   append(Pieces1,Pieces2,Aux),
   append([  [[Row,Colless],Piece2], [ [Rowless,Col], Piece3] ],Aux,Adjacents).
 
-%adjacents of squares in case of bottom line in board (not counting rectangles)
+%adjacentSquareBottom(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to bottom row based on its coordinates
 adjacentSquareBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleUp(Colmore,Row,Board,Piece1),
   getTriangleDown(Colless,Row,Board,Piece2),
@@ -101,7 +126,8 @@ adjacentSquareBottom(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Col,Rowless,Board,Piece4),
   append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [[Rowless,Col],Piece4]],Pieces,Adjacents).
 
-%adjacents of squares in case of right column in board (not counting rectangles)
+%adjacentSquareRight(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to right column square based on its coordinates
 adjacentSquareRight(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getPiece(Colmore,Row,Board,Piece1),
   adjRect(Board,Row,Colmore,Pieces,Piece1),
@@ -110,7 +136,8 @@ adjacentSquareRight(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleUp(Col,Rowless,Board,Piece4),
   append([ [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],Pieces,Adjacents).
 
-%adjacents of squares in even rows
+%adjacentSquareEvenRows(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to even row square based on its coordinates
 adjacentSquareEvenRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Colmore,Row,Board,Piece1),
   getTriangleUp(Colless,Row,Board,Piece2),
@@ -118,7 +145,8 @@ adjacentSquareEvenRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):
   getTriangleDown(Col,Rowless,Board,Piece4),
   append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],[],Adjacents).
 
-%adjacents of squares in odd rows
+%adjacentSquareOddRows(+Col,+Row,+Board,+Adjacents,+Colmore,+Colless,+Rowmore,+Rowless)
+% calculate adjacent pieces to odd row square based on its coordinates
 adjacentSquareOddRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleUp(Colmore,Row,Board,Piece1),
   getTriangleDown(Colless,Row,Board,Piece2),
@@ -126,7 +154,8 @@ adjacentSquareOddRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getTriangleDown(Col,Rowless,Board,Piece4),
   append([  [[Row,Colmore],Piece1],  [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],[],Adjacents).
 
-%adjacents of squares 
+%adjacentSquare(+Board,+Col,+Row,+Adjacents)
+%analizes square coordinates and calculates adjacent pieces calling the correct predicate
 adjacentSquare(Board,Col,Row,Adjacents):-
   Colless is Col -1,
   Rowmore is Row+1,
@@ -151,10 +180,33 @@ adjacentSquare(Board,Col,Row,Adjacents):-
   adjacentSquareOddRows(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless)).
 
 
+%---------------------------------
+%|   |    R2    |    R3      |   |
+%|   |---------------------- |   |                       
+%| R1|                       | R4|
+%|   |                       |   |
+%|   |                       |   |
+%--------------------------------|
+%|   |                       |   |
+%| R8|                       | R5|
+%|   |                       |   |
+%----------------------------|   |
+%|    R7        |      R6    |   |
+%---------------------------------
+
+%adjRectVert(+Board,+Row,+Col,+ID,+IDB,+PiecesOutA,+PiecesOut,+Piece)  
+%verify if piece belongs to rectangle in cause. 
+%stops recursivity if doesnt (stop condition)
 adjRectVert(_,Row,Col,ID,IDB,PiecesOutA,PiecesOut,Piece)  :-
   (Row @< 1; Row @>10; ID \= IDB; member([[Row,Col],Piece],PiecesOutA)),
   PiecesOut = PiecesOutA.
 
+%adjRectVert(+Board,+Row,+Col,+ID,+IDB,+PiecesOutA,+PiecesOut,+Piece)  
+%based on a rectangle piece coordinates and id calculates all the pieces belonging to that vertical rectangle
+%PiecesOut is the final list of pieces belonging to that rectangle
+%
+%search for pieces in left and right; 
+%verifies if piece matches the rectangle in cause and if so adds to it list of pieces
 adjRectVert(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   append( [[[Row,Col],Piece]] ,Pieces,PiecesAux),
   RowB is Row - 1,
@@ -168,10 +220,19 @@ adjRectVert(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   adjRectVert(Board,RowA,Col,Id,IdA,PiecesAux,PiecesOut2,Piece1),
   adjRectVert(Board,RowB,Col,Id,IdB,PiecesOut2,PiecesOut,Piece2).
 
+%adjRectHorz(+Board,+Row,+Col,+ID,+IDB,+PiecesOutA,+PiecesOut,+Piece)  
+%verify if piece belongs to rectangle in cause. 
+%stops recursivity if doesnt (stop condition)
 adjRectHorz(_,Row,Col,ID,IDB,PiecesOutA,PiecesOut,Piece) :-
   (Col @< 1; Col @>10; ID \= IDB; member([[Row,Col],Piece],PiecesOutA)),
   PiecesOut = PiecesOutA.
 
+%adjRectHorizontal(+Board,+Row,+Col,+ID,+IDB,+PiecesOutA,+PiecesOut,+Piece)  
+%based on a rectangle piece coordinates and id calculates all the pieces belonging to that horizontal rectangle
+%PiecesOut is the final list of pieces belonging to that rectangle
+%
+%search for pieces in top and bottom; 
+%verifies if piece matches the rectangle in cause and if so adds to it list of pieces
 adjRectHorz(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   append(  [[[Row,Col],Piece]] ,Pieces, PiecesAux),
   ColB is Col - 1,
@@ -185,7 +246,9 @@ adjRectHorz(Board,Row,Col,Id,Id,Pieces,PiecesOut,Piece) :-
   adjRectHorz(Board,Row,ColA,Id,IdA,PiecesAux,PiecesOut2,Piece1),
   adjRectHorz(Board,Row,ColB,Id,IdB,PiecesOut2,PiecesOut,Piece2).
 
-
+%adjRect(+Board,+Row,+Col,+Pieces,+Piece1) 
+%calculates all the pieces belonging to a rectangle based on one of its pieces
+%calls the correct predicate for the rectangle in cause (horizontal or vertical)
 adjRect(Board,Row,Col,Pieces,Piece1) :-
   getId(Piece1,Id),
   ((Row == 1, Col \= 1, adjRectHorz(Board,Row,Col,Id,Id,[],PiecesAux,Piece1));
@@ -193,7 +256,8 @@ adjRect(Board,Row,Col,Pieces,Piece1) :-
  adjRectVert(Board,Row,Col,Id,Id,[],PiecesAux,Piece1)),
   append(PiecesAux,[],Pieces).
 
-
+%adjRect1(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 1 
 adjRect1(Board,Adjacents):-
     Col is 2,
     getPiece(Col,2,Board,Piece1),
@@ -207,6 +271,8 @@ adjRect1(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([ [[2,Col],Piece1], [ [3,Col], Piece2], [[4,Col],Piece3],[[5,Col],Piece4] ],Aux,Adjacents).
 
+%adjRect2(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 2
 adjRect2(Board,Adjacents):-
     Row is 2,
     getPiece(2,Row,Board,Piece1),
@@ -220,7 +286,8 @@ adjRect2(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[Row,2],Piece1],  [[Row,3],Piece2], [ [Row,4], Piece3], [[Row,5],Piece4]],Aux,Adjacents).
 
-
+%adjRect3(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 3 
 adjRect3(Board,Adjacents):-
     Row is 2,
     getPiece(6,Row,Board,Piece1),
@@ -234,6 +301,8 @@ adjRect3(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[Row,6],Piece1],  [[Row,7],Piece2], [ [Row,8], Piece3], [[Row,9],Piece4]],Aux,Adjacents).
 
+%adjRect4(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 4 
 adjRect4(Board,Adjacents):-
     Col is 9,
     getTriangleUp(Col,2,Board,Piece1),
@@ -247,6 +316,8 @@ adjRect4(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[2,Col],Piece1],  [[3,Col],Piece2], [ [4,Col], Piece3], [[5,Col],Piece4],[[1,10],Piece5]],Aux,Adjacents).
 
+%adjRect5(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 5 
 adjRect5(Board,Adjacents):-
     Col is 9,
     getTriangleUp(Col,6,Board,Piece1),
@@ -260,6 +331,8 @@ adjRect5(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[6,Col],Piece1],  [[7,Col],Piece2], [ [8,Col], Piece3], [[9,Col],Piece4]],Aux,Adjacents).
 
+%adjRect6(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 6
 adjRect6(Board,Adjacents):-
     Row is 9,
     getTriangleDown(6,Row,Board,Piece1),
@@ -273,6 +346,8 @@ adjRect6(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[Row,6],Piece1],  [[Row,7],Piece2], [ [Row,8], Piece3], [[Row,9],Piece4]],Aux,Adjacents).
 
+%adjRect7(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 7 
 adjRect7(Board,Adjacents):-
     Row is 9,
     getTriangleDown(2,Row,Board,Piece1),
@@ -286,7 +361,8 @@ adjRect7(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[Row,2],Piece1],  [[Row,3],Piece2], [ [Row,4], Piece3], [[Row,5],Piece4]],Aux,Adjacents).
 
-
+%adjRect8(+Board,+Adjacents)
+%calculates adjacent pieces to rectangle 8 
 adjRect8(Board,Adjacents):-
     Col is 2,
     getPiece(Col,6,Board,Piece1),
@@ -300,7 +376,8 @@ adjRect8(Board,Adjacents):-
     append(Pieces1,Pieces2,Aux),
     append([  [[6,Col],Piece1],  [[7,Col],Piece2], [ [8,Col], Piece3], [[9,Col],Piece4]],Aux,Adjacents).
 
-%adjacents of rectangles 
+%calculates adjacent pieces to rectangle
+%calls correct predicate based on rectangle in cause
 adjacentRectangle(Board,Col,Row,Adjacents):-
 
   ((Col == 1, Row < 6,
