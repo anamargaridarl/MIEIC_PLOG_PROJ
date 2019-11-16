@@ -95,6 +95,7 @@ getShapeAddCoord(Board,Row,Col,Tri,Tout,Piece) :-
 
 %___________________addPlayAux - Auxiliar Functions _______________________%
 
+%addAuxSq(Col,Row,Board,AuxIn,AuxOut)
 %add square pieces to auxiliar structure
 addAuxSq(Col,Row,Board,AuxIn,AuxOut):-
     getPiece(Col,Row,Board,Piece),               %get piece
@@ -152,9 +153,18 @@ removeform([],ListAux,ListAux).
 removeform([[Coord|_]|Rest],ListAux,ListOut):-
   removeform(Rest,[Coord|ListAux],ListOut).
 
+printList([X|Y]):-
+  writef('['),
+  Aux is X+64,
+  char_code(Aux2,Aux),
+  format('~w',Aux2),
+  writef(','),
+  format('~w',Y),
+  writef(']').  
+
 printPossibleMoves2([]).
 printPossibleMoves2([X|Rest]):-
-  print(X),writef(','),
+  printList(X),writef(','),
   printPossibleMoves2(Rest).
 
 printPossibleMoves(PossiblePlays):-
@@ -166,7 +176,7 @@ printPossibleMoves(PossiblePlays):-
 
 printPossibleMoves([]).
 printPossibleMoves([[Coord|_]|Rest]):-
-  print(Coord),writef(','),
+  printList(Coord),writef(','),
   printPossibleMoves(Rest).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GAME LOGIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
