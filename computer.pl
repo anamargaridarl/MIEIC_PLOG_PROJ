@@ -23,12 +23,22 @@ getGreedyPiece(TabIn,Played,Player,[First|Rest],Row,Col,Tri) :-
   Best = [[Row,Col],[_,ID]],
   isTri(ID,Tri).
 
+%getMinValue(+TabIn,+Played,+Player,+PossList,-N,+Aux,-Best)
+%Search in the possible pieces list and evaluate them, looking
+%for the one that gets the minimum (best) outcome possible.
+%The value of a play is the number of plays that the opponent can make
+%that on its adjacent pieces. The less it has, the more surrounded it is.
 getMinValue(_,_,_,[],_,Best,Best).
 getMinValue(TabIn,Played,Player,[Piece|Rest],N,Aux,Best) :-
   evalPiece(TabIn,Played,Player,Piece,TempN),
   ((TempN @> N, getMinValue(TabIn,Played,Player,Rest,TempN,Piece,Best));
   getMinValue(TabIn,Played,Player,Rest,N,Aux,Best)).
 
+%evalPiece(+Tabin,+Played,+Player,+Piece,-N)
+%In order to evaluate a piece, it makes a simulation of the play
+%analysing the possible moves, then gets the plays already made by the
+%opponent and gets its adjacents, crossmatching with the valid moves
+%returning the number of matches made (length of the intersection)
 evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   makeFakeMove(TabIn,Played,Player,Row,Col,ID,Played2,TabOut),
   valid_moves(TabOut,Played2,ToPlay),
@@ -39,11 +49,17 @@ evalPiece(TabIn,Played,Player,[[Row,Col],[_,ID]],N) :-
   length(PlayerPoss,NumAux),
   N is 0-NumAux.
 
+%makeFakeMove(+TabIn,+Played,+Player,+Row,+Col,+ID,-PlayedOut,-TabOut)
+%Works as the move/6 predicate, except the graphic interface is left out
+%since its purpose is only to retrive internal data on move of a given piece
 makeFakeMove(TabIn,Played,Player,Row,Col,ID,PlayedOut,TabOut):-
   isTri(ID,T),
   fillPiece(TabIn,Row,Col,T,Player,TabOut),
   addPlayAux(Played,TabOut,Col,Row,T, PlayedOut).
 
+%getPlayerPieces(+Played,+Player,-Pieces)
+%Searches the played pieces list, retrieving those belonging
+%to a given player
 getPlayerPieces([],_,[]).
 getPlayerPieces([Elem|Rest],Player,[E2|Rest2]) :-
   Elem = [_,[Fill,_]],
@@ -54,11 +70,14 @@ getPlayerPieces([Elem|Rest],Player,[E2|Rest2]) :-
 getPlayerPieces([_|Rest],Player,ListOut) :-
   getPlayerPieces(Rest,Player,ListOut).
 
+%getAllAdjacents(+TabIn,+OppPieces,-Adjacents)
+%Retrieves all pieces adjacent to the pieces played
+%by the opponent
 getAllAdjacents(TabIn,OppPieces,Adjacents) :-
-  getAllAdjacent(TabIn,OppPieces,[],Adjacents).
+  getAllAdjacents(TabIn,OppPieces,[],Adjacents).
 
-getAllAdjacent(_,[],Adjacents,Adjacents).
-getAllAdjacent(TabIn,[Piece|Rest],Aux,Adjacents) :-
+getAllAdjacents(_,[],Adjacents,Adjacents).
+getAllAdjacents(TabIn,[Piece|Rest],Aux,Adjacents) :-
   lookForAdjacent(TabIn,Piece,Adjs),
   append(Adjs,Aux,NewAux),
-  getAllAdjacent(TabIn,Rest,NewAux,Adjacents).
+  getAllAdjacents(TabIn,Rest,NewAux,Adjacents).

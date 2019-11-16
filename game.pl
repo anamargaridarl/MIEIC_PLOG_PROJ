@@ -214,11 +214,11 @@ addPlayAux(AuxIn,Board,Col,Row,T, AuxOut):-
     1:addAuxTriangleDown(Col,Row,Board,AuxIn,AuxOut)
   ]).
 
-  
+%move(+Player,+Board,+AuxIn,-AuxOut,-BoardOut,-StateOut)  
 move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
   display_game(Board,Player),!,                          %display board with last move
   valid_moves(Board,AuxIn,PossiblePlays),                %compute possible plays --> format: [[Row,Col],[Color,Id]],...
-  writef('Possible Plays'),nl,                            %print possible plays --> format: [Row,Col],...
+  writef('Possible Plays'),nl,                           %print possible plays --> format: [Row,Col],...
   printPossibleMoves(PossiblePlays),nl,
   repeat,
   getPlayInfo(Col,Row,T),                                %process play from user input (Error proof)
@@ -228,13 +228,14 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
   addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
   value(BoardOut,AuxOut,StateOut).                       %evalues game state 
 
+%choose_move(+Player,+Board,+AuxIn,-AuxOut,-BoardOut,-StateOut,+Lvl)  
 choose_move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
   display_game(Board,Player),!,
   sleep(1),    
   valid_moves(Board,AuxIn,PossiblePlays),
   repeat,
-  getRandomPiece(PossiblePlays,Row,Col,T),
-  fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+  getRandomPiece(PossiblePlays,Row,Col,T),               %differs from move because the piece played will be obatined randomly
+  fillPiece(Board,Row,Col,T,Player,BoardOut),        
   addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
   value(BoardOut,AuxOut,StateOut).
 
@@ -243,11 +244,13 @@ choose_move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
   sleep(1),
   valid_moves(Board,AuxIn,PossiblePlays),
   repeat,
-  getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T),
-  fillPiece(Board,Row,Col,T,Player,BoardOut),        %fill piece with player color
+  getGreedyPiece(Board,AuxIn,Player,PossiblePlays,Row,Col,T), %instead of choosing randomly, decided which piece is best with a greedy strategy
+  fillPiece(Board,Row,Col,T,Player,BoardOut),        
   addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
   value(BoardOut,AuxOut,StateOut).
 
+%twoPlayerGame(+Board,+Aux,+StateOut)
+%The boco game with 2-player mode.
 twoPlayerGame(Board,Aux,StateOut):-
   (game_over(StateOut);
   (clear,move(1,Board,Aux,Aux2,BoardOut,StateOut2),
@@ -255,6 +258,10 @@ twoPlayerGame(Board,Aux,StateOut):-
   (clear,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut3),
   twoPlayerGame(BoardOut2,AuxF,StateOut3))))).                      
 
+%cpuHumanGame(+Board,+Aux,+Lvl)
+%The boco game with 1-player mode where the computer makes the first move.
+%Depending on the value of Lvl, the computer will make a move following
+%different strategies.
 cpuHumanGame(Board,Aux,Lvl) :-
   clear,choose_move(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),
   (game_over(StateOut);
@@ -262,6 +269,10 @@ cpuHumanGame(Board,Aux,Lvl) :-
   (game_over(StateOut2);
   (cpuHumanGame(BoardOut2,AuxF,Lvl),!)))).
 
+%humanCPUGame(+Board,+Aux,+StateOut)
+%The boco game with 1-player mode where the user makes the first move.
+%Same as above, the computer will behave differently according to the
+%difficulty level.
 humanCPUGame(Board,Aux,Lvl) :-
   clear,move(1,Board,Aux,Aux2,BoardOut,StateOut),
   (game_over(StateOut);
@@ -269,6 +280,10 @@ humanCPUGame(Board,Aux,Lvl) :-
   (game_over(StateOut2);
   (humanCPUGame(BoardOut2,AuxF,Lvl),!)))).
 
+%twoComputerGame(+Board,Aux,+Lvl1,+Lvl2)
+%the boco game with two computer mode, the user will spectate will the computer
+%plays against himself
+%As before both computer bots will have their difficulty level set.
 twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
   clear,choose_move(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),
   (game_over(StateOut);
