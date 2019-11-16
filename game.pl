@@ -217,7 +217,7 @@ move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut):-
   addPlayAux(AuxIn,BoardOut,Col,Row,Tout, AuxOut),       %add played piece to auxiliar structure --> pieces format: [[Row,Col],[Color,Id]] 
   value(BoardOut,AuxOut,StateOut).                       %evalues game state 
 
-moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
+choose_move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
   display_game(Board,Player),!,
   sleep(1),    
   valid_moves(Board,AuxIn,PossiblePlays),
@@ -227,7 +227,7 @@ moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,0) :-
   addPlayAux(AuxIn,BoardOut,Col,Row,T, AuxOut),
   value(BoardOut,AuxOut,StateOut).
 
-moveCPU(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
+choose_move(Player, Board, AuxIn, AuxOut,BoardOut,StateOut,1) :-
   display_game(Board,Player),!,
   sleep(1),
   valid_moves(Board,AuxIn,PossiblePlays),
@@ -245,7 +245,7 @@ twoPlayerGame(Board,Aux,StateOut):-
   twoPlayerGame(BoardOut2,AuxF,StateOut3))))).                      
 
 cpuHumanGame(Board,Aux,Lvl) :-
-  clear,moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),
+  clear,choose_move(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl),
   (game_over(StateOut);
   (clear,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2),!,
   (game_over(StateOut2);
@@ -254,14 +254,14 @@ cpuHumanGame(Board,Aux,Lvl) :-
 humanCPUGame(Board,Aux,Lvl) :-
   clear,move(1,Board,Aux,Aux2,BoardOut,StateOut),
   (game_over(StateOut);
-  (clear,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
+  (clear,choose_move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl),!,
   (game_over(StateOut2);
   (humanCPUGame(BoardOut2,AuxF,Lvl),!)))).
 
 twoComputerGame(Board,Aux,Lvl1,Lvl2) :-
-  clear,moveCPU(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),
+  clear,choose_move(1,Board,Aux,Aux2,BoardOut,StateOut,Lvl1),
   (game_over(StateOut);
-  (clear,moveCPU(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
+  (clear,choose_move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut2,Lvl2),!,
   (game_over(StateOut2);
   (twoComputerGame(BoardOut2,AuxF,Lvl1,Lvl2),!)))).
 
