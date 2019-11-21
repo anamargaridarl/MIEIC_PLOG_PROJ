@@ -132,7 +132,7 @@ adjacentSquareRight(Col,Row,Board,Adjacents,Colmore,Colless,Rowmore,Rowless):-
   getPiece(Colmore,Row,Board,Piece1),
   adjRect(Board,Row,Colmore,Pieces,Piece1),
   getTriangleDown(Colless,Row,Board,Piece2),
-  getTriangleDown(Col,Rowmore,Board,Piece3),
+  getTriangleUp(Col,Rowmore,Board,Piece3),
   getTriangleUp(Col,Rowless,Board,Piece4),
   append([ [[Row,Colless],Piece2], [ [Rowmore,Col], Piece3], [[Rowless,Col],Piece4]],Pieces,Adjacents).
 
@@ -352,7 +352,7 @@ adjRect7(Board,Adjacents):-
     Row is 9,
     getTriangleDown(2,Row,Board,Piece1),
     getPiece(3,Row,Board,Piece2),
-    getTriangleUp(4,Row,Board,Piece3),
+    getTriangleDown(4,Row,Board,Piece3),
     getPiece(5,Row,Board,Piece4),
     getPiece(1,Row,Board,Piece5),
     adjRect(Board,Row,1,Pieces1,Piece5),
