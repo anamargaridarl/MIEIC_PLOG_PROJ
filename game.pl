@@ -288,7 +288,7 @@ twoPlayerGame(Board,Aux,StateOut):-
   (clear,move(1,Board,Aux,Aux2,BoardOut,StateOut2),
   (game_over(StateOut2);
   (clear,move(2,BoardOut,Aux2,AuxF,BoardOut2,StateOut3),
-  twoPlayerGame(BoardOut2,AuxF,StateOut3))))).                      
+  twoPlayerGame(BoardOut2,AuxF,StateOut3),!)))).                      
 
 %cpuHumanGame(+Board,+Aux,+Lvl)
 %The boco game with 1-player mode where the computer makes the first move.
