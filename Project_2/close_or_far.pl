@@ -3,17 +3,18 @@
 :- use_module(library(random)).
 % 0 - blank 1 - C (Close) 2 - F (Far)
 
-solver(Board) :-
+solver(Board,N,Opt) :-
   length(Board,N),
   NZeros is N-4,
   constraintRows(Board,N,NZeros),
   transpose(Board, BoardT),
   constraintRows(BoardT,N,NZeros),
   append(Board, Brd),
-  labeling([ffc], Brd).
+  labeling(Opt, Brd).
 
-constraintRows([],0,_).
+constraintRows([],_,_).
 constraintRows([R|Rs],N,NZeros) :-
+  length(R,N),
   domain(R,0,2),
   global_cardinality(R, [1-2, 2-2,0-NZeros]),
   element(I1, R, 1),
@@ -24,8 +25,7 @@ constraintRows([R|Rs],N,NZeros) :-
   DC #= abs(I2 - I1),
   DF #= abs(I4 - I3),
   DC #< DF,
-  N1 is N-1,
-  constraintRows(Rs,N1,NZeros).
+  constraintRows(Rs,N,NZeros).
   
 displayBoard([]) :- !,nl.
 displayBoard([R|Rs]) :-
@@ -44,47 +44,27 @@ test :-
 
 %%%%%%%%%%%%%%%%%%% BOARD GENERATION %%%%%%%%%%%%%%%%%%%%
 
-generate(N) :-
-  generateBoard(N,B),
-  displayBoard(B).
+generate(N,NewB):-
+  solver(B,N,[variable(selRandom),value(selRandom)]),
+  createPuzzle(B,NewB).
 
-generateBoard(Rows,Board) :-
-  length(Board,Rows),
-  boardInit(Board,Rows),
-  generateCols(Rows,Cols),
-  assignVars(Cols,Rows,Board).
-
-boardInit([],_).
-boardInit([Row|Rs],N) :-
-  length(Row,N),
-  boardInit(Rs,N).
-
-generateCols(N,Cols) :-
-  length(Cols,N),
-  domain(Cols,1,N),
-  all_distinct(Cols),
-  labeling([variable(selRandom)],Cols).
+createPuzzle(B,NewB).% create
 
 selRandom(ListOfVars, Var, Rest) :-
   random_select(Var, ListOfVars, Rest).
 
-assignVars([],0,_).
-assignVars([C|Cs],R,Board) :-
-  random(1,2,E),
-  nth1(R,Board,Row),
-  nth1(C,Row,E),
-  R1 is R-1,
-  assignVars(Cs,R1,Board).
-  
+selRandom(Var, Rest, BB0, BB1):- % selecionavalor de forma aleatória
+  fd_set(Var, Set), fdset_to_list(Set, List), random_member(Value,List), % da library(random)
+  (first_bound(BB0, BB1), Var#= Value;
+  later_bound(BB0, BB1), Var#\= Value).
+
 %%%%%%%%%%%%%%%%%%%%%%%%% GENERATE AND SOLVE %%%%%%%%%%%%%
 
 close_or_far(N) :-
-  generateBoard(N,B),
+  generate(N,B),
   displayBoard(B),nl,nl,!,
-  solver(B),
+  solver(B,N,[ffc]),
   displayBoard(B).
-
-
 
   
   
