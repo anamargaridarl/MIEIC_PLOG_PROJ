@@ -6,9 +6,9 @@
 solver(Board,N,Opt) :-
   length(Board,N),
   NZeros is N-4,
-  constraintRows(Board,N,NZeros),
-  transpose(Board, BoardT),
-  constraintRows(BoardT,N,NZeros),
+  constraintRows(Board,N,NZeros), % aplicar as restrições das linhas
+  transpose(Board, BoardT),       % transpor a matriz do tabuleiro
+  constraintRows(BoardT,N,NZeros), % aplicar as restrições das colunas
   append(Board, Brd),
   labeling(Opt, Brd).
 
@@ -16,25 +16,25 @@ constraintRows([],_,_).
 constraintRows([R|Rs],N,NZeros) :-
   length(R,N),
   domain(R,0,2),
-  global_cardinality(R, [1-2, 2-2,0-NZeros]),
+  global_cardinality(R, [1-2, 2-2,0-NZeros]), % definir que apenas há 2 C e 2 F
   element(I1, R, 1),
   element(I2, R, 1),
   element(I3, R, 2),
   element(I4, R, 2),
-  I1 #< I2, I3 #< I4,
+  I1 #< I2, I3 #< I4, % fixar posição dos pares C e F para eliminar simetrias
   DC #= abs(I2 - I1),
   DF #= abs(I4 - I3),
-  DC #< DF,
+  DC #< DF,           % restringir distancia entre C e F
   constraintRows(Rs,N,NZeros).
 
 %%%%%%%%%%%%%%%%%%% BOARD GENERATION %%%%%%%%%%%%%%%%%%%%
 
 generate(N,NewB):-
-  solver(B,N,[variable(selRandom),value(selRandom)]),
-  createPuzzle(B,N,NewB),displayBoard(B).
+  solver(B,N,[variable(selRandom),value(selRandom)]), % gerar um tabuleiro resolvido
+  createPuzzle(B,N,NewB).
 
 createPuzzle(B,N,NewB) :-
-  selectPieces(B,N,Pos,Types),
+  selectPieces(B,N,Pos,Types), %Pos é uma lista que guarda a coluna de cada linha onde estará uma letra e Types é a lista de letras por linha
   length(NewB,N),
   buildBoard(NewB,N,Pos,Types).
 
@@ -44,18 +44,15 @@ selectPieces(B,N,Pos,Types) :-
   domain(Pos,1,N),
   domain(Types,1,2),
   all_distinct(Pos),
-  constrainPiece(B,Pos,Types),
+  constrainPiece(B,Pos,Types), % preencher as listas Pos e Types
   append(Pos,Types,Vars),
   labeling([value(selRandom)],Vars).
 
 constrainPiece([],[],[]).
-constrainPiece([Row|Bs],[P|Ps],[1|Ts]) :-
-  element(P,Row,1),
-  constrainPiece(Bs,Ps,Ts).
-
-constrainPiece([Row|Bs],[P|Ps],[2|Ts]) :-
-  element(P,Row,2),
-  constrainPiece(Bs,Ps,Ts).  
+constrainPiece([Row|Bs],[P|Ps],[T|Ts]) :-
+  T in 1..2,
+  element(P,Row,T),
+  constrainPiece(Bs,Ps,Ts). 
 
 buildBoard([],_,[],[]).
 buildBoard([Row|Bs],N,[P|Ps],[T|Ts]) :-
