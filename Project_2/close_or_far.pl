@@ -15,16 +15,19 @@ solver(Board,N,Opt) :-
 constraintRows([],_,_).
 constraintRows([R|Rs],N,NZeros) :-
   length(R,N),
-  domain(R,0,2),
-  global_cardinality(R, [1-2, 2-2,0-NZeros]), % definir que apenas há 2 C e 2 F
-  element(I1, R, 1),
-  element(I2, R, 1),
-  element(I3, R, 2),
-  element(I4, R, 2),
-  I1 #< I2, I3 #< I4, % fixar posição dos pares C e F para eliminar simetrias
-  DC #= abs(I2 - I1),
-  DF #= abs(I4 - I3),
-  DC #< DF,           % restringir distancia entre C e F
+  automaton(R,_,R,
+    [source(s),sink(h)],
+    [arc(s,0,s),arc(s,1,a),arc(s,2,b),
+     arc(a,0,a,[C+1,F]),arc(a,1,c),arc(a,2,d,[C+1,F]),
+     arc(b,0,b,[C,F+1]),arc(b,1,d,[C,F+1]),arc(b,2,e),
+     arc(c,0,c),arc(c,2,f),
+     arc(d,0,d,[C+1,F+1]),arc(d,1,f,[C,F+1]),arc(d,2,g,[C+1,F]),
+     arc(e,0,e),arc(e,1,g),
+     arc(f,0,f,[C,F+1]),arc(f,2,h),
+     arc(g,0,g,[C+1,F]),arc(g,1,h),
+     arc(h,0,h)],
+    [C,F],[0,0],[A,B]),
+  A#<B,
   constraintRows(Rs,N,NZeros).
 
 %%%%%%%%%%%%%%%%%%% BOARD GENERATION %%%%%%%%%%%%%%%%%%%%
@@ -98,13 +101,33 @@ selRandom(Var,_, BB0, BB1):- % selecionavalor de forma aleatória
 
 test :-
   Test = [
-    [_A1,_A2,_A3,1],
-    [_B1,1,_B3,_B4],
-    [1,_C2,_C3,_C4],
-    [_D1,_D2,1,_D4]
+    [_,_,1,_,_,_,_],
+    [2,_,_,_,_,_,_],
+    [_,_,_,_,_,_,1],
+    [_,_,_,1,_,_,_],
+    [_,_,_,_,2,_,_],
+    [_,1,_,_,_,_,_],
+    [_,_,_,_,_,2,_]
   ],
-  solver(Test),
+  solver(Test,7,[ffc]),
   displayBoard(Test).
+
+test_automata(Seq) :-
+  domain([M,N],0,20),
+  automaton(Seq,_,Seq,
+    [source(s),sink(h)],
+    [arc(s,0,s),arc(s,1,a),arc(s,2,b),
+     arc(a,0,a,[C+1,F]),arc(a,1,c),arc(a,2,d,[C+1,F]),
+     arc(b,0,b,[C,F+1]),arc(b,1,d,[C,F+1]),arc(b,2,e),
+     arc(c,0,c),arc(c,2,f),
+     arc(d,0,d,[C+1,F+1]),arc(d,1,f,[C,F+1]),arc(d,2,g,[C+1,F]),
+     arc(e,0,e),arc(e,1,g),
+     arc(f,0,f,[C,F+1]),arc(f,2,h),
+     arc(g,0,g,[C+1,F]),arc(g,1,h),
+     arc(h,0,h)],
+    [C,F],[0,0],[M,N]),
+    M#<N,
+    labeling([],[M,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOARD DISPLAY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
