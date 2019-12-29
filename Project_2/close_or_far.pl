@@ -32,7 +32,7 @@ constraintRows([R|Rs],N) :-
 %%%%%%%%%%%%%%%%%%% BOARD GENERATION %%%%%%%%%%%%%%%%%%%%
 
 generate(N,NewB):-
-  reset_timer, solver(B,N,[variable(selRandom),value(selRandom)]), print_time, % gerar um tabuleiro resolvido
+  solver(B,N,[variable(selRandom),value(selRandom)]), % gerar um tabuleiro resolvido
   createPuzzle(B,N,NewB).
 
 createPuzzle(B,N,NewB) :-
@@ -71,7 +71,7 @@ close_or_far(N) :-
   fd_statistics,
   displayBoard(B),nl,nl,!,
   reset_timer,
-  solver(B,N,[ffc,bisect]),
+  solver(B,N,[ff,down]),
   print_time,
 	fd_statistics,
   displayBoard(B).
