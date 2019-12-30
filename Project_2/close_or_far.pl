@@ -14,6 +14,7 @@ solver(Board,N,Opt) :-
 constraintRows([],_).
 constraintRows([R|Rs],N) :-
   length(R,N),
+  domain(R,0,2),
   automaton(R,_,R,
     [source(s),sink(h)],
     [arc(s,0,s),arc(s,1,a),arc(s,2,b),
