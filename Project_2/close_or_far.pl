@@ -33,7 +33,7 @@ constraintRows([R|Rs],N) :-
 %%%%%%%%%%%%%%%%%%% BOARD GENERATION %%%%%%%%%%%%%%%%%%%%
 
 generate(N,NewB):-
-  solver(B,N,[variable(selRandom),value(selRandom)]), % gerar um tabuleiro resolvido
+  solver(B,N,[]), % gerar um tabuleiro resolvido
   createPuzzle(B,N,NewB).
 
 createPuzzle(B,N,NewB) :-
@@ -49,7 +49,7 @@ selectPieces(B,N,Pos,Types) :-
   all_distinct(Pos),
   constrainPiece(B,Pos,Types), % preencher as listas Pos e Types
   append(Pos,Types,Vars),
-  labeling([value(selRandom)],Vars).
+  labeling([variable(selRandom),value(selRandom)],Vars).
 
 constrainPiece([],[],[]).
 constrainPiece([Row|Bs],[P|Ps],[T|Ts]) :-
@@ -72,11 +72,10 @@ close_or_far(N) :-
   fd_statistics,
   displayBoard(B),nl,nl,!,
   reset_timer,
-  solver(B,N,[ff,down]),
+  solver(B,N,[ff]),
   print_time,
 	fd_statistics,
   displayBoard(B).
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% STATISTICS %%%%%%%%%%%%%%%%%%%%%
 
