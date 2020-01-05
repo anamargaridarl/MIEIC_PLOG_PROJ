@@ -72,7 +72,8 @@ close_or_far(N) :-
   fd_statistics,
   displayBoard(B),nl,nl,!,
   reset_timer,
-  solver(B,N,[ff]),
+  choose_opts(N,Opts),
+  solver(B,N,Opts),
   print_time,
 	fd_statistics,
   displayBoard(B).
@@ -87,7 +88,14 @@ print_time :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% LABELING HEURISTICS %%%%%%%%%%%%%%%%%
-  
+
+choose_opts(N,Opts) :-
+  N < 180,
+  Opts = [up,enum].
+
+choose_opts(_,Opts) :-
+  Opts = [].
+
 selRandom(ListOfVars, Var, Rest) :-
   random_select(Var, ListOfVars, Rest).
 
